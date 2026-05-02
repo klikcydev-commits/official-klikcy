@@ -2,104 +2,123 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Klikcy design system — teal/cyan/navy. All colors HSL. */
 
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 210 67% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 210 67% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 210 67% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary teal #00AEBB */
+    --primary: 184 100% 37%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 181 86% 43%;
+    --primary-dark: 184 89% 35%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Navy */
+    --navy: 203 81% 19%;
+    --navy-deep: 209 60% 16%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --secondary: 184 60% 96%;
+    --secondary-foreground: 209 60% 16%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --muted: 187 50% 97%;
+    --muted-foreground: 209 22% 49%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --accent: 184 86% 95%;
+    --accent-foreground: 184 100% 30%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --radius: 0.5rem;
+    --border: 186 38% 89%;
+    --input: 186 38% 89%;
+    --ring: 184 100% 37%;
 
-    --sidebar-background: 0 0% 98%;
+    --radius: 0.75rem;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --soft-bg: 184 50% 98%;
+    --light-teal-bg: 184 86% 95%;
 
-    --sidebar-primary: 240 5.9% 10%;
+    --gradient-primary: linear-gradient(135deg, hsl(203 81% 19%), hsl(184 100% 37%), hsl(181 86% 43%));
+    --gradient-soft: linear-gradient(180deg, hsl(0 0% 100%), hsl(184 50% 98%));
+    --gradient-hero: radial-gradient(ellipse at top right, hsl(184 100% 37% / 0.12), transparent 60%),
+                     radial-gradient(ellipse at bottom left, hsl(181 86% 43% / 0.08), transparent 50%);
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    --shadow-soft: 0 2px 12px -2px hsl(184 100% 37% / 0.08);
+    --shadow-card: 0 4px 24px -8px hsl(203 81% 19% / 0.1);
+    --shadow-glow: 0 8px 32px -8px hsl(184 100% 37% / 0.3);
 
-    --sidebar-accent: 240 4.8% 95.9%;
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 210 67% 15%;
+    --sidebar-primary: 184 100% 37%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 184 86% 95%;
+    --sidebar-accent-foreground: 184 100% 30%;
+    --sidebar-border: 186 38% 89%;
+    --sidebar-ring: 184 100% 37%;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
+  * { @apply border-border; }
+  html { scroll-behavior: smooth; }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-feature-settings: "cv11", "ss01";
   }
+  h1, h2, h3, h4 {
+    font-family: 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+    @apply text-navy-deep;
+  }
+  h1 { @apply font-bold; }
+  ::selection { background: hsl(var(--primary) / 0.2); color: hsl(var(--navy-deep)); }
+}
+
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8; }
+  .gradient-text {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 font-semibold text-white;
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-glow);
+    transition: var(--transition);
+  }
+  .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border-2 border-primary bg-white px-6 py-3 font-semibold text-primary;
+    transition: var(--transition);
+  }
+  .btn-secondary:hover { @apply bg-accent; }
+  .card-soft {
+    @apply rounded-2xl border bg-card p-6;
+    box-shadow: var(--shadow-card);
+    transition: var(--transition);
+  }
+  .card-soft:hover { transform: translateY(-2px); border-color: hsl(var(--primary) / 0.4); }
+  .micro-label {
+    @apply text-xs font-bold uppercase tracking-[0.18em] text-primary;
+  }
+  .section { @apply py-16 sm:py-20 lg:py-24; }
+  .prose-klikcy { @apply text-base leading-relaxed text-foreground/80; }
+  .prose-klikcy h2 { @apply mt-10 mb-4 text-2xl sm:text-3xl font-bold; }
+  .prose-klikcy h3 { @apply mt-8 mb-3 text-xl font-bold; }
+  .prose-klikcy p { @apply mb-4; }
+  .prose-klikcy ul { @apply mb-4 space-y-2 pl-5 list-disc marker:text-primary; }
+  .prose-klikcy a { @apply text-primary font-medium hover:underline; }
 }
