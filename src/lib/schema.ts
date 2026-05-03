@@ -32,7 +32,7 @@ export const breadcrumbSchema = (items: { name: string; url: string }[]) => ({
   })),
 });
 
-export const serviceSchema = (s: { name: string; description: string; slug: string }) => ({
+export const serviceSchema = (s: { name: string; shortDescription?: string; description?: string; slug: string }) => ({
   "@context": "https://schema.org",
   "@type": "Service",
   name: s.name,
