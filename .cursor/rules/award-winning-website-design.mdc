@@ -1,0 +1,1449 @@
+---
+description: Award-winning website UI/UX design system for Cursor
+globs:
+  - "**/*.tsx"
+  - "**/*.jsx"
+  - "**/*.ts"
+  - "**/*.js"
+  - "**/*.css"
+  - "**/*.scss"
+  - "**/*.mdx"
+alwaysApply: true
+---
+
+# Award-Winning Website UI/UX Design Skill
+
+---
+
+## 1. SKILL IDENTITY
+
+**Name:** Award-Winning Website UI/UX Design Skill  
+**Version:** 1.0  
+**Category:** Frontend Design, UI/UX, Web Development
+
+**Purpose:**  
+This skill transforms Cursor into a world-class UI/UX design partner. When activated, Cursor must design and build websites that are premium, conversion-focused, visually distinctive, responsive, accessible, and production-ready — the kind of work that wins Awwwards, appears in Webflow Showcase, and gets shared as a reference.
+
+**When to Activate:**  
+- When creating any website, landing page, or web application UI
+- When improving or refactoring existing website designs
+- When reviewing components, sections, or pages for design quality
+- When building homepage, service, SaaS, e-commerce, portfolio, or local business pages
+
+**What Cursor Does When Activated:**  
+1. Reads the business context before writing a single line of code
+2. Defines a complete design system (color, typography, spacing, motion) before building components
+3. Structures every page with intentional section order and UX purpose
+4. Implements conversion-focused layouts with clear visual hierarchy
+5. Applies responsive, accessible, performant code throughout
+6. Runs the Design Quality Checklist before finalizing output
+7. Never generates generic, templated, or "AI-looking" designs
+
+---
+
+## 2. DESIGN PHILOSOPHY
+
+Every decision must be intentional. Nothing exists for decoration. Everything serves the user's journey and the business's conversion goal.
+
+### Core Principles
+
+**Every section has a purpose.**  
+If you cannot state in one sentence what a section achieves for the user or the business, delete it or redesign it. Purpose before aesthetics.
+
+**Every layout guides the eye.**  
+Visual hierarchy is not optional. The user's eye must flow naturally from the most important element to the next. Use size, weight, contrast, position, and whitespace to direct attention. Never let the eye get lost.
+
+**Every page feels branded, not templated.**  
+Templates are starting points. The final result must feel custom-built for this specific business. Color, typography, imagery, tone, and language must align to create a unified brand experience.
+
+**Visual design supports conversion.**  
+Beautiful design that does not convert is decoration. Every visual decision must make it easier for the user to take the desired action: sign up, buy, contact, or read more.
+
+**Clean but not boring.**  
+Minimalism is not an excuse for emptiness. Premium spacing, sharp typography, thoughtful contrast, and subtle motion turn a clean layout into an experience.
+
+**Avoid at all times:**
+- Generic Bootstrap-looking sections with equal-height cards in a 3-column grid
+- Weak typography: body font used for headings, no size contrast, default line heights
+- Random color palettes not grounded in brand psychology
+- Excessive whitespace with no visual anchors
+- Animations that distract instead of delight
+- Copy-paste sections that look identical to every SaaS website
+- Fake luxury design (black background + gold text without real craft)
+- Stock photo grids with no visual identity
+
+---
+
+## 3. AWARD-WINNING WEBSITE PRINCIPLES
+
+Apply every principle on every project. No exceptions.
+
+### 3.1 Strong First Impression Above the Fold
+The hero section must communicate the offer, create desire, and establish visual identity within 3 seconds. If a user does not understand what the business does and feel compelled to continue within 3 seconds, the hero has failed.
+
+### 3.2 Clear Value Proposition
+The headline must answer: "What is this, who is it for, and why does it matter?" It is not a tagline. It is not a clever pun. It is a clear, confident statement of value.
+
+### 3.3 Memorable Visual Identity
+Every page must have a visual signature — a color, a typographic treatment, a layout pattern, a texture, or a motion style — that makes it recognizable and distinctive.
+
+### 3.4 Editorial Typography
+Typography is design. Headlines must be oversized, bold, and purposeful. Use type as a visual element, not just a content container. Mix weights. Use display typefaces. Create hierarchy through contrast.
+
+### 3.5 Strategic Asymmetry
+Avoid perfectly centered, symmetrical, equal-column layouts as the default. Strategic asymmetry creates tension, dynamism, and visual interest. A 60/40 split, an overlapping element, or a broken grid is more engaging than a centered block every time.
+
+### 3.6 Modern Grid Systems
+Use 12-column grids as the foundation. Break out of the grid intentionally for hero sections and featured content. Use CSS Grid and Flexbox. Never use tables for layout.
+
+### 3.7 Layered Depth
+Create visual depth through: overlapping elements, subtle shadows, gradient backgrounds, frosted glass effects, z-index layering, border contrast, and texture. Flat design without depth feels amateur.
+
+### 3.8 Strong Contrast
+Contrast is the tool of hierarchy. Use it for: heading vs. body text, CTA vs. background, active vs. inactive states, light vs. dark sections to create rhythm.
+
+### 3.9 High-Quality Microinteractions
+Buttons must respond to hover with clear feedback. Links must animate underlines. Cards must lift on hover. Form inputs must have visible focus states. Every interaction must feel deliberate and polished.
+
+### 3.10 Scroll Rhythm
+As the user scrolls, sections must feel connected but distinct. Use alternating layouts, color section breaks, and spacing to create a natural reading rhythm. The page must not feel like a single endless column of identical cards.
+
+### 3.11 Immersive but Usable Motion
+Motion enhances perception. It draws attention to what matters and guides flow. But motion must never block, delay, or distract. Every animation must have a purpose and an off state for reduced-motion preferences.
+
+### 3.12 Strong Content Hierarchy
+Heading → Subheading → Body → Caption. Never reverse this. Never use the same font size for different levels of content. Hierarchy is what makes pages scannable.
+
+### 3.13 Clear Call-to-Action Paths
+Every page has a primary CTA and at most one secondary CTA. The primary CTA must be visible without scrolling, repeated at logical scroll milestones, and contrast sharply with its surroundings.
+
+### 3.14 Trust-Building Sections
+Testimonials, case study numbers, client logos, certifications, and guarantees must appear before the final CTA. Trust is what converts skeptical visitors into buyers.
+
+### 3.15 Conversion-Focused Storytelling
+The page must tell a story: Here is your problem → Here is why it matters → Here is our solution → Here is proof it works → Here is what to do next. Every section advances this narrative.
+
+---
+
+## 4. PAGE STRUCTURE RULES
+
+### 4.1 Homepage
+
+**Section Order:**
+1. Navigation
+2. Hero — Headline, subheadline, primary CTA, social proof signal
+3. Logos / Trust strip — Client logos or press mentions
+4. Problem section — Agitate the pain the target user feels
+5. Solution section — Introduce the product/service as the answer
+6. Features or Services overview — 3–6 key value points
+7. How it works — 3-step process
+8. Social proof — Testimonials or case study highlights
+9. Case studies / Results — Specific numbers and outcomes
+10. Final CTA — Strong closing offer with CTA
+11. Footer
+
+**UX Goal:** The homepage must qualify visitors, build desire, establish trust, and convert in one scroll journey.
+
+**SEO:** H1 in hero. H2 for each major section. FAQ section if relevant. Schema: Organization, WebPage, FAQ.
+
+---
+
+### 4.2 Service Page
+
+**Section Order:**
+1. Navigation
+2. Hero — Service name, outcome-focused headline, CTA
+3. What it is — Clear explanation of the service
+4. Who it's for — Ideal client description
+5. What's included — Deliverables and scope
+6. Process — How you work together
+7. Results/Proof — Testimonials and case study data
+8. Pricing or CTA to discuss pricing
+9. FAQ — Objection handling
+10. Final CTA
+11. Footer
+
+**UX Goal:** Convert a researching visitor into a qualified lead.
+
+**SEO:** H1 = service name + location/audience modifier. H2 for each section. FAQ schema. Internal links to related services.
+
+---
+
+### 4.3 SaaS Landing Page
+
+**Section Order:**
+1. Navigation with product name, features link, pricing link, login link, CTA button
+2. Hero — Problem-aware headline, demo visual or product screenshot, primary CTA, secondary CTA
+3. Social proof — Logos of companies using the product
+4. Problem section
+5. Feature highlights — 3–4 core features with screenshots or illustrations
+6. How it works — 3-step visual flow
+7. Testimonials
+8. Pricing section
+9. FAQ
+10. Final CTA
+11. Footer
+
+**UX Goal:** Get the visitor to start a trial, book a demo, or sign up.
+
+**SEO:** H1 = product category + key benefit. FAQ schema. Clear product description for rich snippets.
+
+---
+
+### 4.4 E-commerce Product Page
+
+**Section Order:**
+1. Navigation with cart
+2. Product hero — Image gallery, product name, price, key specs, Add to Cart, trust badges
+3. Product description — Benefits-first, then features
+4. Social proof — Star rating, number of reviews, featured reviews
+5. Product details / specs accordion
+6. Related products
+7. Full review section
+8. Final trust section — Returns policy, shipping, guarantees
+
+**UX Goal:** Remove friction. Reduce doubt. Convert to purchase.
+
+**SEO:** H1 = product name. Structured data: Product schema with price, availability, reviews.
+
+---
+
+### 4.5 Portfolio / Case Study Page
+
+**Section Order:**
+1. Navigation
+2. Project hero — Title, client name, categories, hero image/video
+3. Project overview — Challenge, objective, role
+4. Process — What was done and why
+5. Design/solution showcase — Full-width images, mockups, code highlights
+6. Results — Measurable outcomes
+7. Testimonial from client
+8. Next project teaser
+9. CTA — Work with me
+
+**UX Goal:** Demonstrate expertise and build enough credibility to generate an inquiry.
+
+---
+
+### 4.6 About Page
+
+**Section Order:**
+1. Navigation
+2. Hero — Founder photo or team image, mission statement headline
+3. Story — Why the company exists
+4. Team — Photos, names, roles
+5. Values — 3–5 core principles
+6. Client logos or press
+7. CTA
+
+**UX Goal:** Build personal connection and trust with human visitors who are almost ready to buy.
+
+---
+
+### 4.7 Contact Page
+
+**Section Order:**
+1. Navigation
+2. Hero — Headline that reframes the action positively ("Let's build something.")
+3. Contact form — Name, email, message, optional project type selector
+4. Alternative contact methods — Email, phone, social
+5. Location / map (if relevant)
+6. FAQ — Answer common pre-contact questions
+
+**UX Goal:** Reduce friction to starting a conversation.
+
+---
+
+### 4.8 Blog / Article Page
+
+**Section Order:**
+1. Navigation
+2. Article hero — Title (H1), author, date, category, estimated read time, hero image
+3. Table of contents (for articles over 1500 words)
+4. Article body — Proper heading structure, short paragraphs, pull quotes, inline images
+5. Author bio
+6. Related articles
+7. Newsletter CTA or service CTA
+
+**UX Goal:** Deliver value, build authority, capture leads, drive internal traffic.
+
+**SEO:** H1 = exact target keyword. Structured data: Article schema. Internal links throughout.
+
+---
+
+### 4.9 Local SEO Landing Page
+
+**Section Order:**
+1. Navigation
+2. Hero — Service + city in H1, outcome headline, CTA (call or form)
+3. Trust signals — Years in service, number of clients, certifications
+4. Services offered in this location
+5. Why us — Differentiators
+6. Service area map or list of neighborhoods
+7. Testimonials from local clients
+8. FAQ with location-specific questions
+9. Final CTA with phone number prominent
+10. Footer with NAP (Name, Address, Phone) in schema
+
+**UX Goal:** Rank for local searches and convert high-intent local visitors immediately.
+
+**SEO:** H1 includes service + city. NAP schema. LocalBusiness schema. FAQ schema.
+
+---
+
+## 5. HERO SECTION RULES
+
+The hero is the most critical section of any page. If it fails, nothing else matters.
+
+### 5.1 H1 Strategy
+- One H1 per page. Always.
+- Must state: what the product/service is + who it's for + the key outcome
+- Must be written for humans first, then optimized for keywords
+- Length: 4–12 words for maximum impact
+- Font size: 56px–96px desktop, 36px–56px mobile
+- Weight: Bold or Black (700–900)
+- Never use a clever tagline as H1. Be clear, then creative.
+
+**Strong H1 Examples:**
+- "Accounting Software Built for Freelancers"
+- "Custom Web Design for London Businesses Ready to Grow"
+- "We Build Sales Machines for B2B SaaS Companies"
+
+**Weak H1 Examples:**
+- "Welcome to Our World"
+- "Innovation Meets Excellence"
+- "Transforming Your Digital Future"
+
+### 5.2 Supporting Paragraph
+- 1–3 sentences. Maximum 40 words.
+- Expands on the H1 with specificity: who, how, and the tangible result
+- Uses plain, direct language — not marketing jargon
+- Font size: 18px–22px, regular weight, 65–75% line fill
+
+### 5.3 CTA Button Strategy
+- Primary CTA: High contrast, specific verb ("Start Free Trial", "Book a Call", "Get a Quote")
+- Never use: "Submit", "Click Here", "Learn More" as primary CTA text
+- Secondary CTA: Ghost or text link. Less prominent. ("See how it works →")
+- Button size: minimum 44px height, 160px width
+- Place CTA above the fold without scrolling
+
+### 5.4 Social Proof Placement
+- Place immediately below or beside the CTA
+- Use: star ratings, number of users, client count, or a short pull quote
+- Format: "Trusted by 4,200+ founders" or ★★★★★ "5/5 from 300+ reviews"
+- Keep it to one line. Do not list testimonials in the hero.
+
+### 5.5 Hero Visuals
+- Use product screenshots, lifestyle photography, video loops, 3D renders, or custom illustrations — never generic stock photos of people shaking hands
+- The visual must show the product, the result, or the experience
+- Place at right-side of hero on desktop (60/40 split), full-width background on mobile
+- For SaaS: use a browser-framed product screenshot with a soft shadow and slight tilt
+
+### 5.6 Background Treatments
+- Gradient mesh: works for modern SaaS and tech
+- Dark background with light text: works for premium, luxury, creative
+- Neutral/off-white with typography as the design: works for editorial and agency
+- Full-bleed photography with dark overlay: works for hospitality, events, local service
+- Custom illustrated or abstract pattern: works for creative studios and portfolios
+- Avoid: plain white background with a stock photo to the right (this is generic)
+
+### 5.7 Trust Badges
+- Place below the fold if space is tight above
+- Use: security icons, payment icons, certifications, media logos
+- Keep badge rows to max 5 icons on desktop, 3 on mobile
+
+### 5.8 Mobile Hero Layout
+- Stack vertically: H1 → supporting paragraph → CTA → social proof → visual
+- Visual goes below CTA on mobile, not above
+- Font size: H1 at 36px–48px, body at 16px–18px
+- CTA button must be full-width on mobile
+- Ensure no horizontal overflow
+
+### 5.9 Mistakes to Avoid
+- H1 that is a tagline or slogan
+- CTA that says "Submit" or "Learn More"
+- Hero with no visual or only a placeholder graphic
+- Generic stock photography
+- Background animation that distracts from reading the headline
+- No social proof signal
+- Mobile hero where the image covers the CTA
+
+---
+
+## 6. NAVIGATION DESIGN RULES
+
+### 6.1 Desktop Navbar
+- Logo left, nav links center or left-adjacent, CTA button right
+- Max 5–6 top-level nav items. More than 6 creates cognitive load.
+- Font size: 14px–16px, medium weight (500)
+- Use clear active states: underline, color change, or dot indicator
+- CTA button must be visually distinct from nav links (filled, rounded, contrasting)
+
+### 6.2 Mobile Navbar
+- Hamburger icon right-aligned, logo left-aligned
+- Full-screen or slide-in drawer. Not a dropdown that pushes content down.
+- Menu items large enough to tap: minimum 48px touch target
+- CTA button must appear prominently in the mobile menu
+- Close button clearly visible
+
+### 6.3 Mega Menu
+- Use only when there are 6+ service/product categories
+- Organize in columns. Use icons or short descriptions for each item.
+- Add a featured CTA card in the right column (e.g., "Book a Free Strategy Call")
+- Close on click outside, Escape key, and tab-out
+
+### 6.4 Service Dropdowns
+- Show on hover (desktop) and click/tap (mobile)
+- Keep to max 8 items per dropdown
+- Use consistent icon + label + optional short description format
+- Group logically by category if needed
+
+### 6.5 Sticky Navbar
+- Navbar becomes sticky after 80px of scroll
+- Apply backdrop-blur and subtle background/shadow when sticky
+- Logo may shrink slightly when sticky (transition with CSS)
+- CTA button remains visible in sticky state
+
+### 6.6 Transparent-to-Solid Behavior
+- Hero sections with full-bleed backgrounds: start navbar transparent
+- On scroll past ~60px: transition to solid or frosted-glass background
+- Use CSS transition: `background-color 0.3s ease, backdrop-filter 0.3s ease`
+- Ensure text contrast works in both states
+
+### 6.7 Accessibility
+- All nav items keyboard navigable
+- Dropdown items accessible via keyboard arrow keys
+- Use `role="navigation"` and `aria-label="Main navigation"`
+- Focus state visible on all items
+- Skip-to-content link at top of page (visually hidden, visible on focus)
+
+---
+
+## 7. SECTION DESIGN SYSTEM
+
+### 7.1 Problem Section
+**Goal:** Make the target user feel deeply understood.  
+**Layout:** Full-width section with a dark or accent background to break visual rhythm. Use large headline + supporting paragraph + 3-column pain point breakdown.  
+**UI:** Icons or emoji to represent each pain. Short 1–2 sentence descriptions. Bold the pain, soften the explanation.  
+**Conversion:** Agitation. The user must think "This is exactly what I'm dealing with."  
+**Avoid:** Generic pain points that could apply to any business. Vague language.
+
+### 7.2 Solution Section
+**Goal:** Position the product/service as the natural, obvious answer.  
+**Layout:** Mirror of problem section. Light background to signal relief. Headline + paragraph + benefit list or feature split.  
+**UI:** Use a before/after split, a process visual, or a bold promise headline.  
+**Conversion:** Relief and hope. The user must think "This could work for me."  
+**Avoid:** Jumping straight to features before establishing the emotional shift.
+
+### 7.3 Services Section
+**Goal:** Communicate scope and depth of offering.  
+**Layout:** Grid of service cards (2–3 columns desktop, 1 column mobile). Or: numbered list with large titles and descriptions.  
+**UI:** Each service card has: icon or visual, service name (H3), 2–3 sentence description, optional link.  
+**Conversion:** Build confidence in breadth and expertise.  
+**Avoid:** Long paragraphs in service cards. More than 8 services without grouping.
+
+### 7.4 Features Section
+**Goal:** Show what the product does and why each feature matters.  
+**Layout:** Alternating feature rows (image left / text right, then reverse). Or: tab-based feature explorer. Or: scrolling feature list with sticky visual.  
+**UI:** Feature name (H3) + benefit statement + short description + optional screenshot.  
+**Conversion:** Demonstrate capability without overwhelming.  
+**Avoid:** Feature lists without benefits. Screenshots with no labels or context.
+
+### 7.5 Benefits Section
+**Goal:** Answer "What's in it for me?"  
+**Layout:** 3-column or 4-column grid of benefit cards. Alternately, a large 2-column layout with icons.  
+**UI:** Bold benefit headline + 2-sentence explanation. Optional: a relevant number or stat.  
+**Conversion:** Translate features into outcomes the user cares about.  
+**Avoid:** Repeating features disguised as benefits. "Powerful dashboard" is a feature. "See all your data in one place and save 4 hours a week" is a benefit.
+
+### 7.6 Process Section
+**Goal:** Reduce friction by showing how working together is simple.  
+**Layout:** Numbered steps (horizontal on desktop, vertical on mobile). 3–5 steps maximum.  
+**UI:** Step number (large, styled) + step title + 1–2 sentence description. Optional: icon per step.  
+**Conversion:** Remove "this sounds complicated" objection.  
+**Avoid:** More than 5 steps. Vague step names like "Step 1: Discovery."
+
+### 7.7 Testimonials Section
+**Goal:** Social proof through real client voices.  
+**Layout:** 3-column card grid, or a large featured quote with smaller supporting quotes.  
+**UI:** Quote text (larger, italic or styled) + name + role + company + optional photo or logo.  
+**Conversion:** Trust. Specificity is critical — vague testimonials convert poorly.  
+**Avoid:** Anonymous testimonials. Short quotes with no specifics. Stock photos as testimonial avatars.
+
+### 7.8 Case Studies Section
+**Goal:** Prove results with real data.  
+**Layout:** 2-column card grid with project image, client name, category tags, and a result stat.  
+**UI:** Hover reveals a short summary or "View Case Study" CTA.  
+**Conversion:** Credibility and aspiration. The user sees what success looks like.  
+**Avoid:** Case studies with no numbers. "We helped them grow" is not a result.
+
+### 7.9 Pricing Section
+**Goal:** Communicate value, reduce sticker shock, and guide toward the right plan.  
+**Layout:** 3-column pricing cards. Middle card highlighted (most popular).  
+**UI:** Plan name, price, billing period, feature list, CTA button, optional annotation ("Best for teams").  
+**Conversion:** Make the decision easy, not overwhelming.  
+**Avoid:** Too many plan options (max 4). Feature lists over 8 items without grouping.
+
+### 7.10 FAQ Section
+**Goal:** Answer objections before they become bounce triggers.  
+**Layout:** Accordion. 2-column on desktop, 1-column on mobile.  
+**UI:** Question as label. Answer expands on click. Keep answers under 100 words.  
+**Conversion:** Objection handling. SEO value (FAQ schema).  
+**Avoid:** FAQs that don't address real objections. More than 10 FAQ items on one page.
+
+### 7.11 Final CTA Section
+**Goal:** One last, powerful invitation to act.  
+**Layout:** Full-width section with high contrast background. Centered. Headline + subtext + CTA button.  
+**UI:** Make this section feel different from the rest of the page — use a color, gradient, or pattern.  
+**Conversion:** Last chance to convert. Make it feel urgent and personal.  
+**Avoid:** Repeating the hero CTA word-for-word. Weak closers like "Get in touch."
+
+### 7.12 Footer
+**Goal:** Navigation fallback, trust signals, legal compliance, SEO signals.  
+**Layout:** 4–5 column grid on desktop. Stacked on mobile.  
+**UI:** Logo + tagline, site links, service links, contact info, social icons, legal links, copyright.  
+**Conversion:** Not a conversion section — but a trust signal. A well-designed footer signals professionalism.  
+**Avoid:** Footer that is the same black-box on every project. Missing contact information.
+
+---
+
+## 8. TYPOGRAPHY SYSTEM
+
+Typography is a design medium. Use it as one.
+
+### 8.1 Type Scale (Desktop)
+```
+Display:    72px–96px  / weight 700–900 / tight letter-spacing (-0.02em to -0.04em)
+H1:         48px–64px  / weight 700–800 / letter-spacing -0.02em
+H2:         36px–48px  / weight 700     / letter-spacing -0.01em
+H3:         24px–30px  / weight 600     / letter-spacing 0
+H4:         20px–24px  / weight 600     / letter-spacing 0
+Body large: 18px–20px  / weight 400     / line-height 1.7
+Body:       16px–18px  / weight 400     / line-height 1.65
+Caption:    13px–14px  / weight 400–500 / letter-spacing 0.02em
+Label:      11px–13px  / weight 600     / letter-spacing 0.08em / UPPERCASE
+```
+
+### 8.2 Type Scale (Mobile)
+```
+H1:         36px–48px
+H2:         28px–36px
+H3:         20px–24px
+Body:       16px
+Caption:    13px
+```
+
+### 8.3 Font Pairing Rules
+Never use a single font for everything. Use 2 typefaces maximum per project.
+
+| Brand Type         | Display Font             | Body Font                  |
+|--------------------|--------------------------|----------------------------|
+| Premium SaaS       | Cal Sans, Geist, Sora    | DM Sans, Plus Jakarta Sans |
+| Luxury Brand       | Cormorant, Playfair      | Jost, Outfit               |
+| Creative Agency    | Neue Haas Grotesk, Clash | DM Mono, Syne Mono         |
+| Local Service      | Lexend, Nunito           | Inter, Source Sans         |
+| Editorial/Blog     | Lora, Libre Baskerville  | Source Serif, Literata     |
+| E-commerce         | Bricolage Grotesque       | DM Sans, Manrope           |
+| Tech/Developer     | Space Grotesk, IBM Plex  | JetBrains Mono (code)      |
+
+**Rules:**
+- Load only the font weights you use: typically 400, 600, 700, 800
+- Subset fonts when using Google Fonts or Fontsource
+- Display fonts must be used ONLY for headings — never for body text
+- Body fonts must maintain high readability at all sizes
+
+### 8.4 Typography as Design
+- Use oversized characters as decorative elements (large "01", "&", or quotes)
+- Mix type weights within a headline (normal word + **Bold word**)
+- Use gradient or color fill on select heading words
+- Use a horizontal rule (line) between a label and a heading for premium feel
+- Stack words vertically in wide hero headlines for editorial effect
+
+### 8.5 Mistakes to Avoid
+- Using the same font size for H2, H3, and body — there must be clear contrast
+- Centered body text (never center more than 3 lines of paragraph text)
+- Justified text on the web (causes uneven word spacing)
+- Light weight (300) for small text — unreadable
+- Line heights under 1.4 for body text
+- Too many font families (max 2)
+
+---
+
+## 9. COLOR SYSTEM
+
+Never choose colors randomly. Build a complete, intentional system for every project.
+
+### 9.1 Color System Structure
+```
+--color-primary:      Main brand color. Used for CTAs, active states, headings
+--color-primary-dark: Darker shade for hover states on primary elements
+--color-secondary:    Supporting color. Used for accents, icons, tags
+--color-accent:       High-energy pop color. Used sparingly for emphasis
+--color-neutral-50:   Lightest background
+--color-neutral-100:  Section background, card backgrounds
+--color-neutral-200:  Borders, dividers
+--color-neutral-500:  Muted text, placeholders
+--color-neutral-800:  Body text
+--color-neutral-950:  Headings, dark backgrounds
+--color-surface:      Card and panel background
+--color-text-primary: Default text color
+--color-text-muted:   Secondary text
+--color-border:       Borders and dividers
+--color-error:        Form validation error
+--color-success:      Form success, confirmation states
+```
+
+### 9.2 Color Psychology Guide
+
+| Industry / Emotion     | Color Direction                             |
+|------------------------|---------------------------------------------|
+| Trust / B2B SaaS       | Deep blue (#0047AB), neutral whites         |
+| Energy / Consumer App  | Electric blue, coral, or orange accents     |
+| Luxury / Premium       | Midnight navy, warm ivory, muted gold       |
+| Health / Wellness      | Sage green, warm beige, cream               |
+| Finance / Legal        | Dark navy, forest green, charcoal           |
+| Creative / Agency      | High contrast black/white + bold accent pop |
+| Food / Restaurant      | Warm terracotta, cream, forest green        |
+| Technology / Dev       | Deep indigo, electric cyan, dark neutral    |
+| Eco / Sustainability   | Earthy green, sand, warm neutrals           |
+
+### 9.3 Gradient Usage
+- Use gradients for: hero backgrounds, CTA sections, card highlights, text fills
+- Max 2 gradient directions per page
+- Gradient colors must come from the defined palette — not arbitrary values
+- Avoid rainbow gradients. Two-color or subtle mesh gradients read premium.
+- Use mesh gradients (CSS or SVG) for modern SaaS aesthetics
+
+### 9.4 Dark Mode
+- Build with CSS variables from the start — dark mode is a variable swap
+- Do not use pure black (#000000) — use near-black (#0A0A0F or similar)
+- Surfaces in dark mode: use layered dark grays, not flat black
+- Ensure all text meets WCAG AA contrast in both modes
+- Provide `prefers-color-scheme: dark` media query support
+
+### 9.5 Contrast Requirements
+- Body text on background: minimum 4.5:1 ratio (WCAG AA)
+- Large text (18px+ bold): minimum 3:1 ratio
+- UI components and focus indicators: minimum 3:1 ratio
+- Test all color combinations with a contrast checker before shipping
+
+### 9.6 Mistakes to Avoid
+- Using 4+ distinct colors with no relationship to each other
+- Using pure black and pure white only (this looks like a prototype)
+- Choosing colors because they "look nice" without brand or psychology grounding
+- Dark text on dark background
+- Light text on light background
+- Using accent color everywhere (it loses meaning)
+
+---
+
+## 10. SPACING AND LAYOUT SYSTEM
+
+### 10.1 Container Widths
+```css
+--container-sm:  640px   /* Narrow content: blog, article, legal */
+--container-md:  768px   /* Forms, modals, focused content */
+--container-lg:  1024px  /* Standard content sections */
+--container-xl:  1280px  /* Wide sections, default page container */
+--container-2xl: 1440px  /* Full-width hero sections */
+```
+
+Always use `max-width` + `margin: 0 auto` + horizontal padding for containers.
+
+### 10.2 Section Padding Scale
+```css
+--section-padding-sm: 64px  0;    /* Compact sections: logos, dividers */
+--section-padding-md: 96px  0;    /* Standard sections */
+--section-padding-lg: 128px 0;    /* Hero, final CTA, featured sections */
+--section-padding-xl: 160px 0;    /* Full-screen hero sections */
+```
+
+Mobile: divide desktop padding by 2 (64px → 32px, 128px → 64px).
+
+### 10.3 Spacing Scale (8px base)
+```
+4px   — micro gaps (icon to label)
+8px   — tight spacing (badge padding, small gaps)
+12px  — compact inner spacing
+16px  — standard component padding
+24px  — card inner padding
+32px  — gap between related elements
+48px  — gap between sections within a group
+64px  — gap between major sections
+96px  — section padding (mobile)
+128px — section padding (desktop)
+```
+
+### 10.4 Grid System
+```css
+/* Standard 12-column grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+}
+/* Breakpoints */
+/* Desktop:  12 columns */
+/* Tablet:   8 columns  */
+/* Mobile:   4 columns  */
+```
+
+Common grid patterns:
+- 4+4+4 (3 equal columns): features, benefits
+- 8+4 (wide + narrow): feature + screenshot
+- 6+6 (halves): problem/solution
+- 3+3+3+3 (4 equal): pricing, team members
+- Full-width: hero, CTA, section breaks
+
+### 10.5 White Space Usage
+- White space is not empty space — it is breathing room that creates premium perception
+- Increase spacing between sections as content importance decreases
+- Group related elements with tight spacing; separate distinct elements with generous spacing
+- Never let text touch edges — minimum 16px horizontal padding on mobile
+
+### 10.6 Responsive Breakpoints
+```css
+--bp-sm:  640px   /* Mobile landscape */
+--bp-md:  768px   /* Tablet */
+--bp-lg:  1024px  /* Desktop */
+--bp-xl:  1280px  /* Wide desktop */
+--bp-2xl: 1536px  /* Ultra-wide */
+```
+
+---
+
+## 11. COMPONENT DESIGN RULES
+
+### 11.1 Buttons
+
+**Primary Button:**
+- Background: `--color-primary`
+- Text: white or high-contrast light
+- Height: 44px–52px
+- Padding: 12px 24px–32px
+- Border-radius: 6px–12px (consistent with brand radius)
+- Hover: darken 8–12%, subtle shadow lift
+- Active: darken 15%, scale 0.97
+- Transition: all 0.15s ease
+
+**Secondary Button (Ghost):**
+- Border: 1.5px solid `--color-border` or `--color-primary`
+- Background: transparent
+- Hover: fill with light primary tint
+
+**Icon Button:**
+- Square, minimum 40px × 40px
+- Clear tooltip on hover
+- Accessible `aria-label`
+
+**Mistakes to avoid:**
+- Disabled buttons with no visual difference from active
+- Buttons with no hover/active feedback
+- Tiny buttons under 36px height
+- Full-width buttons on desktop (only on mobile)
+
+---
+
+### 11.2 Cards
+
+- Background: `--color-surface`
+- Border: 1px solid `--color-border`
+- Border-radius: 12px–16px
+- Padding: 24px–32px
+- Shadow: subtle (0 1px 3px rgba(0,0,0,0.08))
+- Hover: lift shadow + translate Y by -2px to -4px
+- Transition: all 0.2s ease
+
+**Content structure inside card:**
+1. Icon or image (top)
+2. Heading (H3)
+3. Description
+4. Optional: CTA link or tag
+
+**Mistakes to avoid:**
+- Cards with equal height forced via CSS that breaks on unusual content
+- Cards with no hover state
+- Card grids with inconsistent padding
+- Cards wider than 420px on mobile
+
+---
+
+### 11.3 Forms and Inputs
+
+**Input field:**
+- Height: 44px–48px
+- Border: 1.5px solid `--color-border`
+- Border-radius: 8px
+- Padding: 12px 16px
+- Font size: 16px (below 16px triggers iOS zoom)
+- Focus: border color becomes `--color-primary`, box-shadow ring
+- Error: border becomes `--color-error`, error message below in red
+- Label: above the input, never placeholder-only
+
+**Form layout:**
+- Single-column on mobile always
+- Max 2 columns on desktop for short fields (name + email side by side)
+- Submit button: full-width on mobile, auto-width on desktop
+- Always include visible validation feedback
+
+**Mistakes to avoid:**
+- Placeholder text used as label (inaccessible)
+- Input font size below 16px on mobile
+- Missing error states
+- Multi-column forms on mobile
+
+---
+
+### 11.4 Pricing Cards
+
+**Structure per card:**
+1. Plan name (label, uppercase, small)
+2. Price (display size, bold)
+3. Billing period ("per month, billed annually")
+4. Short value statement
+5. Feature list (checkmark + feature name)
+6. CTA button (full-width)
+7. Optional: "Most Popular" badge on highlighted card
+
+**Highlighted card:**
+- Use `--color-primary` background or border
+- Scale up slightly (1.03) on desktop
+- Most Popular badge at top
+
+---
+
+### 11.5 Testimonial Cards
+
+**Structure:**
+1. Star rating (if applicable)
+2. Quote text (16px–18px, italic or styled)
+3. Author photo (40px–48px, circle)
+4. Author name + role + company
+
+**Rules:**
+- Quote must be real and specific — no generic praise
+- Photo must be real (not a placeholder icon)
+- Company logo optional but adds credibility
+
+---
+
+### 11.6 Stats Blocks
+
+- Large number (display size, bold, colored)
+- Descriptor label (small, muted)
+- Optional icon or upward arrow
+- Use in hero, case studies, and about sections
+- Animate count-up on scroll for engagement
+
+---
+
+## 12. MOTION AND ANIMATION RULES
+
+### 12.1 Principles
+- Every animation must have a purpose (guide attention, provide feedback, or reveal content)
+- Animations must not delay content or block interaction
+- Always respect `prefers-reduced-motion` media query
+- Default: fast and subtle. Premium, not flashy.
+
+### 12.2 Entrance Animations
+Use staggered fade-up or fade-in for content sections:
+```css
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Trigger on intersection with IntersectionObserver or Framer Motion viewport */
+```
+- Duration: 0.4s–0.6s
+- Easing: `cubic-bezier(0.16, 1, 0.3, 1)` (spring-like)
+- Stagger delay: 0.08s–0.12s between children
+
+### 12.3 Hover Interactions
+- Buttons: background color shift + subtle shadow increase
+- Cards: translateY(-4px) + shadow intensify
+- Links: underline slides in from left
+- Images: subtle scale(1.03) with overflow hidden on container
+- Magnetic buttons (for key CTAs): translate toward cursor using JS mousemove
+
+### 12.4 Scroll Animations
+- Use `IntersectionObserver` for scroll-triggered reveals
+- Or Framer Motion's `whileInView` prop
+- Trigger when 15%–20% of element is visible
+- Do not animate every element — only section openers and key content blocks
+
+### 12.5 Parallax
+- Use only for hero backgrounds and featured image sections
+- Parallax shift: 20px–50px max. Not 200px.
+- Use CSS `transform: translateY()` driven by scroll event — not `background-attachment: fixed` (causes jank)
+- Never use parallax on mobile
+
+### 12.6 Page Transitions
+- Use opacity fade or slide-up transition between routes
+- Duration: 0.25s–0.4s
+- Do not use complex 3D transitions on content-heavy pages
+
+### 12.7 Reduced Motion
+```css
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+Always implement. No exceptions.
+
+### 12.8 Mistakes to Avoid
+- Animations that take over 0.8s — they feel sluggish
+- Bouncing or elastic animations on every element
+- Auto-playing carousels that move without user input
+- Scroll-hijacking (overriding native scroll behavior)
+- Animations that block content from being readable
+
+---
+
+## 13. RESPONSIVE DESIGN RULES
+
+### 13.1 Mobile-First Approach
+Write base styles for mobile. Use `min-width` media queries to add desktop enhancements.
+
+```css
+/* Base: mobile */
+.hero { padding: 64px 16px; }
+
+/* Desktop enhancement */
+@media (min-width: 1024px) {
+  .hero { padding: 128px 32px; }
+}
+```
+
+### 13.2 Grid Conversion
+```
+Desktop:  3-column grid        → Tablet: 2-column grid   → Mobile: 1-column stack
+Desktop:  2-column feature row → Tablet: 2-column        → Mobile: 1-column stack (image below text)
+Desktop:  4-column pricing     → Tablet: 2×2 grid        → Mobile: 1-column stack
+```
+
+### 13.3 Typography Scaling
+Use `clamp()` for fluid typography:
+```css
+h1 { font-size: clamp(36px, 5vw, 72px); }
+h2 { font-size: clamp(28px, 4vw, 48px); }
+body { font-size: clamp(16px, 1.2vw, 18px); }
+```
+
+### 13.4 Navigation Behavior
+- Hide desktop nav items at < 768px
+- Show hamburger icon
+- Full-screen or drawer overlay mobile menu
+- Sticky header on mobile always
+
+### 13.5 Button Behavior
+- Primary CTA: full-width on mobile
+- Secondary CTA: full-width or 50% on mobile
+- Minimum touch target: 44px × 44px for all interactive elements
+
+### 13.6 Image Handling
+- Use `srcset` and `sizes` attributes for responsive images
+- Use `aspect-ratio` to prevent layout shift during load
+- Use `object-fit: cover` inside fixed-height containers
+- Lazy load all below-fold images
+
+### 13.7 Avoiding Horizontal Overflow
+- Use `overflow-x: hidden` on `body` only as a last resort — debug the actual cause
+- Ensure no element has a fixed width wider than the viewport
+- Use `max-width: 100%` on images and embeds
+
+### 13.8 Touch Target Sizes
+- Every tappable element: minimum 44px × 44px
+- Space between touch targets: minimum 8px
+- Never place two tappable elements within 8px of each other
+
+---
+
+## 14. ACCESSIBILITY RULES
+
+Accessibility is not optional. It is a baseline requirement.
+
+### 14.1 Semantic HTML
+- Use `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<aside>`, `<footer>`
+- Use `<h1>` through `<h6>` in correct hierarchical order
+- Use `<button>` for interactive elements, not `<div>` or `<span>`
+- Use `<a href>` for navigation, `<button>` for actions
+
+### 14.2 Heading Order
+- One `<h1>` per page
+- `<h2>` for section titles
+- `<h3>` for card titles and subsections
+- Never skip levels (no jumping from H1 to H4)
+
+### 14.3 Image Alt Text
+- Every `<img>` must have `alt` attribute
+- Decorative images: `alt=""`
+- Informational images: describe the content, not "image of..."
+- Product images: describe product name, color, key feature
+
+### 14.4 Keyboard Navigation
+- All interactive elements reachable and activatable via keyboard
+- Tab order must follow visual reading order
+- Dropdown menus navigable with arrow keys
+- Modal opens with Enter, closes with Escape
+
+### 14.5 Focus States
+- Default browser focus style is often insufficient — enhance it:
+```css
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+```
+- Never use `outline: none` without providing an alternative focus style
+
+### 14.6 ARIA Usage
+- Use ARIA only when native HTML semantics are insufficient
+- `aria-label` for icon-only buttons
+- `aria-expanded` for toggles and accordions
+- `aria-live` for dynamic content updates
+- `role="dialog"` and `aria-modal="true"` for modals
+- Never use ARIA to fix broken semantic structure — fix the HTML first
+
+### 14.7 Form Labels
+- Every input must have a visible `<label>` associated via `for`/`id`
+- Never use placeholder text as the only label
+- Error messages must be associated with the input via `aria-describedby`
+
+### 14.8 Color Contrast
+- All text: minimum 4.5:1 ratio against background (WCAG AA)
+- Large text (18px bold+): minimum 3:1
+- Use a tool like WebAIM Contrast Checker before shipping
+
+---
+
+## 15. SEO AND AEO STRUCTURE
+
+### 15.1 Heading Structure
+- One `<h1>` per page — the primary keyword phrase
+- `<h2>` for each major section — secondary keywords
+- `<h3>` for subsections and card titles
+- Never put keywords in headings unnaturally — write for humans first
+
+### 15.2 FAQ Sections
+- Add FAQ sections to service pages, product pages, and local landing pages
+- Each question as `<h3>` or `<dt>`, answer as paragraph or `<dd>`
+- Add FAQ schema markup (JSON-LD) for rich snippets
+
+### 15.3 Schema Markup (JSON-LD)
+Always implement:
+- `Organization` — name, logo, URL, contact
+- `WebPage` or `WebSite` — name, URL
+- `LocalBusiness` — for local service pages (NAP, hours, service area)
+- `Product` — for e-commerce pages
+- `FAQPage` — for FAQ sections
+- `Article` — for blog posts
+- `BreadcrumbList` — for all interior pages
+
+### 15.4 Internal Linking
+- Every service page links to related services
+- Blog posts link to relevant service pages
+- Footer includes key service and location page links
+- Homepage links to all primary service pages
+
+### 15.5 Metadata Placeholders
+Every page template must include:
+```html
+<title>{Page Title} | {Brand Name}</title>
+<meta name="description" content="{150–160 character description}">
+<link rel="canonical" href="{canonical URL}">
+<meta property="og:title" content="{OG Title}">
+<meta property="og:description" content="{OG Description}">
+<meta property="og:image" content="{OG Image URL}">
+```
+
+### 15.6 Avoid
+- Text inside images (not crawlable)
+- Duplicate H1 tags
+- Generic meta descriptions ("Welcome to our website")
+- Pages with no H2 structure
+- Shipping a Vite SPA where every route hides the real `<h1>`, primary copy, and meta tags behind a delayed client-only render with no `react-helmet-async` (or equivalent) updates — crawlers and previews still need a coherent default in `index.html` plus per-route `<title>`, description, canonical, and OG tags for share cards
+
+---
+
+## 16. PERFORMANCE RULES
+
+### 16.1 Images
+- Use WebP format (or AVIF) for all images
+- Use `srcset` for responsive images
+- Set explicit `width` and `height` to prevent CLS
+- Lazy load all below-fold images: `loading="lazy"`
+- Hero image: eager load, preload in `<head>`
+- Max image dimensions: 1920px wide for backgrounds, 800px for content images
+
+### 16.2 Fonts
+- Load only the weights you use
+- Use `font-display: swap`
+- Prefer variable fonts when using multiple weights
+- Preload critical fonts: `<link rel="preload" as="font">`
+- Host fonts locally when possible (eliminates third-party DNS lookup)
+
+### 16.3 JavaScript
+- Code-split by route: in Vite + React, use `React.lazy` + `<Suspense>` with `react-router-dom` routes, and/or `import()` for heavy route-level chunks; Vite emits separate chunks automatically — verify with `vite build` output and `rollup-plugin-visualizer` (or similar) when bundle size matters
+- Defer non-critical scripts
+- Avoid render-blocking scripts in `<head>`
+- Remove unused JavaScript — audit with bundle analyzer
+- Use dynamic `import()` for heavy libraries
+
+### 16.4 CSS
+- Purge unused CSS in production (Tailwind does this automatically)
+- Avoid `@import` in CSS (causes sequential loads)
+- Critical CSS inlined in `<head>` for above-the-fold content
+
+### 16.5 Core Web Vitals Targets
+```
+LCP (Largest Contentful Paint): < 2.5s
+INP (Interaction to Next Paint): < 200ms
+CLS (Cumulative Layout Shift):  < 0.1
+```
+
+### 16.6 Animation Performance
+- Use `transform` and `opacity` for animations (GPU-composited)
+- Avoid animating `width`, `height`, `top`, `left`, `padding`, `margin` (cause reflow)
+- Use `will-change: transform` sparingly and only on animated elements
+
+---
+
+## 17. BRAND ADAPTATION RULES
+
+Before designing anything, ask: What industry, audience, and emotion does this brand need?
+
+### 17.1 Digital Agency
+- **Visual tone:** Bold, editorial, confident, creative
+- **Layout:** Asymmetric, large typography, work-first presentation
+- **Colors:** High contrast (dark background + accent pop) or minimal light
+- **Typography:** Distinctive display + grotesque body
+- **CTA:** "Start a Project", "Let's Talk"
+- **Trust:** Case studies with named clients and results
+- **Section priority:** Work portfolio → Process → Team → CTA
+
+### 17.2 SaaS Company
+- **Visual tone:** Clean, modern, trustworthy, growth-oriented
+- **Layout:** Product-screenshot-forward, feature-focused
+- **Colors:** Blue, indigo, or teal primary on neutral backgrounds
+- **Typography:** Geometric sans-serif throughout
+- **CTA:** "Start Free Trial", "Book a Demo"
+- **Trust:** Logos of known customers, G2/Capterra ratings
+- **Section priority:** Hero → Logos → Features → Pricing → Testimonials → FAQ
+
+### 17.3 E-commerce Brand
+- **Visual tone:** Aspirational, product-forward, lifestyle-driven
+- **Layout:** Product imagery dominant, editorial grid
+- **Colors:** Derived from product palette; premium often uses warm neutrals
+- **Typography:** Mix of serif heading + clean sans body for editorial feel
+- **CTA:** "Shop Now", "Discover the Collection"
+- **Trust:** Reviews, return policy, secure checkout icons
+- **Section priority:** Hero → Bestsellers → Story/Brand → Reviews → CTA
+
+### 17.4 Luxury Brand
+- **Visual tone:** Refined, quiet, exclusive, prestigious
+- **Layout:** Generous whitespace, minimal text, large imagery
+- **Colors:** Deep navy, warm ivory, charcoal — never garish "black + gold" without restraint
+- **Typography:** Serif display + elegant body, tight tracking
+- **CTA:** "Request a Consultation", "Discover"
+- **Trust:** Heritage, craftmanship, bespoke process
+- **Section priority:** Film/hero visual → Story → Product → Heritage → Contact
+
+### 17.5 Local Service Business (HVAC, Plumbing, Cleaning, etc.)
+- **Visual tone:** Trustworthy, professional, local, responsive
+- **Layout:** CTA-first, simple, phone number prominent
+- **Colors:** Blue or green for trust; avoid experimental palettes
+- **Typography:** Clear, legible, strong — Lexend or Nunito + readable body
+- **CTA:** "Call Now", "Get a Free Quote" — always with phone number visible
+- **Trust:** Years in business, licenses, reviews, BBB badge
+- **Section priority:** Hero with phone → Services → Reviews → Service area → FAQ → CTA
+
+### 17.6 Restaurant
+- **Visual tone:** Appetizing, warm, atmospheric, experiential
+- **Layout:** Full-bleed food photography, menu-focused
+- **Colors:** Warm terracotta, deep forest green, cream, or charcoal
+- **Typography:** Mix of handwritten/script display + clean body
+- **CTA:** "Reserve a Table", "Order Online"
+- **Trust:** Awards, press mentions, chef bio
+- **Section priority:** Hero (food photo) → Story → Menu → Reserve → Location
+
+### 17.7 Personal Brand / Portfolio
+- **Visual tone:** Distinctive, personality-forward, memorable
+- **Layout:** Unique, personal, non-template
+- **Colors:** Reflects personal aesthetic — must be intentional
+- **Typography:** A typeface that represents the person's style
+- **CTA:** "Hire Me", "Let's Work Together"
+- **Trust:** Featured work, client names, credentials
+- **Section priority:** Intro → Work → Skills → Testimonials → Contact
+
+### 17.8 Photography Studio
+- **Visual tone:** Visual-first, minimal UI, work speaks
+- **Layout:** Full-bleed masonry or editorial grid
+- **Colors:** Black and white base, neutral to not compete with photos
+- **Typography:** Minimal, thin, elegant
+- **CTA:** "Book a Session", "View Portfolio"
+- **Section priority:** Full-screen gallery → About → Services → Pricing → Contact
+
+---
+
+## 18. DESIGN QUALITY CHECKLIST
+
+Run this checklist before finalizing every website. Every "No" is a problem to fix.
+
+| Check | Pass? |
+|-------|-------|
+| The first screen communicates the offer within 3 seconds | ☐ |
+| The H1 is clear, specific, and keyword-relevant | ☐ |
+| The page has one clear primary CTA visible without scrolling | ☐ |
+| The design feels visually unique — not a recognizable template | ☐ |
+| Section spacing is premium (not cramped or empty) | ☐ |
+| Typography has clear hierarchy: Display → H1 → H2 → H3 → Body | ☐ |
+| Font pairing is deliberate and appropriate for the brand | ☐ |
+| Color system is defined and based on brand psychology | ☐ |
+| All text meets WCAG AA contrast requirements | ☐ |
+| The mobile layout is excellent, not just "functional" | ☐ |
+| Navigation is clear, accessible, and CTA-equipped | ☐ |
+| Every section has a clear purpose that advances the user journey | ☐ |
+| Social proof appears before the final CTA | ☐ |
+| FAQ or objection handling is present | ☐ |
+| The hero is not decoration — it explains and converts | ☐ |
+| Animations are subtle, purposeful, and reduced-motion safe | ☐ |
+| Images are WebP, lazy-loaded (except hero), and have alt text | ☐ |
+| Fonts are subset, preloaded, and use `font-display: swap` | ☐ |
+| Schema markup (JSON-LD) is implemented | ☐ |
+| One H1, logical H2/H3 structure, proper semantic HTML | ☐ |
+| All interactive elements are keyboard navigable | ☐ |
+| Focus states are visible and styled | ☐ |
+| Forms have visible labels and accessible error states | ☐ |
+| No horizontal overflow on any viewport width | ☐ |
+| CLS is near zero — all images and embeds have defined dimensions | ☐ |
+| The page looks like a professional agency made it | ☐ |
+
+---
+
+## 19. CURSOR IMPLEMENTATION INSTRUCTIONS
+
+### 19.1 Project Stack
+Default to this stack unless the project specifies otherwise (this repo is a **Vite + React + TypeScript** SPA, not Next.js):
+- **Build tool & dev server:** Vite 5+ (`vite`, `vite build`, `vite preview`)
+- **UI library:** React 18+ with TypeScript — client-rendered components only; **do not** use React Server Components, server-only APIs, or Next.js data-fetching patterns
+- **Routing:** `react-router-dom` — use `<Routes>`, `<Route>`, nested routes, and `<Link>` / `<NavLink>` for internal navigation (**never** `next/link` or file-based Next routing)
+- **Document head & SEO tags:** `react-helmet-async` (`Helmet`, `HelmetProvider`) for per-route `<title>`, meta description, canonical, Open Graph, and Twitter cards — **never** Next.js `metadata` exports, `<Head>` from `next/head`, or `app/layout` head conventions
+- **Styling (this project):** Tailwind CSS v3 (utility-first; production CSS is purged via PostCSS). If a different repo has no Tailwind, use **CSS Modules** (e.g. `Component.module.css`) or plain CSS files co-located with components, imported from TS/TSX, and keep the same design tokens as CSS variables in a global stylesheet
+- **Animation:** Prefer CSS transitions, `@keyframes`, and `IntersectionObserver` for scroll-driven reveals (no extra dependency). Optionally use **Framer Motion** only when it is already listed in that project’s `package.json`
+- **UI Components:** shadcn/ui-style Radix primitives + Tailwind (as in this template) or fully custom components — same composition patterns, no Next-specific wrappers
+- **Icons:** Lucide React or Phosphor Icons
+- **Fonts:** Self-hosted `@font-face` in CSS, Fontsource packages imported in the entry or global CSS, or Google Fonts linked from `index.html` — use `font-display: swap` — **never** `next/font` or `next/font/local`
+- **Images:** Standard `<img>` with `width`, `height`, `alt`, `loading`, and `srcset`/`sizes` as needed — **never** `next/image` or the Next.js image optimization loader
+- **Entry:** `index.html` → `src/main.tsx` (calls `createRoot`) → `App.tsx` (providers, router). Do not assume `pages/_app`, `layout.tsx`, or `src/app/` exist
+
+**Hard bans for this stack (do not generate):** `next/*` imports, App Router or Pages Router file conventions, `metadata` / `generateMetadata`, default `export const runtime`, Server Actions, `next/image`, `next/link`, `next/navigation`, `next/router` (Pages), or any pattern that requires a Node server rendering React per request unless the user explicitly asks for a different framework.
+
+### 19.2 Design Token Setup
+Always define design tokens as CSS custom properties in the **global** stylesheet (this project typically uses `src/index.css`; other repos may use `src/styles/globals.css` — follow the repo). The examples below apply regardless of filename:
+```css
+:root {
+  --color-primary: #2563EB;
+  --color-primary-dark: #1D4ED8;
+  --color-secondary: #7C3AED;
+  --color-accent: #F59E0B;
+  --color-neutral-50: #F8FAFC;
+  --color-neutral-100: #F1F5F9;
+  --color-neutral-200: #E2E8F0;
+  --color-neutral-500: #64748B;
+  --color-neutral-800: #1E293B;
+  --color-neutral-950: #020617;
+  --color-surface: #FFFFFF;
+  --color-text-primary: #1E293B;
+  --color-text-muted: #64748B;
+  --color-border: #E2E8F0;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+```
+Map these to Tailwind in `tailwind.config.ts`:
+```ts
+theme: {
+  extend: {
+    colors: {
+      primary: 'var(--color-primary)',
+      secondary: 'var(--color-secondary)',
+      accent: 'var(--color-accent)',
+      surface: 'var(--color-surface)',
+      border: 'var(--color-border)',
+    }
+  }
+}
+```
+
+### 19.3 Component-Based Architecture
+Organize by feature and layout responsibility. A Vite + React Router SPA often matches:
+```
+index.html              # Root HTML shell, favicon, default lang
+src/
+  main.tsx              # createRoot, StrictMode, import global CSS (`index.css`)
+  App.tsx               # HelmetProvider, data/UI providers, BrowserRouter, Routes, shared layout chrome
+  index.css             # Tailwind directives + CSS variables / base styles (or split tokens into styles/tokens.css)
+  pages/                # Route-level views (e.g. Index.tsx, Contact.tsx) — thin: compose sections, wire data
+  components/
+    ui/                 # Base design system: Button, Card, Input, Badge (shadcn-style primitives)
+    layout/             # Header, Footer, Container, Section, shell wrappers
+    sections/           # Hero, Features, Testimonials, Pricing, FAQ, CTA
+    blocks/             # Reusable sub-components within sections
+  lib/
+    utils.ts            # cn() helper, constants, shared helpers
+  hooks/                # Shared hooks (media query, reduced motion, etc.)
+```
+Add `src/assets/` for static images processed by Vite; reference them with `new URL('./file.webp', import.meta.url).href` or `import img from './file.webp'` depending on convention. Use `public/` only for files that must keep exact URLs (e.g. `robots.txt`, verified domain files).
+
+### 19.4 Reusable Section Wrapper
+```tsx
+// components/layout/Section.tsx
+interface SectionProps {
+  children: React.ReactNode;
+  className?: string;
+  id?: string;
+  variant?: 'default' | 'muted' | 'dark' | 'accent';
+}
+
+export function Section({ children, className, id, variant = 'default' }: SectionProps) {
+  const variants = {
+    default: 'bg-white',
+    muted: 'bg-neutral-50',
+    dark: 'bg-neutral-950 text-white',
+    accent: 'bg-primary text-white',
+  };
+  return (
+    <section id={id} className={cn('py-24 lg:py-32', variants[variant], className)}>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {children}
+      </div>
+    </section>
+  );
+}
+```
+
+### 19.5 Motion Patterns (CSS-first; Framer Motion optional)
+In Vite SPAs, prefer **CSS transitions / `@keyframes`** plus **`IntersectionObserver`** (or a tiny hook) for section reveals so bundles stay lean. The patterns below with **`motion.*`** apply **only** when the project already depends on `framer-motion`; do not add the dependency solely for trivial fades unless the user asks.
+
+```tsx
+// Staggered children reveal (Framer Motion — use only if installed)
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } }
+};
+
+// Usage
+<motion.ul variants={container} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-100px" }}>
+  {items.map(i => <motion.li key={i.id} variants={item}>{i.content}</motion.li>)}
+</motion.ul>
+```
+
+### 19.6 Clean Tailwind Patterns (and CSS Modules fallback)
+When Tailwind is available, compose utilities and `cn()` as the default. When Tailwind is **not** installed, mirror the same structure using **CSS Modules**: import `styles from './Button.module.css'`, use `className={styles.primary}`, and keep token alignment with `:global(:root)` variables.
+
+```tsx
+// ✅ Good: component class extracted
+function Button({ variant, children }: ButtonProps) {
+  return (
+    <button className={cn(
+      "inline-flex items-center justify-center rounded-lg px-6 py-3 text-sm font-semibold transition-all duration-150",
+      variant === 'primary' && "bg-primary text-white hover:bg-primary-dark shadow-sm hover:shadow-md",
+      variant === 'ghost' && "border border-border text-neutral-800 hover:bg-neutral-50"
+    )}>
+      {children}
+    </button>
+  );
+}
+
+// ❌ Bad: inline styles, repeated class strings, no abstraction
+<div style={{ backgroundColor: '#2563EB', padding: '12px 24px', borderRadius: '8px' }}>...</div>
+```
+
+### 19.7 Schema JSON-LD Implementation
+Inject JSON-LD from **route-level page components** together with other head tags. With **`react-helmet-async`**, colocate schema with the page that owns the entity (adjust provider wiring to match the repo — this project wraps the tree in `HelmetProvider` in `App.tsx` around `BrowserRouter`).
+
+```tsx
+// Example: src/pages/Contact.tsx (or any page component)
+import { Helmet } from 'react-helmet-async';
+
+export default function ContactPage() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Company Name",
+    "url": "https://company.com",
+    "telephone": "+1-555-000-0000",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "123 Main St",
+      "addressLocality": "City",
+      "addressRegion": "State",
+      "postalCode": "12345"
+    }
+  };
+
+  return (
+    <>
+      <Helmet>
+        <title>Contact | Company Name</title>
+        <meta name="description" content="150–160 character description" />
+        <link rel="canonical" href="https://company.com/contact" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      </Helmet>
+      {/* page content */}
+    </>
+  );
+}
+```
+
+For shared JSON-LD (e.g. `Organization` on every page), either repeat a small `Helmet` block in a layout wrapper component rendered inside `<Routes>`, or centralize in a dedicated `<SEO />` component used by each page.
+
+### 19.8 Rules for Cursor Code Output
+- **Never** use inline `style={{}}` for design values — always use Tailwind, CSS Modules, or CSS variables
+- **Never** repeat the same class string in multiple places — extract to a component or constant
+- **Never** build a page as one giant component — always split into section components
+- **Never** import or use **Next.js** APIs or file conventions (`next/image`, `next/link`, `next/font`, `next/head`, `next/navigation`, App Router `layout.tsx` / `page.tsx` metadata exports, Server Actions, etc.) — this project is **Vite + React**
+- **Always** add `// Design token: see src/index.css` (or the repo’s actual global CSS path) comments when wiring CSS variables into Tailwind arbitrary values or shared theme extensions
+- **Always** export reusable components from a central `index.ts` barrel file when the repo already uses that pattern
+- **Always** use `cn()` utility (clsx + tailwind-merge) for conditional classes when Tailwind is in use
+- **Always** define TypeScript interfaces (or explicit prop types) for every component; prefer explicit props over `defaultProps` on function components (React 18+ direction)
+- **Always** run `vite build` before treating performance work as done; check chunk sizes and Lighthouse on `vite preview` for realistic static hosting behavior
+
+---
+
+## 20. NON-NEGOTIABLE RULES
+
+Cursor must comply with all of these on every website project. No exceptions.
+
+1. **Do not create boring generic layouts.** Every page must have a visual identity decision.
+2. **Do not use random colors.** Build a color system first. Choose colors based on brand and psychology.
+3. **Do not ignore mobile.** Test every section at 375px before considering it done.
+4. **Do not use weak typography.** Every heading must be impactful. Every body text must be readable.
+5. **Do not overuse animations.** If an animation doesn't improve understanding or experience, remove it.
+6. **Do not create inaccessible designs.** Semantic HTML, proper contrast, keyboard navigation — always.
+7. **Do not build decorative sections with no purpose.** Every section earns its place.
+8. **Do not use fake luxury design.** Black background + gold text is not luxury. Craft, restraint, and detail are.
+9. **Do not copy existing websites.** Draw inspiration; never replicate.
+10. **Do not sacrifice usability for creativity.** Creative decisions that confuse the user are failures.
+11. **Do not forget conversion.** Beautiful design that doesn't convert is portfolio work, not business work.
+12. **Do not forget SEO structure.** Every page needs proper heading hierarchy, meta tags, and schema.
+13. **Do not forget performance.** Optimize images, fonts, and code on every project.
+14. **Do not use placeholder content in final output.** Lorem ipsum must be replaced with real or realistic content.
+15. **Do not submit without running the Design Quality Checklist.** Every item must be addressed.

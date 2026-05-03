@@ -48,8 +48,9 @@
 
     --gradient-primary: linear-gradient(135deg, hsl(203 81% 19%), hsl(184 100% 37%), hsl(181 86% 43%));
     --gradient-soft: linear-gradient(180deg, hsl(0 0% 100%), hsl(184 50% 98%));
-    --gradient-hero: radial-gradient(ellipse at top right, hsl(184 100% 37% / 0.12), transparent 60%),
-                     radial-gradient(ellipse at bottom left, hsl(181 86% 43% / 0.08), transparent 50%);
+    --gradient-hero: radial-gradient(ellipse 90% 80% at 100% -10%, hsl(184 100% 37% / 0.14), transparent 55%),
+                     radial-gradient(ellipse 70% 60% at 0% 100%, hsl(181 86% 43% / 0.1), transparent 50%),
+                     radial-gradient(ellipse 50% 40% at 50% 50%, hsl(203 81% 19% / 0.04), transparent 70%);
 
     --shadow-soft: 0 2px 12px -2px hsl(184 100% 37% / 0.08);
     --shadow-card: 0 4px 24px -8px hsl(203 81% 19% / 0.1);
@@ -73,19 +74,45 @@
   html { scroll-behavior: smooth; }
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-feature-settings: "cv11", "ss01";
   }
   h1, h2, h3, h4 {
-    font-family: 'Inter', system-ui, sans-serif;
-    letter-spacing: -0.02em;
+    font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+    letter-spacing: -0.025em;
     @apply text-navy-deep;
   }
-  h1 { @apply font-bold; }
-  ::selection { background: hsl(var(--primary) / 0.2); color: hsl(var(--navy-deep)); }
+  h1 {
+    @apply font-extrabold;
+  }
+  ::selection {
+    background: hsl(var(--primary) / 0.2);
+    color: hsl(var(--navy-deep));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-fade-up,
+  .animate-fade-up-delayed,
+  .animate-fade-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .btn-primary:hover,
+  .btn-secondary:hover,
+  .card-soft:hover {
+    transform: none;
+  }
 }
 
 @layer components {
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-xl focus:bg-primary focus:px-4 focus:py-3 focus:text-sm focus:font-bold focus:text-primary-foreground focus:shadow-glow focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary;
+  }
   .container-x { @apply mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8; }
   .gradient-text {
     background: var(--gradient-primary);
@@ -93,28 +120,68 @@
     background-clip: text;
     color: transparent;
   }
+  .font-display {
+    font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  }
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 font-semibold text-white;
+    @apply inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-xl px-6 py-3 font-semibold text-white;
     background: var(--gradient-primary);
     box-shadow: var(--shadow-glow);
-    transition: var(--transition);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease, box-shadow 0.2s ease;
   }
-  .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+    box-shadow: 0 12px 40px -10px hsl(184 100% 37% / 0.35);
+  }
+  .btn-primary:focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-primary;
+  }
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border-2 border-primary bg-white px-6 py-3 font-semibold text-primary;
-    transition: var(--transition);
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border-2 border-primary bg-white px-6 py-3 font-semibold text-primary;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .btn-secondary:hover { @apply bg-accent; }
+  .btn-secondary:hover {
+    @apply bg-accent;
+    transform: translateY(-1px);
+  }
+  .btn-secondary:focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-primary;
+  }
   .card-soft {
-    @apply rounded-2xl border bg-card p-6;
+    @apply relative overflow-hidden rounded-2xl border border-border/80 bg-card p-6;
     box-shadow: var(--shadow-card);
-    transition: var(--transition);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
   }
-  .card-soft:hover { transform: translateY(-2px); border-color: hsl(var(--primary) / 0.4); }
+  .card-soft::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    opacity: 0;
+    background: var(--gradient-primary);
+    transition: opacity 0.25s ease;
+  }
+  .card-soft:hover {
+    transform: translateY(-4px);
+    border-color: hsl(var(--primary) / 0.35);
+    box-shadow: 0 12px 40px -16px hsl(203 81% 19% / 0.12);
+  }
+  .card-soft:hover::before {
+    opacity: 1;
+  }
   .micro-label {
     @apply text-xs font-bold uppercase tracking-[0.18em] text-primary;
   }
-  .section { @apply py-16 sm:py-20 lg:py-24; }
+  .section {
+    @apply py-16 sm:py-20 lg:py-28;
+  }
+  .hero-grid-bg {
+    background-image: linear-gradient(hsl(var(--border) / 0.5) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.5) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 70% at 70% 20%, black, transparent);
+  }
   .prose-klikcy { @apply text-base leading-relaxed text-foreground/80; }
   .prose-klikcy h2 { @apply mt-10 mb-4 text-2xl sm:text-3xl font-bold; }
   .prose-klikcy h3 { @apply mt-8 mb-3 text-xl font-bold; }

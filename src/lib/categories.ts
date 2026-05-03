@@ -24,7 +24,7 @@ export const categories: Category[] = [
     short: "Websites",
     tagline: "Fast, scalable, SEO-ready sites built to convert.",
     description:
-      "Custom websites built on modern stacks — from marketing sites and landing pages to WordPress, Shopify and Next.js platforms engineered for speed, SEO and growth.",
+      "Custom websites built on modern stacks — from marketing sites and landing pages to WordPress, Shopify, and high-performance React (Vite) experiences engineered for speed, SEO and growth.",
     icon: "Code2",
   },
   {
