@@ -8,6 +8,7 @@ import { getService } from "@/lib/services";
 import { getState } from "@/lib/states";
 import { serviceSchema, faqSchema, breadcrumbSchema, SITE } from "@/lib/schema";
 import { buildServiceStateContent } from "@/lib/content";
+import { getCitiesForState } from "@/lib/cities";
 
 const ServiceStatePage = () => {
   const { service: serviceSlug = "", state: stateSlug = "" } = useParams();
