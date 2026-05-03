@@ -7,6 +7,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { getState } from "@/lib/states";
 import { categories } from "@/lib/categories";
 import { services as allServices } from "@/lib/services";
+import { getCitiesForState } from "@/lib/cities";
 import { breadcrumbSchema, SITE } from "@/lib/schema";
 import { stateIntroContent } from "@/lib/content";
 
@@ -61,8 +62,8 @@ const StatePage = () => {
             <span className="micro-label">Cities served</span>
             <h2 className="mt-3 text-3xl font-bold">{state.name} cities we serve</h2>
             <div className="mt-6 flex flex-wrap gap-2">
-              {state.cities.map((city) => (
-                <span key={city} className="rounded-full border border-border bg-white px-4 py-2 text-sm text-navy-deep">{city}</span>
+              {getCitiesForState(state).map((c) => (
+                <Link key={c.slug} to={`/service-areas/${state.slug}/${c.slug}`} className="rounded-full border border-border bg-white px-4 py-2 text-sm text-navy-deep hover:border-primary hover:text-primary">{c.name}</Link>
               ))}
             </div>
             <p className="mt-4 text-sm text-muted-foreground">Remote-first delivery — we serve every city in {state.name}, not just the ones listed above.</p>
