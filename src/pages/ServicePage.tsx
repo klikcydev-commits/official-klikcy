@@ -7,6 +7,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { getService, getRelatedServices } from "@/lib/services";
 import { getCategory } from "@/lib/categories";
 import { priorityStates } from "@/lib/states";
+import { getCitiesForState } from "@/lib/cities";
 import { serviceSchema, faqSchema, breadcrumbSchema, SITE } from "@/lib/schema";
 
 const ServicePage = () => {
@@ -95,6 +96,20 @@ const ServicePage = () => {
               {priorityStates.map((s) => (
                 <Link key={s.slug} to={`/${service.slug}/${s.slug}`} className="rounded-full border border-border bg-white px-4 py-2 text-sm hover:border-primary hover:text-primary">
                   {service.name} in {s.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section">
+          <div className="container-x">
+            <span className="micro-label">By city</span>
+            <h2 className="mt-3 text-3xl font-bold">{service.name} in major U.S. cities</h2>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {priorityStates.flatMap((st) => getCitiesForState(st).slice(0, 4)).map((c) => (
+                <Link key={`${c.state.slug}-${c.slug}`} to={`/${service.slug}/${c.state.slug}/${c.slug}`} className="rounded-full border border-border bg-white px-4 py-2 text-sm hover:border-primary hover:text-primary">
+                  {service.name} in {c.name}, {c.state.abbr}
                 </Link>
               ))}
             </div>

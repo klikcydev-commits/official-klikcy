@@ -8,6 +8,7 @@ import { getService } from "@/lib/services";
 import { getState } from "@/lib/states";
 import { serviceSchema, faqSchema, breadcrumbSchema, SITE } from "@/lib/schema";
 import { buildServiceStateContent } from "@/lib/content";
+import { getCitiesForState } from "@/lib/cities";
 
 const ServiceStatePage = () => {
   const { service: serviceSlug = "", state: stateSlug = "" } = useParams();
@@ -73,6 +74,20 @@ const ServiceStatePage = () => {
                 <p>{f.a}</p>
               </div>
             ))}
+          </div>
+        </section>
+
+        <section className="section">
+          <div className="container-x">
+            <span className="micro-label">{state.name} cities</span>
+            <h2 className="mt-3 text-3xl font-bold">{service.name} in {state.name} cities</h2>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {getCitiesForState(state).map((c) => (
+                <Link key={c.slug} to={`/${service.slug}/${state.slug}/${c.slug}`} className="rounded-full border border-border bg-white px-4 py-2 text-sm hover:border-primary hover:text-primary">
+                  {service.name} in {c.name}
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
 
