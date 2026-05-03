@@ -12,6 +12,8 @@ import CategoryPage from "./pages/CategoryPage.tsx";
 import StatePage from "./pages/StatePage.tsx";
 import ServiceAreas from "./pages/ServiceAreas.tsx";
 import ServiceStatePage from "./pages/ServiceStatePage.tsx";
+import CityPage from "./pages/CityPage.tsx";
+import ServiceCityPage from "./pages/ServiceCityPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -31,7 +33,9 @@ const App = () => (
             <Route path="/categories/:slug" element={<CategoryPage />} />
             <Route path="/service-areas" element={<ServiceAreas />} />
             <Route path="/service-areas/:slug" element={<StatePage />} />
+            <Route path="/service-areas/:state/:city" element={<CityPage />} />
             <Route path="/:service/:state" element={<ServiceStatePage />} />
+            <Route path="/:service/:state/:city" element={<ServiceCityPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
