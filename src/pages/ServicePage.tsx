@@ -7,6 +7,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { getService, getRelatedServices } from "@/lib/services";
 import { getCategory } from "@/lib/categories";
 import { priorityStates } from "@/lib/states";
+import { getCitiesForState } from "@/lib/cities";
 import { serviceSchema, faqSchema, breadcrumbSchema, SITE } from "@/lib/schema";
 
 const ServicePage = () => {
