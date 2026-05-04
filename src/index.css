@@ -25,6 +25,10 @@
     --navy: 203 81% 19%;
     --navy-deep: 209 60% 16%;
 
+    /* Deep editorial surfaces */
+    --ink: 222 47% 7%;
+    --void: 222 58% 4%;
+
     --secondary: 184 60% 96%;
     --secondary-foreground: 209 60% 16%;
 
@@ -97,14 +101,18 @@
   }
   .animate-fade-up,
   .animate-fade-up-delayed,
-  .animate-fade-in {
+  .animate-fade-in,
+  .animate-float-soft,
+  .animate-gradient-shift {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
   }
   .btn-primary:hover,
   .btn-secondary:hover,
-  .card-soft:hover {
+  .card-soft:hover,
+  .service-showcase:hover,
+  .bento-tile:hover {
     transform: none;
   }
 }
@@ -136,6 +144,15 @@
   }
   .btn-primary:focus-visible {
     @apply outline outline-2 outline-offset-2 outline-primary;
+  }
+  .btn-ghost-light {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition;
+  }
+  .btn-ghost-light:hover {
+    @apply border-white/40 bg-white/10;
+  }
+  .btn-ghost-light:focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-primary-light;
   }
   .btn-secondary {
     @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border-2 border-primary bg-white px-6 py-3 font-semibold text-primary;
@@ -177,10 +194,46 @@
     @apply py-16 sm:py-20 lg:py-28;
   }
   .hero-grid-bg {
-    background-image: linear-gradient(hsl(var(--border) / 0.5) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--border) / 0.5) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(ellipse 80% 70% at 70% 20%, black, transparent);
+    background-image: linear-gradient(hsl(0 0% 100% / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(0 0% 100% / 0.06) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 90% 80% at 60% 0%, black, transparent 72%);
+  }
+  .hero-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+  .bento-tile {
+    @apply relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset] backdrop-blur-md transition duration-300;
+  }
+  .bento-tile:hover {
+    @apply border-primary/35 bg-white/[0.07];
+    box-shadow: 0 20px 50px -24px hsl(184 100% 37% / 0.35);
+  }
+  .service-showcase {
+    @apply relative overflow-hidden rounded-[1.35rem] border border-border/60 bg-card p-6 sm:p-7;
+    box-shadow: 0 4px 28px -16px hsl(203 81% 19% / 0.18);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.35s ease;
+  }
+  .service-showcase::after {
+    content: "";
+    position: absolute;
+    inset: auto -40% -60% -40%;
+    height: 120px;
+    background: radial-gradient(ellipse at center, hsl(184 100% 37% / 0.12), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+  }
+  .service-showcase:hover {
+    transform: translateY(-6px) scale(1.01);
+    border-color: hsl(var(--primary) / 0.35);
+    box-shadow: 0 24px 50px -20px hsl(203 81% 19% / 0.2);
+  }
+  .service-showcase:hover::after {
+    opacity: 1;
+  }
+  .timeline-rail {
+    background: linear-gradient(90deg, hsl(var(--primary) / 0.15), hsl(var(--primary) / 0.55), hsl(var(--primary) / 0.15));
   }
   .prose-klikcy { @apply text-base leading-relaxed text-foreground/80; }
   .prose-klikcy h2 { @apply mt-10 mb-4 text-2xl sm:text-3xl font-bold; }

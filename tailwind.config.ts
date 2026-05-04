@@ -27,6 +27,8 @@ export default {
           DEFAULT: "hsl(var(--navy))",
           deep: "hsl(var(--navy-deep))",
         },
+        ink: "hsl(var(--ink))",
+        void: "hsl(var(--void))",
         secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
         destructive: { DEFAULT: "hsl(var(--destructive))", foreground: "hsl(var(--destructive-foreground))" },
         muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
@@ -68,6 +70,14 @@ export default {
           "0%": { opacity: "0", transform: "translateY(16px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        "float-soft": {
+          "0%, 100%": { transform: "translateY(0) scale(1)" },
+          "50%": { transform: "translateY(-10px) scale(1.02)" },
+        },
+        "gradient-shift": {
+          "0%": { backgroundPosition: "0% 50%" },
+          "100%": { backgroundPosition: "100% 50%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -75,6 +85,11 @@ export default {
         "fade-up": "fade-up 0.5s ease-out both",
         "fade-in": "fade-in 0.4s ease-out both",
         "fade-up-delayed": "fade-up-delayed 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both",
+        "float-soft": "float-soft 14s ease-in-out infinite",
+        "gradient-shift": "gradient-shift 18s ease alternate infinite",
+      },
+      backgroundSize: {
+        "hero-mesh": "200% 200%",
       },
     },
   },

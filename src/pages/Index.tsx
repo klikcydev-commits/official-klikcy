@@ -1,18 +1,23 @@
 import { Link } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
 import {
+  Activity,
   ArrowRight,
-  Code2,
-  Search,
+  BarChart3,
   Bot,
-  ShoppingBag,
-  Layers,
-  Palette,
-  TrendingUp,
-  Server,
   CheckCircle2,
-  Sparkles,
+  Code2,
+  Cpu,
+  Layers,
   MapPin,
+  Palette,
+  Search,
+  Server,
+  ShoppingBag,
+  Sparkles,
+  TrendingUp,
+  Workflow,
+  Zap,
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -36,27 +41,57 @@ const iconMap: Record<string, LucideIcon> = {
   Server,
 };
 
-const trustItems = [
-  "SEO-Ready Websites",
-  "Scalable React & Vite Architecture",
-  "AI Automation Workflows",
-  "Conversion-Focused UI/UX",
-  "Technical SEO Foundation",
-  "Data-Driven Growth",
+const credibilityStrip = [
+  { title: "Strategy-first websites", body: "Information architecture and UX that align to revenue, not vanity pages." },
+  { title: "SEO/AEO-ready builds", body: "Semantic structure, schema, and performance budgets baked in from day one." },
+  { title: "Automation-driven systems", body: "Agents, workflows, and integrations that remove manual bottlenecks." },
+  { title: "Performance-focused development", body: "Lean React (Vite) stacks, tuned assets, and measurable Core Web Vitals." },
+  { title: "Conversion-focused design", body: "Visual hierarchy, CTAs, and trust paths tested for clarity on every breakpoint." },
+];
+
+const whyPillars = [
+  {
+    title: "Growth systems, not one-off pages",
+    body: "We connect brand, UX, engineering, search, and automation so your digital footprint compounds instead of fragmenting.",
+  },
+  {
+    title: "Design + SEO + automation together",
+    body: "No silos: the same team ships UI that converts, copy that ranks, and workflows that keep operations lean.",
+  },
+  {
+    title: "Built for visibility and conversion",
+    body: "Answer-engine readiness, structured data, and CRO-minded layouts — engineered for humans and machines.",
+  },
+  {
+    title: "Technical depth with business fluency",
+    body: "From hosting and security to analytics and APIs — we speak both boardroom outcomes and implementation detail.",
+  },
 ];
 
 const processSteps = [
-  { n: "01", t: "Discover", d: "We map goals, audience, technical context and growth levers." },
-  { n: "02", t: "Design", d: "Brand-aligned UI/UX with conversion and SEO baked in." },
-  { n: "03", t: "Build", d: "Modern stacks — React, Vite, WordPress, Shopify — engineered for speed." },
-  { n: "04", t: "Optimize", d: "Technical SEO, AEO, schema and Core Web Vitals tuning." },
-  { n: "05", t: "Scale", d: "AI automations, programmatic SEO and ongoing growth systems." },
+  { n: "01", label: "Discover", copy: "Goals, audience, constraints, and growth levers — mapped in one strategic frame." },
+  { n: "02", label: "Design", copy: "Experience architecture, UI systems, and narrative flow that earn attention." },
+  { n: "03", label: "Build", copy: "Accessible, fast frontends and reliable integrations — React, Vite, WordPress, Shopify." },
+  { n: "04", label: "Optimize", copy: "Technical SEO, AEO, schema, CWV tuning, and analytics you can trust." },
+  { n: "05", label: "Launch", copy: "Hardened hosting, DNS, email, monitoring, and rollback-safe releases." },
+  { n: "06", label: "Grow", copy: "Automation, content systems, and iterative experiments that scale what works." },
 ];
 
-const capabilityPanels = [
-  { title: "Ship fast", body: "Vite-powered React experiences tuned for Core Web Vitals.", accent: "from-primary/20 to-transparent" },
-  { title: "Get found", body: "SEO + AEO so Google and answer engines cite your brand.", accent: "from-navy/30 to-transparent" },
-  { title: "Automate", body: "Workflows that remove manual handoffs between tools and teams.", accent: "from-primary/25 to-transparent" },
+const impactCards = [
+  { title: "Faster websites", body: "Lean builds and disciplined assets so every interaction feels instant and intentional.", icon: Zap },
+  { title: "Better search visibility", body: "Structured entities, internal linking, and technical hygiene that search engines reward.", icon: Search },
+  { title: "Cleaner user journeys", body: "Clarified paths from first touch to conversion — fewer dead ends, more momentum.", icon: Activity },
+  { title: "Stronger conversion paths", body: "CTA systems, proof placement, and narrative rhythm tuned for decisions.", icon: TrendingUp },
+  { title: "Scalable digital systems", body: "Components, data layers, and automation that keep working as you add markets.", icon: Cpu },
+];
+
+const experienceTiles = [
+  { title: "UI/UX design", body: "Product-grade interfaces, design systems, and brand-led storytelling.", icon: Palette },
+  { title: "Development", body: "Modern React (Vite), WordPress, Shopify, APIs, and integrations.", icon: Code2 },
+  { title: "SEO & AEO", body: "Technical + on-page SEO with answer-engine optimization for AI citations.", icon: Search },
+  { title: "Automation", body: "AI workflows, agents, CRM automation, and operational tooling.", icon: Workflow },
+  { title: "Analytics", body: "Measurement plans, event quality, and dashboards leadership actually uses.", icon: BarChart3 },
+  { title: "Hosting & maintenance", body: "Security, backups, email, DNS, uptime, and proactive performance care.", icon: Server },
 ];
 
 const Index = () => (
@@ -68,73 +103,90 @@ const Index = () => (
       jsonLd={[orgSchema(), websiteSchema(), faqSchema(homeFaqs)]}
     />
     <Header />
-    <main id="main-content">
-      {/* Hero — purpose: state offer, desire, and proof in one scan */}
-      <section className="relative overflow-hidden bg-gradient-hero" aria-labelledby="hero-heading">
-        <div className="pointer-events-none absolute inset-0 hero-grid-bg opacity-[0.45]" aria-hidden />
-        <div className="relative container-x section pb-20 pt-4 sm:pb-24 lg:pb-28 lg:pt-6">
-          <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-14 xl:gap-16">
-            <div className="animate-fade-up max-w-xl lg:col-span-7 lg:max-w-none">
-              <span className="micro-label">Digital Agency · United States</span>
+    <main id="main-content" className="bg-background">
+      {/* 1. Editorial hero */}
+      <section
+        className="relative overflow-hidden bg-ink text-white"
+        aria-labelledby="hero-heading"
+      >
+        <div className="pointer-events-none absolute inset-0 hero-grid-bg opacity-50" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 hero-noise opacity-70 mix-blend-overlay" aria-hidden />
+        <div
+          className="pointer-events-none absolute -left-1/4 top-0 h-[min(80vw,520px)] w-[min(80vw,520px)] rounded-full bg-primary/25 blur-[100px] motion-reduce:opacity-40"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute -right-1/3 bottom-0 h-[min(90vw,640px)] w-[min(90vw,640px)] rounded-full bg-[hsl(181_86%_43%/0.2)] blur-[120px] motion-reduce:opacity-30"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute inset-0 bg-[length:200%_200%] bg-gradient-to-br from-primary/20 via-transparent to-navy/40 opacity-40 motion-reduce:animate-none animate-gradient-shift"
+          aria-hidden
+        />
+
+        <div className="relative container-x pb-20 pt-10 sm:pb-28 sm:pt-14 lg:pb-32 lg:pt-16">
+          <div className="grid items-center gap-14 lg:grid-cols-12 lg:gap-10">
+            <div className="animate-fade-up lg:col-span-7">
+              <p className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.28em] text-primary-light">Digital agency · United States</p>
               <h1
                 id="hero-heading"
-                className="font-display mt-5 text-4xl font-extrabold leading-[1.04] tracking-tight text-navy-deep sm:text-5xl xl:text-[3.35rem]"
+                className="font-display mt-5 max-w-[18ch] text-[clamp(2.35rem,4vw+1.2rem,3.85rem)] font-extrabold leading-[1.02] tracking-tight text-white"
               >
-                Websites, SEO, AI Automation &amp;{" "}
-                <span className="gradient-text">Digital Growth</span> for U.S. Businesses
+                The growth studio for{" "}
+                <span className="bg-gradient-to-r from-white via-primary-light to-primary bg-clip-text text-transparent">
+                  serious
+                </span>{" "}
+                digital brands.
               </h1>
-              <p className="mt-6 max-w-xl text-lg leading-[1.65] text-muted-foreground sm:text-xl">
-                Klikcy builds scalable websites, SEO systems, AI automations, e-commerce platforms and digital solutions for
-                companies across all 50 states — remote-first, conversion-led, technically excellent.
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/72 sm:text-xl sm:leading-relaxed">
+                Klikcy is a remote-first agency shipping websites, SEO &amp; AEO, AI automation, apps, commerce, brand design,
+                marketing, and technical hosting — one accountable partner from strategy to scale.
               </p>
-              <div className="mt-9 flex w-full flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center">
+              <div className="mt-10 flex w-full flex-col gap-3 sm:max-w-md sm:flex-row sm:items-center">
                 <Link to="/contact" className="btn-primary w-full justify-center sm:w-auto">
-                  Request a Strategy Call <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
+                  Start a project <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
                 </Link>
-                <Link to="/categories/web-development" className="btn-secondary w-full justify-center sm:w-auto">
-                  Explore services
+                <Link to="/categories/web-development" className="btn-ghost-light w-full sm:w-auto">
+                  View capabilities
                 </Link>
               </div>
-              <p className="mt-4 text-center text-xs text-muted-foreground sm:text-left">
-                <span className="font-medium text-navy-deep/80">Trusted delivery</span> — SEO-ready builds, schema-first pages,
-                and AI workflows that scale with you.
-              </p>
-              <dl className="mt-10 grid gap-6 border-t border-border/70 pt-8 sm:grid-cols-3">
+              <dl className="mt-12 grid gap-8 border-t border-white/10 pt-10 sm:grid-cols-3">
                 <div>
-                  <dt className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Coverage</dt>
-                  <dd className="font-display mt-1 text-2xl font-bold tabular-nums text-navy-deep">50 states + DC</dd>
+                  <dt className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/45">Coverage</dt>
+                  <dd className="font-display mt-2 text-2xl font-bold text-white">50 states + DC</dd>
                 </div>
                 <div>
-                  <dt className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Practices</dt>
-                  <dd className="font-display mt-1 text-2xl font-bold tabular-nums text-navy-deep">8 disciplines</dd>
+                  <dt className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/45">Disciplines</dt>
+                  <dd className="font-display mt-2 text-2xl font-bold text-white">Eight practices</dd>
                 </div>
                 <div>
-                  <dt className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Model</dt>
-                  <dd className="font-display mt-1 text-2xl font-bold text-navy-deep">Remote-first</dd>
+                  <dt className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/45">Delivery</dt>
+                  <dd className="font-display mt-2 text-2xl font-bold text-white">Remote-first</dd>
                 </div>
               </dl>
             </div>
 
-            <div className="animate-fade-up-delayed relative hidden lg:col-span-5 lg:block" aria-hidden>
-              <div className="absolute -right-6 top-1/2 h-[120%] w-[1px] -translate-y-1/2 bg-gradient-to-b from-transparent via-primary/40 to-transparent" />
-              <div className="relative flex flex-col gap-4 pl-4">
-                {capabilityPanels.map((p, i) => (
-                  <div
-                    key={p.title}
-                    className={cn(
-                      "rounded-2xl border border-white/80 bg-white/90 p-5 shadow-card backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:shadow-glow motion-reduce:hover:translate-y-0",
-                      i === 1 && "translate-x-3 motion-reduce:translate-x-0",
-                      i === 2 && "translate-x-1 motion-reduce:translate-x-0",
-                    )}
-                  >
-                    <div className={cn("mb-3 h-1 w-12 rounded-full bg-gradient-to-r", p.accent)} />
-                    <div className="font-display text-sm font-bold text-navy-deep">{p.title}</div>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{p.body}</p>
+            <div className="relative hidden animate-fade-up-delayed lg:col-span-5 lg:block" aria-hidden>
+              <div className="absolute -left-8 top-8 h-32 w-32 rounded-full border border-white/10 bg-white/5 blur-2xl" />
+              <div className="relative flex flex-col gap-4">
+                <div className="ml-0 rounded-2xl border border-white/15 bg-white/[0.06] p-5 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.8)] backdrop-blur-xl">
+                  <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-primary-light">
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Live stack
                   </div>
-                ))}
-                <div className="mt-2 flex items-center gap-2 rounded-xl border border-dashed border-primary/40 bg-primary/5 px-4 py-3 text-sm font-medium text-primary">
-                  <Sparkles className="h-4 w-4 shrink-0" aria-hidden />
-                  <span>One partner for site, search, and automation.</span>
+                  <p className="mt-3 font-display text-lg font-bold text-white">React · Vite · TypeScript</p>
+                  <p className="mt-2 text-sm leading-relaxed text-white/60">Production-grade SPAs with SEO/AEO-friendly structure — no template lock-in.</p>
+                </div>
+                <div className="ml-8 rounded-2xl border border-white/15 bg-white/[0.06] p-5 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.8)] backdrop-blur-xl motion-reduce:ml-0">
+                  <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-primary-light">
+                    <Bot className="h-3.5 w-3.5" />
+                    Systems
+                  </div>
+                  <p className="mt-3 font-display text-lg font-bold text-white">Search + automation</p>
+                  <p className="mt-2 text-sm leading-relaxed text-white/60">Schema-first pages, programmatic SEO patterns, and AI workflows wired to your ops.</p>
+                </div>
+                <div className="ml-4 rounded-2xl border border-dashed border-primary/40 bg-primary/10 p-4 text-sm font-medium text-primary-light">
+                  One partner for brand, build, search, and scale.
                 </div>
               </div>
             </div>
@@ -142,154 +194,223 @@ const Index = () => (
         </div>
       </section>
 
-      {/* Narrative bridge — purpose: sharpen why Klikcy exists */}
-      <section className="border-y border-navy/10 bg-navy text-white" aria-labelledby="bridge-heading">
-        <div className="container-x py-9 sm:py-11">
-          <h2 id="bridge-heading" className="sr-only">
-            Why teams choose Klikcy
-          </h2>
-          <p className="font-display max-w-4xl text-lg font-semibold leading-snug tracking-tight text-white sm:text-xl sm:leading-snug">
-            Most teams don’t need another generic template — they need a site that converts, search that compounds, and AI that
-            removes busywork. Klikcy delivers all three as one growth partner for businesses nationwide.
-          </p>
-        </div>
-      </section>
-
-      {/* Trust strip — purpose: qualify capabilities quickly */}
-      <section className="border-b border-border bg-white" aria-labelledby="trust-heading">
-        <div className="container-x py-12 sm:py-14">
-          <div className="flex flex-col gap-2 text-center sm:text-left">
-            <p id="trust-heading" className="micro-label">
-              Built for measurable growth
-            </p>
-            <p className="text-sm text-muted-foreground sm:max-w-xl">
-              Every engagement is engineered around performance, discoverability, and systems you can operate — not one-off
-              deliverables.
-            </p>
+      {/* 2. Credibility strip */}
+      <section className="relative border-b border-border bg-white py-14 sm:py-16" aria-labelledby="cred-heading">
+        <div className="container-x">
+          <div className="max-w-3xl">
+            <h2 id="cred-heading" className="font-display text-[clamp(1.5rem,1.5vw+1rem,2.1rem)] font-bold tracking-tight text-navy-deep">
+              <span className="micro-label mb-3 block text-[0.7rem] font-bold tracking-[0.2em]">Proof in the craft</span>
+              <span className="block leading-tight">Engineered for outcomes you can brief an exec on.</span>
+            </h2>
           </div>
-          <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6" role="list">
-            {trustItems.map((t) => (
+          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5" role="list">
+            {credibilityStrip.map((item) => (
               <li
-                key={t}
-                className="flex items-start gap-3 rounded-2xl border border-border/90 bg-[hsl(var(--soft-bg))] px-4 py-3.5 text-left text-sm font-semibold leading-snug text-navy-deep transition hover:border-primary/35 hover:shadow-soft"
+                key={item.title}
+                className="group relative overflow-hidden rounded-2xl border border-border/80 bg-[hsl(var(--soft-bg))] p-5 transition duration-300 hover:border-primary/30 hover:shadow-glow"
               >
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
-                <span>{t}</span>
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 transition group-hover:opacity-100" />
+                <CheckCircle2 className="h-5 w-5 text-primary" aria-hidden />
+                <p className="mt-3 font-display text-sm font-bold text-navy-deep">{item.title}</p>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground sm:text-[0.8125rem]">{item.body}</p>
               </li>
             ))}
           </ul>
         </div>
       </section>
 
-      {/* Services / categories — purpose: route visitors to the right practice */}
+      {/* 3. Services */}
       <PageSection>
         <SectionIntro
-          kicker="What we do"
-          title={<>Eight practices, one senior partner for the full stack.</>}
-          description="From websites and SEO to AI automation and e-commerce — Klikcy delivers across your entire digital surface area with one accountable team."
+          kicker="Capabilities"
+          title={<>Eight practices. One continuous growth surface.</>}
+          description="Each discipline is led with senior-level rigor — designed to compound: your site, your search footprint, your automation layer, and your brand all move together."
         />
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-          {categories.map((c) => {
+        <div className="grid auto-rows-fr gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          {categories.map((c, i) => {
             const Icon = iconMap[c.icon] ?? Code2;
+            const featured = i === 0 || i === 3;
             return (
-              <Link key={c.slug} to={`/categories/${c.slug}`} className="card-soft group block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-primary text-white shadow-soft">
-                  <Icon className="h-5 w-5" aria-hidden />
+              <Link
+                key={c.slug}
+                to={`/categories/${c.slug}`}
+                className={cn(
+                  "service-showcase group flex flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                  featured && "sm:col-span-2 xl:col-span-2 xl:min-h-[280px] xl:flex-row xl:items-stretch xl:gap-8",
+                )}
+              >
+                <div className={cn("flex shrink-0 items-start justify-between gap-4", featured && "xl:flex-col xl:justify-between")}>
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary text-white shadow-glow">
+                    <Icon className="h-6 w-6" aria-hidden />
+                  </div>
+                  <span className="rounded-full border border-border bg-white/80 px-3 py-1 font-mono text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground">
+                    {c.short}
+                  </span>
                 </div>
-                <h3 className="mt-5 font-display text-lg font-bold text-navy-deep">{c.name}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{c.tagline}</p>
-                <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-primary">
-                  View practice
-                  <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" aria-hidden />
-                </span>
+                <div className={cn("mt-5 flex flex-1 flex-col xl:mt-0", featured && "xl:justify-between")}>
+                  <div>
+                    <h3 className="font-display text-xl font-bold tracking-tight text-navy-deep">{c.name}</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-[0.9375rem]">{c.tagline}</p>
+                  </div>
+                  <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-primary transition group-hover:gap-3">
+                    Enter practice <ArrowRight className="h-4 w-4" aria-hidden />
+                  </span>
+                </div>
               </Link>
             );
           })}
         </div>
       </PageSection>
 
-      {/* Process — purpose: reduce perceived risk */}
-      <PageSection variant="muted">
+      {/* 4. Why Klikcy */}
+      <PageSection variant="ink" className="relative overflow-hidden">
+        <div className="pointer-events-none absolute right-0 top-1/2 h-[min(100vw,600px)] w-[min(100vw,600px)] -translate-y-1/2 translate-x-1/3 rounded-full bg-primary/15 blur-[120px]" aria-hidden />
         <SectionIntro
-          kicker="How we work"
-          title={<>Discover, design, build, optimize, scale — without chaos.</>}
-          description="A clear phased model so stakeholders always know what ships when, and how it ties to revenue."
+          tone="onDark"
+          kicker="Why Klikcy"
+          title={<>We are not another vendor list — we are the team that ships the whole arc.</>}
+          description="Most agencies stop at deliverables. Klikcy connects strategy, interface, engineering, search, automation, and infrastructure so your digital presence performs as a single system."
         />
-        <ol className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5" role="list">
-          {processSteps.map((s) => (
-            <li
-              key={s.n}
-              className="card-soft flex flex-col border-l-[3px] border-l-primary bg-white/95 pl-1 sm:border-l-4 sm:pl-2"
-            >
-              <span className="font-display text-xs font-extrabold tracking-[0.2em] text-primary">{s.n}</span>
-              <h3 className="font-display mt-3 text-lg font-bold text-navy-deep">{s.t}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.d}</p>
-            </li>
+        <div className="relative mt-4 grid gap-5 md:grid-cols-2">
+          {whyPillars.map((p) => (
+            <article key={p.title} className="bento-tile">
+              <h3 className="font-display text-lg font-bold text-white">{p.title}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-white/65">{p.body}</p>
+            </article>
           ))}
-        </ol>
+        </div>
       </PageSection>
 
-      {/* Service areas — purpose: local intent + internal discovery */}
+      {/* 5. Process */}
+      <PageSection variant="muted" className="relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px timeline-rail opacity-60" aria-hidden />
+        <SectionIntro
+          kicker="Process"
+          title={<>Discover → design → build → optimize → launch → grow.</>}
+          description="A modern, transparent cadence so stakeholders see progress weekly — not as a black box."
+        />
+        <div className="relative mt-4">
+          <div className="hidden lg:block">
+            <div className="absolute left-0 right-0 top-8 h-0.5 rounded-full bg-gradient-to-r from-primary/10 via-primary/50 to-primary/10" aria-hidden />
+          </div>
+          <ol className="grid gap-5 sm:grid-cols-2 lg:grid-cols-6 lg:gap-4" role="list">
+            {processSteps.map((s, idx) => (
+              <li
+                key={s.label}
+                className="relative rounded-2xl border border-border/80 bg-white p-5 shadow-card transition hover:-translate-y-1 hover:border-primary/30 hover:shadow-glow motion-reduce:hover:translate-y-0"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/30 bg-primary/10 font-mono text-xs font-bold text-primary">
+                    {s.n}
+                  </span>
+                  {idx < processSteps.length - 1 ? (
+                    <span className="hidden font-mono text-[0.65rem] text-muted-foreground/50 lg:inline" aria-hidden>
+                      →
+                    </span>
+                  ) : null}
+                </div>
+                <h3 className="mt-4 font-display text-base font-bold text-navy-deep">{s.label}</h3>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground sm:text-sm">{s.copy}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </PageSection>
+
+      {/* 6. Impact / results (qualitative) */}
+      <PageSection variant="navy" className="relative overflow-hidden">
+        <div className="pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-primary/20 blur-[90px]" aria-hidden />
+        <SectionIntro
+          tone="onDark"
+          kicker="Impact model"
+          title={<>What changes when Klikcy owns the full stack.</>}
+          description="We do not publish inflated metrics — we engineer conditions for measurable lift: speed, clarity, discoverability, and operational leverage."
+        />
+        <ul className="relative mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-5" role="list">
+          {impactCards.map(({ title, body, icon: Icon }) => (
+            <li key={title} className="bento-tile flex flex-col">
+              <Icon className="h-5 w-5 text-primary-light" aria-hidden />
+              <h3 className="mt-4 font-display text-base font-bold text-white">{title}</h3>
+              <p className="mt-2 flex-1 text-sm leading-relaxed text-white/65">{body}</p>
+            </li>
+          ))}
+        </ul>
+      </PageSection>
+
+      {/* 7. Experience bento */}
       <PageSection>
         <SectionIntro
+          kicker="Experience"
+          title={<>Design, code, search, automation, analytics, and uptime — orchestrated.</>}
+          description="Klikcy is built for teams that want craft-level creative direction with principal-engineer execution across the entire lifecycle."
+        />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {experienceTiles.map(({ title, body, icon: Icon }) => (
+            <div
+              key={title}
+              className="relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-br from-white to-[hsl(var(--soft-bg))] p-6 shadow-card transition hover:-translate-y-1 hover:border-primary/25 hover:shadow-glow motion-reduce:hover:translate-y-0"
+            >
+              <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-primary/10 blur-2xl" aria-hidden />
+              <Icon className="relative h-6 w-6 text-primary" aria-hidden />
+              <h3 className="relative mt-4 font-display text-lg font-bold text-navy-deep">{title}</h3>
+              <p className="relative mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
+            </div>
+          ))}
+        </div>
+      </PageSection>
+
+      {/* 8. Service areas */}
+      <PageSection variant="muted">
+        <SectionIntro
           kicker="Nationwide"
-          title={<>Local SEO and service pages for every state you serve.</>}
-          description="Explore state hubs and city-level programs — built for high-intent searches and answer-engine visibility."
+          title={<>State and city programs tuned for local intent.</>}
+          description="Explore hubs for priority markets — built for high-intent local queries and answer-engine visibility."
         />
         <div className="flex flex-wrap gap-2">
           {priorityStates.map((s) => (
             <Link
               key={s.slug}
               to={`/service-areas/${s.slug}`}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-4 py-2.5 text-sm font-semibold text-navy-deep shadow-sm transition hover:border-primary/50 hover:bg-accent hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-4 py-2.5 text-sm font-semibold text-navy-deep shadow-sm transition hover:border-primary/40 hover:bg-white hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              <MapPin className="h-3.5 w-3.5 shrink-0 text-primary/80" aria-hidden />
+              <MapPin className="h-3.5 w-3.5 text-primary" aria-hidden />
               {s.name}
             </Link>
           ))}
         </div>
-        <div className="mt-8">
-          <Link
-            to="/service-areas"
-            className="inline-flex items-center gap-2 font-semibold text-primary transition hover:gap-3 focus-visible:rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            View all service areas
-            <ArrowRight className="h-4 w-4" aria-hidden />
-          </Link>
-        </div>
+        <Link
+          to="/service-areas"
+          className="mt-8 inline-flex items-center gap-2 font-bold text-primary transition hover:gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          Browse all service areas
+          <ArrowRight className="h-4 w-4" aria-hidden />
+        </Link>
       </PageSection>
 
       <HomeFaqSection items={homeFaqs} />
 
-      {/* Final CTA — purpose: single high-conversion close */}
-      <PageSection className="bg-transparent">
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/20 bg-gradient-primary px-8 py-14 text-white shadow-glow sm:px-12 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-12 lg:px-14 lg:py-16">
-          <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" aria-hidden />
-          <div className="pointer-events-none absolute -bottom-20 left-1/3 h-48 w-48 rounded-full bg-primary/30 blur-3xl" aria-hidden />
-          <div className="relative">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-white/75">Next step</span>
-            <h2 className="font-display mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-[2.35rem] lg:leading-tight">
-              Let’s plan your next digital chapter.
+      {/* 10. Final CTA */}
+      <PageSection className="bg-transparent pb-24 pt-4 sm:pb-28">
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-navy via-ink to-void px-8 py-16 text-white shadow-[0_40px_100px_-40px_hsl(184_100%_37%/0.45)] sm:px-14 lg:px-16 lg:py-20">
+          <div className="pointer-events-none absolute -right-20 top-0 h-72 w-72 rounded-full bg-primary/30 blur-[100px]" aria-hidden />
+          <div className="pointer-events-none absolute -bottom-24 left-10 h-56 w-56 rounded-full bg-primary/15 blur-[90px]" aria-hidden />
+          <div className="relative mx-auto max-w-3xl text-center">
+            <p className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.28em] text-primary-light">Let’s build</p>
+            <h2 className="font-display mt-4 text-[clamp(1.85rem,2vw+1rem,2.75rem)] font-extrabold leading-tight tracking-tight">
+              Ready for a digital system that looks, reads, and performs like a category leader?
             </h2>
-            <p className="mt-4 max-w-xl text-base leading-relaxed text-white/88 sm:text-lg">
-              Tell us about your business and goals. We’ll respond with a concise plan covering websites, SEO, AEO, and AI
-              automation — scoped for outcomes, not buzzwords.
+            <p className="mt-5 text-base leading-relaxed text-white/75 sm:text-lg">
+              Share your goals — we’ll respond with a focused plan across web, SEO/AEO, automation, and hosting. No jargon walls,
+              no mystery pricing dance.
             </p>
-          </div>
-          <div className="relative mt-10 flex flex-col gap-3 sm:flex-row lg:mt-0 lg:flex-col lg:items-stretch">
-            <Link
-              to="/contact"
-              className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-white px-8 py-3.5 text-center font-bold text-primary shadow-soft transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            >
-              Start your project
-              <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
-            </Link>
-            <Link
-              to="/about"
-              className="inline-flex min-h-[48px] items-center justify-center rounded-xl border-2 border-white/50 px-6 py-3 text-center font-semibold text-white transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            >
-              Meet the agency
-            </Link>
+            <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link to="/contact" className="btn-primary min-w-[200px] justify-center">
+                Book a strategy call
+              </Link>
+              <Link to="/about" className="btn-ghost-light min-w-[200px] justify-center">
+                Meet Klikcy
+              </Link>
+            </div>
           </div>
         </div>
       </PageSection>
