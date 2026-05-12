@@ -1,9 +1,9 @@
 import { useLayoutEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import SplitType from "split-type";
 import { ensureGsapPlugins, gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { homeHero } from "@/content/home";
 import { cn } from "@/utils/cn";
@@ -14,7 +14,7 @@ export interface HomeHeroProps {
 
 /**
  * Choreographed hero: mesh bg, SplitType headline, magnetic CTA.
- * Timeline (seconds): 0 bg · 0.1 eyebrow · 0.25 words · 0.5 sub · 0.65 CTA elastic.
+ * Timeline (seconds): 0 bg · 0.1 eyebrow · 0.25 headline · 0.5 sub · 0.65 CTA elastic.
  */
 export function HomeHero({ className }: HomeHeroProps) {
   const root = useRef<HTMLElement>(null);
@@ -24,33 +24,27 @@ export function HomeHero({ className }: HomeHeroProps) {
   const sub = useRef<HTMLParagraphElement>(null);
   const cta = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  const isMobile = useMediaQuery("(max-width: 639px)", false);
 
   useLayoutEffect(() => {
     const section = root.current;
     if (!section) return;
 
-    if (reduced) {
+    if (reduced || isMobile) {
       gsap.set([bg.current, eyebrow.current, sub.current, cta.current, h1Inner.current], { opacity: 1, y: 0, clearProps: "all" });
       return;
     }
 
     ensureGsapPlugins();
-    let split: SplitType | null = null;
     const ctx = gsap.context(() => {
-      let words: Element[] = [];
-      if (h1Inner.current) {
-        split = new SplitType(h1Inner.current, { types: "words" });
-        words = split.words ?? [];
-      }
-
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
       if (bg.current) tl.fromTo(bg.current, { opacity: 0 }, { opacity: 1, duration: 0.55 }, 0);
       if (eyebrow.current) tl.fromTo(eyebrow.current, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.45 }, 0.1);
-      if (words.length) {
+      if (h1Inner.current) {
         tl.fromTo(
-          words,
-          { opacity: 0, y: "120%" },
-          { opacity: 1, y: "0%", stagger: 0.06, duration: 0.55, ease: "power3.out" },
+          h1Inner.current,
+          { opacity: 0, y: 28 },
+          { opacity: 1, y: 0, duration: 0.62, ease: "power3.out" },
           0.25,
         );
       }
@@ -66,10 +60,9 @@ export function HomeHero({ className }: HomeHeroProps) {
     }, section);
 
     return () => {
-      split?.revert();
       ctx.revert();
     };
-  }, [reduced]);
+  }, [isMobile, reduced]);
 
   const hi = homeHero.heroImage;
 
@@ -104,7 +97,7 @@ export function HomeHero({ className }: HomeHeroProps) {
             </p>
             <h1
               id="hero-heading"
-              className="font-display mt-5 max-w-full text-balance font-extrabold leading-[var(--leading-display)] tracking-tight text-[length:var(--type-display)] text-white sm:max-w-[22ch]"
+              className="font-display mt-5 max-w-full text-balance font-extrabold leading-[0.98] tracking-tight text-[clamp(2rem,10vw,3.1rem)] text-white sm:max-w-[22ch] sm:leading-[var(--leading-display)] sm:text-[length:var(--type-display)]"
             >
               <span ref={h1Inner} className="block max-w-full [overflow-wrap:anywhere]">
                 <span className="inline-block whitespace-nowrap">{homeHero.headlineBefore}</span>{" "}
@@ -116,7 +109,7 @@ export function HomeHero({ className }: HomeHeroProps) {
             </h1>
             <p
               ref={sub}
-              className="mt-6 max-w-xl text-[length:var(--type-body-lg)] leading-[var(--leading-body)] text-white/75"
+              className="mt-6 max-w-[34ch] text-[0.98rem] leading-[1.6] text-white/75 sm:max-w-xl sm:text-[length:var(--type-body-lg)] sm:leading-[var(--leading-body)]"
             >
               {homeHero.sub}
             </p>
