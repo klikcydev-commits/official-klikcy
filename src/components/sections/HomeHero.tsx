@@ -1,0 +1,171 @@
+import { useLayoutEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import SplitType from "split-type";
+import { ensureGsapPlugins, gsap } from "@/lib/gsap";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { MagneticButton } from "@/components/ui/MagneticButton";
+import { homeHero } from "@/content/home";
+import { cn } from "@/utils/cn";
+
+export interface HomeHeroProps {
+  className?: string;
+}
+
+/**
+ * Choreographed hero: mesh bg, SplitType headline, magnetic CTA.
+ * Timeline (seconds): 0 bg · 0.1 eyebrow · 0.25 words · 0.5 sub · 0.65 CTA elastic.
+ */
+export function HomeHero({ className }: HomeHeroProps) {
+  const root = useRef<HTMLElement>(null);
+  const bg = useRef<HTMLDivElement>(null);
+  const eyebrow = useRef<HTMLParagraphElement>(null);
+  const h1Inner = useRef<HTMLSpanElement>(null);
+  const sub = useRef<HTMLParagraphElement>(null);
+  const cta = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+
+  useLayoutEffect(() => {
+    const section = root.current;
+    if (!section) return;
+
+    if (reduced) {
+      gsap.set([bg.current, eyebrow.current, sub.current, cta.current, h1Inner.current], { opacity: 1, y: 0, clearProps: "all" });
+      return;
+    }
+
+    ensureGsapPlugins();
+    let split: SplitType | null = null;
+    const ctx = gsap.context(() => {
+      let words: Element[] = [];
+      if (h1Inner.current) {
+        split = new SplitType(h1Inner.current, { types: "words" });
+        words = split.words ?? [];
+      }
+
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      if (bg.current) tl.fromTo(bg.current, { opacity: 0 }, { opacity: 1, duration: 0.55 }, 0);
+      if (eyebrow.current) tl.fromTo(eyebrow.current, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.45 }, 0.1);
+      if (words.length) {
+        tl.fromTo(
+          words,
+          { opacity: 0, y: "120%" },
+          { opacity: 1, y: "0%", stagger: 0.06, duration: 0.55, ease: "power3.out" },
+          0.25,
+        );
+      }
+      if (sub.current) tl.fromTo(sub.current, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5 }, 0.5);
+      if (cta.current) {
+        tl.fromTo(
+          cta.current,
+          { opacity: 0, scale: 0.82 },
+          { opacity: 1, scale: 1, duration: 0.58, ease: "elastic.out(1, 0.65)" },
+          0.65,
+        );
+      }
+    }, section);
+
+    return () => {
+      split?.revert();
+      ctx.revert();
+    };
+  }, [reduced]);
+
+  const hi = homeHero.heroImage;
+
+  return (
+    <section
+      ref={root}
+      className={cn(
+        "relative overflow-hidden text-white mesh-bg-layer",
+        className,
+      )}
+      aria-labelledby="hero-heading"
+    >
+      <div ref={bg} className="pointer-events-none absolute inset-0 opacity-100" aria-hidden>
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "var(--gradient-hero)",
+            opacity: 0.85,
+          }}
+        />
+        <div className="absolute inset-0 hero-grid-bg opacity-40" aria-hidden />
+      </div>
+
+      <div className="relative k-container pb-[var(--space-section-y)] pt-10 sm:pt-14 lg:pt-16">
+        <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.75fr)] lg:gap-6 xl:gap-10">
+          <div className="lg:pr-[var(--container-bleed)]">
+            <p
+              ref={eyebrow}
+              className="font-display font-bold uppercase tracking-[0.28em] text-[length:var(--type-eyebrow)] text-[hsl(var(--primary-light))]"
+            >
+              {homeHero.eyebrow}
+            </p>
+            <h1
+              id="hero-heading"
+              className="font-display mt-5 max-w-full text-balance font-extrabold leading-[var(--leading-display)] tracking-tight text-[length:var(--type-display)] text-white sm:max-w-[22ch]"
+            >
+              <span ref={h1Inner} className="block max-w-full [overflow-wrap:anywhere]">
+                <span className="inline-block whitespace-nowrap">{homeHero.headlineBefore}</span>{" "}
+                <span className="hero-accent inline-block whitespace-nowrap">
+                  {homeHero.headlineAccent}
+                </span>{" "}
+                {homeHero.headlineAfter}
+              </span>
+            </h1>
+            <p
+              ref={sub}
+              className="mt-6 max-w-xl text-[length:var(--type-body-lg)] leading-[var(--leading-body)] text-white/75"
+            >
+              {homeHero.sub}
+            </p>
+            <div ref={cta} className="mt-10 flex w-full max-w-lg flex-col gap-3 sm:flex-row sm:items-center">
+              <MagneticButton className="w-full sm:w-auto">
+                <Link
+                  to={homeHero.primaryCta.href}
+                  className="btn-primary inline-flex w-full min-h-[48px] justify-center sm:w-auto sm:min-w-[12.5rem]"
+                >
+                  {homeHero.primaryCta.label} <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
+                </Link>
+              </MagneticButton>
+              <Link
+                to={homeHero.secondaryCta.href}
+                className="btn-ghost-light inline-flex w-full min-h-[48px] justify-center sm:w-auto"
+              >
+                {homeHero.secondaryCta.label}
+              </Link>
+            </div>
+            <dl className="mt-12 grid gap-8 border-t border-white/10 pt-10 sm:grid-cols-3">
+              {homeHero.stats.map((s) => (
+                <div key={s.label}>
+                  <dt className="font-display text-[length:var(--type-label)] font-bold uppercase tracking-[0.2em] text-white/45">
+                    {s.label}
+                  </dt>
+                  <dd className="font-display mt-2 text-[length:var(--type-h3)] font-bold text-white">{s.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          <div className="relative -mr-[var(--container-bleed)] hidden min-h-[20rem] lg:block">
+            <div className="absolute -left-10 top-6 h-40 w-40 rounded-full border border-white/10 bg-white/5 blur-2xl" aria-hidden />
+            <figure className="relative ml-auto max-w-md rotate-[2deg] overflow-hidden rounded-[var(--radius-xl)] border border-white/15 shadow-[var(--shadow-elevated)]">
+              <img
+                src={hi.src}
+                width={hi.width}
+                height={hi.height}
+                alt={hi.alt}
+                fetchPriority="high"
+                decoding="async"
+                className="h-auto w-full object-cover"
+                loading="eager"
+              />
+              <figcaption className="sr-only">Atmosphere frame for the Klikcy homepage hero.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

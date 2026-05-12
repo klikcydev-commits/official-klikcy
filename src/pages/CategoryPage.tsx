@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { CategoryServiceGrid } from "@/components/category/CategoryServiceGrid";
 import { getCategory, categories } from "@/lib/categories";
 import { getServicesByCategory } from "@/lib/services";
 import { breadcrumbSchema, SITE } from "@/lib/schema";
@@ -35,21 +36,24 @@ const CategoryPage = () => {
           </div>
         </section>
 
-        <section className="section">
+        <section className="section relative">
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/25 to-transparent"
+            aria-hidden
+          />
           <div className="container-x">
-            <span className="micro-label">Services</span>
-            <h2 className="mt-3 text-3xl font-bold">{cat.name} services we deliver</h2>
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {services.map((s) => (
-                <Link key={s.slug} to={`/services/${s.slug}`} className="card-soft group block">
-                  <h3 className="text-lg font-bold">{s.name}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">{s.shortDescription}</p>
-                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary">
-                    Learn more <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                  </span>
-                </Link>
-              ))}
+            <div className="max-w-3xl">
+              <div className="flex items-center gap-4">
+                <span className="micro-label shrink-0">Services</span>
+                <span className="h-px flex-1 max-w-[6rem] bg-gradient-to-r from-primary/50 to-transparent" aria-hidden />
+              </div>
+              <h2 className="section-title mt-4 text-balance">{cat.name} services we deliver</h2>
+              <p className="section-desc mt-4 max-w-2xl text-pretty text-muted-foreground">
+                Each card is a concrete deliverable—scope, outcomes, and how we ship—so you can shortlist fast and brief
+                us with clarity.
+              </p>
             </div>
+            <CategoryServiceGrid services={services} />
           </div>
         </section>
 

@@ -11,10 +11,12 @@ interface BreadcrumbsProps {
   items: BreadcrumbItem[];
   /** Use `ink` on dark hero backgrounds for readable contrast. */
   tone?: "default" | "ink";
+  /** Horizontal shell — default `container-x`; use `k-container` to align with marketing pages. */
+  shellClassName?: string;
 }
 
-const Breadcrumbs = ({ items, tone = "default" }: BreadcrumbsProps) => (
-  <nav aria-label="Breadcrumb" className={cn("container-x", tone === "default" && "pt-6", tone === "ink" && "pt-2 pb-4")}>
+const Breadcrumbs = ({ items, tone = "default", shellClassName = "container-x" }: BreadcrumbsProps) => (
+  <nav aria-label="Breadcrumb" className={cn(shellClassName, tone === "default" && "pt-6", tone === "ink" && "pt-2 pb-4")}>
     <ol
       className={cn(
         "flex flex-wrap items-center gap-1 text-sm",

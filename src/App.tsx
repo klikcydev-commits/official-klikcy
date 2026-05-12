@@ -4,11 +4,16 @@ import { HelmetProvider } from "react-helmet-async";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeRoot } from "@/components/layout/ThemeRoot";
+import { LenisGsapProvider } from "@/components/layout/LenisGsapProvider";
+import { CustomCursor } from "@/components/layout/CustomCursor";
+import { PageTransition } from "@/components/layout/PageTransition";
 import Index from "./pages/Index.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import ServicePage from "./pages/ServicePage.tsx";
 import CategoryPage from "./pages/CategoryPage.tsx";
+import AllServicesPage from "./pages/AllServicesPage.tsx";
 import StatePage from "./pages/StatePage.tsx";
 import ServiceAreas from "./pages/ServiceAreas.tsx";
 import ServiceStatePage from "./pages/ServiceStatePage.tsx";
@@ -18,28 +23,43 @@ import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
 
+function RoutedShell() {
+  return (
+    <>
+      <PageTransition />
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/services/:slug" element={<ServicePage />} />
+        <Route path="/categories/:slug" element={<CategoryPage />} />
+        <Route path="/all-services" element={<AllServicesPage />} />
+        <Route path="/service-areas" element={<ServiceAreas />} />
+        <Route path="/service-areas/:slug" element={<StatePage />} />
+        <Route path="/service-areas/:state/:city" element={<CityPage />} />
+        <Route path="/:service/:state" element={<ServiceStatePage />} />
+        <Route path="/:service/:state/:city" element={<ServiceCityPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
+  );
+}
+
 const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/services/:slug" element={<ServicePage />} />
-            <Route path="/categories/:slug" element={<CategoryPage />} />
-            <Route path="/service-areas" element={<ServiceAreas />} />
-            <Route path="/service-areas/:slug" element={<StatePage />} />
-            <Route path="/service-areas/:state/:city" element={<CityPage />} />
-            <Route path="/:service/:state" element={<ServiceStatePage />} />
-            <Route path="/:service/:state/:city" element={<ServiceCityPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <ThemeRoot>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <LenisGsapProvider>
+              <CustomCursor />
+              <RoutedShell />
+            </LenisGsapProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeRoot>
     </QueryClientProvider>
   </HelmetProvider>
 );

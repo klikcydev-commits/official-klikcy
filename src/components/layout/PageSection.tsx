@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 type SectionVariant = "default" | "muted" | "ink" | "navy";
 
@@ -17,11 +17,11 @@ interface PageSectionProps {
   children: React.ReactNode;
 }
 
-/** // Design token: see src/index.css — consistent vertical rhythm and container width. */
+/** Design token: see `src/styles/globals.css` + `src/index.css` — vertical rhythm and container width. */
 export function PageSection({ id, variant = "default", className, innerClassName, children }: PageSectionProps) {
   return (
     <section id={id} className={cn(shell[variant], className)}>
-      <div className={cn("container-x section", innerClassName)}>{children}</div>
+      <div className={cn(innerClassName ?? "container-x section")}>{children}</div>
     </section>
   );
 }

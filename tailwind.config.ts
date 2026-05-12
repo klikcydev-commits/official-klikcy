@@ -1,15 +1,15 @@
 import type { Config } from "tailwindcss";
 
 export default {
-  darkMode: ["class"],
+  darkMode: ["selector", '[data-theme="dark"]'],
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
   theme: {
     container: { center: true, padding: "1.5rem", screens: { "2xl": "1280px" } },
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        display: ['"Plus Jakarta Sans"', "Inter", "system-ui", "sans-serif"],
+        sans: ["var(--font-body)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

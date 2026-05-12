@@ -1,0 +1,102 @@
+---
+description: Documents the Klikcy “Signal Mesh” Awwwards-grade redesign — tokens, motion, architecture, and extension rules for this repo (Vite + React + TS + Tailwind).
+globs:
+  - "src/**/*.tsx"
+  - "src/**/*.ts"
+  - "src/**/*.css"
+alwaysApply: false
+---
+
+# Klikcy — Awwwards Rank #1 Design System (Shipped)
+
+This rule replaces prior generic “award-winning” guidance for **this codebase only**. It records what is implemented so future edits stay coherent.
+
+## Visual concept (one sentence)
+
+**“Signal Mesh”** — a near-black editorial canvas where cyan/teal gradients read as live signal on a grain-textured mesh, Syne headlines feel like instrumentation, and motion choreographs attention without obscuring the offer.
+
+## Color & theme tokens
+
+- **Light & dark** use semantic HSL variables in `:root` and `html[data-theme="dark"]` (mirrored with `html.dark` for Tailwind `dark:`). Source of truth: `src/styles/globals.css`.
+- **Brand hues** stay within teal/cyan + navy (primary / ink / void) — max three chromatic families plus neutrals.
+- **Mesh layers** use `--c-mesh-1`, `--c-mesh-2`, `--c-mesh-3` radial stacks on `--ink` base (see `.mesh-bg-layer`).
+- **Grain** is a fixed full-viewport `body::after` SVG turbulence overlay (`--grain-opacity`).
+
+Toggle theme via `ThemeRoot` / `applyTheme()` — never set colors ad hoc in JSX.
+
+## Typography
+
+- **Display:** Syne Variable (`@fontsource-variable/syne`) — `var(--font-display)`.
+- **Body:** DM Sans 400/500/700 (`@fontsource/dm-sans/*`) — `var(--font-body)`.
+- **Scale:** All fluid sizes use `clamp()` custom properties: `--type-display`, `--type-h1`, `--type-h2`, `--type-h3`, `--type-body`, `--type-body-lg`, `--type-label`, `--type-eyebrow`.
+- **Utility:** `font-display` class maps to Syne; Tailwind `font-sans` / `font-display` in `tailwind.config.ts` bind to the same CSS variables.
+
+## Layout primitives
+
+- **`k-container`** — max width `var(--container-max)` + `var(--space-gutter)` horizontal padding (`globals.css`).
+- **`container-x`** — legacy shadcn layout width; `PageSection` defaults to `innerClassName ?? "container-x section"`. Override with `innerClassName="k-container section"` when aligning to the new marketing grid.
+- **Asymmetry** — homepage intentionally alternates split grids, sticky side columns, negative horizontal translation (`lg:-translate-x-[var(--container-bleed)]`), and full-bleed hero imagery.
+
+## Motion & libraries
+
+- **Lenis + GSAP:** `LenisGsapProvider` (`src/components/layout/LenisGsapProvider.tsx`) instantiates Lenis, proxies `document.documentElement` for `ScrollTrigger`, and drives `lenis.raf` on `gsap.ticker`. Disabled entirely when `prefers-reduced-motion: reduce`.
+- **ScrollTrigger:** Registered once in `src/lib/gsap.ts` via `ensureGsapPlugins()`.
+- **Hero timeline:** `HomeHero` uses `gsap.context` + **SplitType** character stagger, timed to: background → eyebrow (0.1s) → chars (0.25s) → subcopy (0.5s) → CTA elastic (0.65s). Cleanup calls `split.revert()` + `ctx.revert()`.
+- **Staggered reveals:** `StaggerReveal` animates `[data-reveal-item]` children on first enter (default 80ms stagger).
+- **Count-up:** `HomeStatsRow` animates integers with `gsap.to` + `ScrollTrigger` `once: true`.
+- **Pinned narrative:** `HomePinnedChapter` uses **CSS `position: sticky`** + scrubbed GSAP on the headline (no GSAP `pin` — fewer Lenis conflicts).
+- **Magnetic CTA:** `MagneticButton` wraps primary hero CTA; uses GSAP `to` on pointer move (fine pointer only).
+- **Tilt cards:** `TiltCard` applies perspective rotate from pointer (fine pointer only).
+- **Scramble nav:** `ScrambleLink` randomises label characters on hover/focus (`DesktopScrambleNav`).
+- **Custom cursor:** `CustomCursor` — dot + lerped ring; disabled on coarse pointers and reduced motion.
+- **Route wipe:** `PageTransition` scales a fixed overlay on `location.pathname` change (skipped on first paint / reduced motion).
+
+**Rule:** any new GSAP work must run inside `gsap.context(() => { ... }, scopeRef)` and revert on unmount.
+
+## Performance
+
+- **Fonts:** Self-hosted via Fontsource; no Google Fonts `<link>` in `index.html`.
+- **Hero image:** WebP at `public/hero-klikcy.webp` with `<link rel="preload">` in `index.html` and `fetchPriority="high"` on the `<img>`.
+- **Below-fold images:** always `loading="lazy"` when added.
+- **Bundle:** GSAP + Lenis + SplitType ship in the main chunk (~730kB gzipped ~227kB) — acceptable for this marketing SPA; split further with `import()` only when a route truly isolates heavy motion.
+
+## Content layer
+
+- Marketing copy for the homepage lives in `src/content/home.ts` (including `homeFaqs`).
+- `src/lib/home-content.ts` re-exports `homeFaqs` for JSON-LD and legacy imports.
+
+## Component architecture
+
+```
+src/components/
+  animations/   ScrambleLink, StaggerReveal
+  layout/       LenisGsapProvider, ThemeRoot, ThemeToggle, CustomCursor, PageTransition, PageSection
+  sections/     HomeHero, HomePinnedChapter, HomeStatsRow
+  service/      ServiceHero, ServiceStateHubs, ServiceMetroCities
+  ui/           MagneticButton, TiltCard (+ existing shadcn primitives)
+src/content/    home.ts (page copy)
+src/hooks/      useReducedMotion, useMediaQuery, useMousePosition
+src/lib/        gsap.ts (plugin registration)
+src/styles/     globals.css (design tokens + grain + cursor + page transition)
+src/utils/      cn.ts, math.ts, device.ts
+```
+
+## Accessibility
+
+- One **h1** on the homepage (`HomeHero`).
+- Skip link retained in `Header`.
+- Enhanced `:focus-visible` in `globals.css`.
+- Mobile navigation is a **full-screen overlay** with **no accordion** (flat scroll + grouped links).
+- Respect `prefers-reduced-motion` for Lenis, cursor, and GSAP-driven sections.
+
+## Extending consistently
+
+1. Add copy to `src/content/home.ts` (or a new file under `src/content/`), not inside presentation components.
+2. Add or adjust CSS variables in `globals.css`; avoid raw hex in TSX except for one-off SVG data-URLs.
+3. New animated section: wrap in a ref-scoped `gsap.context`, prefer `ScrollTrigger` `once: true` unless scrub is part of the concept.
+4. Use `cn()` from `src/utils/cn.ts` (also re-exported as `@/lib/utils`).
+5. After layout-affecting changes with Lenis, call `ScrollTrigger.refresh()` if triggers misalign.
+
+## Related checklist
+
+See `_zip_extract/awwwards-rank1-checklist.md` (from the reference ZIP) for pre-submission QA against jury categories.
