@@ -70,7 +70,7 @@ export function HomeHero({ className }: HomeHeroProps) {
     <section
       ref={root}
       className={cn(
-        "relative overflow-hidden text-white mesh-bg-layer",
+        "surface-dark relative overflow-hidden text-white mesh-bg-layer",
         className,
       )}
       aria-labelledby="hero-heading"

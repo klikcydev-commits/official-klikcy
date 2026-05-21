@@ -1,64 +1,279 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, Target, Globe2, Zap } from "lucide-react";
+import {
+  ArrowRight,
+  Bot,
+  CheckCircle2,
+  Cloud,
+  Code2,
+  MapPin,
+  Palette,
+  Search,
+  Shield,
+  ShoppingBag,
+  Smartphone,
+  Sparkles,
+  Target,
+} from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { orgSchema, breadcrumbSchema, SITE } from "@/lib/schema";
+import { PageSection, SectionIntro } from "@/components/layout/PageSection";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { getAboutSeo } from "@/lib/seo";
+import {
+  aboutCta,
+  aboutDifferentiators,
+  aboutFaqs,
+  aboutHero,
+  aboutIndustries,
+  aboutLocations,
+  aboutProcessSteps,
+  aboutSeoPhilosophy,
+  aboutServiceCards,
+  aboutTechStacks,
+  aboutTrust,
+  aboutWhoWeAre,
+} from "@/content/about";
+import { faqSchema } from "@/lib/schema";
 
-const values = [
-  { icon: Sparkles, t: "Premium craft", d: "We design and build with care — no template clutter, no AI-generated mediocrity." },
-  { icon: Target, t: "Outcomes over output", d: "We measure work in rankings, conversions and pipeline — not deliverables." },
-  { icon: Globe2, t: "Remote-first, U.S.-wide", d: "We serve businesses in all 50 states with a senior team and async delivery." },
-  { icon: Zap, t: "AI-native delivery", d: "We use AI internally to ship faster — and embed AI workflows into client systems." },
-];
+const diffIcons = [Code2, Search, Shield, MapPin] as const;
+const serviceIcons = [Code2, ShoppingBag, Smartphone, Cloud, Bot, Palette] as const;
+
+const aboutSeo = getAboutSeo();
 
 const About = () => (
   <>
     <SEO
-      title="About Klikcy — Digital Agency for the United States"
-      description="Klikcy is a remote-first digital agency building websites, SEO/AEO systems, AI automations and e-commerce platforms for U.S. businesses."
-      canonical={`${SITE.url}/about`}
-      jsonLd={[orgSchema(), breadcrumbSchema([{ name: "Home", url: SITE.url }, { name: "About", url: `${SITE.url}/about` }])]}
+      title={aboutSeo.title}
+      description={aboutSeo.description}
+      keywords={aboutSeo.keywords}
+      canonical={aboutSeo.canonical}
+      robots={aboutSeo.robots}
+      ogImage={aboutSeo.ogImage}
+      jsonLd={[...(aboutSeo.jsonLd ?? []), faqSchema(aboutFaqs)]}
     />
     <Header />
     <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "About" }]} />
-    <main>
+    <main id="main-content">
       <section className="bg-gradient-hero">
         <div className="container-x py-14 sm:py-20">
-          <span className="micro-label">About Klikcy</span>
-          <h1 className="mt-3 max-w-3xl text-4xl font-extrabold sm:text-5xl">A digital agency built for modern growth.</h1>
-          <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-            Klikcy is a remote-first agency partnering with U.S. businesses to ship websites, SEO and AEO systems, AI automations and e-commerce platforms — engineered for speed, search visibility and conversion.
-          </p>
+          <span className="micro-label">{aboutHero.kicker}</span>
+          <h1 className="mt-3 max-w-3xl text-4xl font-extrabold sm:text-5xl">{aboutHero.title}</h1>
+          <p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted-foreground">{aboutHero.lead}</p>
         </div>
       </section>
 
-      <section className="section">
-        <div className="container-x grid gap-10 lg:grid-cols-2 lg:items-center">
+      <PageSection>
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
           <div className="prose-klikcy">
-            <h2>Our story</h2>
-            <p>Klikcy was founded to solve a recurring problem: businesses pay agencies for "websites" and "SEO" but rarely receive systems that compound into real growth. We built Klikcy as the alternative — a small, senior team that engineers websites, SEO/AEO and AI automations as one connected stack.</p>
-            <h2>How we work</h2>
-            <p>Every engagement starts with a discovery sprint. We map goals, audience, technical context and growth levers — then design and ship in tight cycles with frequent client visibility. We're remote-first by design, which means we hire senior practitioners across the country instead of staffing offices.</p>
+            <h2>{aboutWhoWeAre.title}</h2>
+            <p>{aboutWhoWeAre.body}</p>
+            <p>
+              Klikcy was founded to solve a recurring problem: businesses pay agencies for websites and SEO but rarely
+              receive systems that compound into real growth. We engineer websites, SEO/AEO, and AI automations as one
+              connected stack—with senior practitioners, async delivery, and measurable outcomes.
+            </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            {values.map((v) => (
-              <div key={v.t} className="card-soft">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-primary text-white"><v.icon className="h-5 w-5" /></div>
-                <h3 className="mt-4 text-lg font-bold">{v.t}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{v.d}</p>
-              </div>
-            ))}
+            {aboutDifferentiators.map((d, i) => {
+              const Icon = diffIcons[i] ?? Sparkles;
+              return (
+                <div key={d.title} className="card-soft">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-primary text-white">
+                    <Icon className="h-5 w-5" aria-hidden />
+                  </div>
+                  <h3 className="mt-4 text-lg font-bold">{d.title}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{d.description}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
-      </section>
+      </PageSection>
 
-      <section className="section bg-gradient-primary">
+      <PageSection variant="muted">
+        <SectionIntro
+          kicker="What we do"
+          title={<>Comprehensive digital solutions tailored to your business.</>}
+          description="From custom websites and commerce to mobile apps, SaaS, AI automations, and design — each practice ships with SEO, analytics, and conversion discipline."
+        />
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {aboutServiceCards.map((s, i) => {
+            const Icon = serviceIcons[i] ?? Code2;
+            return (
+              <article key={s.title} className="card-soft flex h-full flex-col">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-primary text-white">
+                  <Icon className="h-5 w-5" aria-hidden />
+                </div>
+                <h3 className="mt-4 text-lg font-bold">{s.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.description}</p>
+                <ul className="mt-4 flex-1 space-y-2" role="list">
+                  {s.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-sm text-foreground/85">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to={s.href}
+                  className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary transition hover:gap-3"
+                >
+                  Explore <ArrowRight className="h-4 w-4" aria-hidden />
+                </Link>
+              </article>
+            );
+          })}
+        </div>
+      </PageSection>
+
+      <PageSection>
+        <SectionIntro
+          kicker="How we work"
+          title={<>Discovery → IA/UX → build → QA → launch → optimize.</>}
+          description="A transparent cadence so stakeholders see progress weekly — not as a black box."
+        />
+        <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list">
+          {aboutProcessSteps.map((step) => (
+            <li
+              key={step.step}
+              className="rounded-[var(--radius-lg)] border border-border bg-card p-5 shadow-card"
+            >
+              <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-primary">{step.step}</span>
+              <h3 className="mt-3 font-display text-lg font-bold">{step.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.description}</p>
+            </li>
+          ))}
+        </ol>
+      </PageSection>
+
+      <PageSection variant="muted">
+        <SectionIntro kicker="Technology" title={<>Platforms and tools we ship with every day.</>} align="center" />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {aboutTechStacks.map((stack) => (
+            <div key={stack.label} className="rounded-[var(--radius-lg)] border border-border bg-card p-5">
+              <p className="font-display text-xs font-bold uppercase tracking-[0.2em] text-primary">{stack.label}</p>
+              <ul className="mt-3 space-y-1.5 text-sm text-muted-foreground" role="list">
+                {stack.items.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </PageSection>
+
+      <PageSection>
+        <div className="grid gap-10 lg:grid-cols-2">
+          <div>
+            <SectionIntro
+              kicker="Nationwide reach"
+              title={<>Where we operate</>}
+              description="Klikcy supports organizations across the United States with nationwide reach and local relevance."
+              align="left"
+            />
+            <div className="flex flex-wrap gap-2">
+              {aboutLocations.map((loc) => (
+                <span
+                  key={loc}
+                  className="rounded-full border border-border bg-[hsl(var(--soft-bg))] px-3 py-1.5 text-xs font-semibold text-foreground/80"
+                >
+                  {loc}
+                </span>
+              ))}
+            </div>
+            <Link
+              to="/service-areas"
+              className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-primary transition hover:gap-3"
+            >
+              Browse all service areas <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </div>
+          <div>
+            <SectionIntro kicker="Industries" title={<>Who we build for</>} align="left" />
+            <ul className="space-y-2" role="list">
+              {aboutIndustries.map((ind) => (
+                <li key={ind} className="flex items-center gap-2 text-[length:var(--type-body)] text-foreground/90">
+                  <Target className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+                  {ind}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </PageSection>
+
+      <PageSection variant="muted">
+        <div className="grid gap-10 lg:grid-cols-2">
+          <div>
+            <h2 className="font-display text-2xl font-bold">Our SEO philosophy</h2>
+            <ul className="mt-4 space-y-3" role="list">
+              {aboutSeoPhilosophy.seo.map((item) => (
+                <li key={item} className="flex gap-3 text-sm leading-relaxed text-muted-foreground">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+                  <span className="text-foreground/90">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h2 className="font-display text-2xl font-bold">Our CRO philosophy</h2>
+            <ul className="mt-4 space-y-3" role="list">
+              {aboutSeoPhilosophy.cro.map((item) => (
+                <li key={item} className="flex gap-3 text-sm leading-relaxed text-muted-foreground">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+                  <span className="text-foreground/90">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </PageSection>
+
+      <PageSection>
+        <SectionIntro kicker="Trust" title={<>Accessibility, security & privacy</>} align="center" />
+        <div className="grid gap-5 md:grid-cols-3">
+          {aboutTrust.map((t) => (
+            <div key={t.title} className="card-soft">
+              <h3 className="text-lg font-bold">{t.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{t.body}</p>
+            </div>
+          ))}
+        </div>
+      </PageSection>
+
+      <PageSection variant="muted" id="faq">
+        <SectionIntro
+          align="center"
+          kicker="Questions"
+          title={<>Straight answers before you reach out.</>}
+          description="Common questions about how Klikcy works with teams across the U.S."
+        />
+        <Accordion type="single" collapsible className="mx-auto w-full max-w-3xl rounded-2xl border border-border bg-card px-2 shadow-card sm:px-4">
+          {aboutFaqs.map((f, i) => (
+            <AccordionItem key={f.q} value={`about-faq-${i}`} className="border-border px-2 sm:px-3">
+              <AccordionTrigger className="py-5 text-left text-[0.95rem] font-semibold leading-snug text-navy-deep hover:no-underline sm:text-base">
+                {f.q}
+              </AccordionTrigger>
+              <AccordionContent className="pb-5 text-sm leading-relaxed text-muted-foreground sm:text-[0.9375rem]">
+                {f.a}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </PageSection>
+
+      <section className="surface-dark section bg-gradient-primary text-white">
         <div className="container-x text-center text-white">
-          <h2 className="text-3xl font-extrabold text-white sm:text-4xl">Let's plan your next chapter.</h2>
-          <p className="mx-auto mt-3 max-w-xl text-white/85">A 30-minute call is the fastest way to see if Klikcy is the right partner for your business.</p>
-          <Link to="/contact" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 font-semibold text-primary">Request a Strategy Call <ArrowRight className="h-4 w-4" /></Link>
+          <h2 className="text-3xl font-extrabold text-white sm:text-4xl">{aboutCta.title}</h2>
+          <p className="mx-auto mt-3 max-w-xl text-white/85">{aboutCta.description}</p>
+          <Link
+            to="/contact"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 font-semibold text-primary"
+          >
+            Request a strategy call <ArrowRight className="h-4 w-4" aria-hidden />
+          </Link>
         </div>
       </section>
     </main>

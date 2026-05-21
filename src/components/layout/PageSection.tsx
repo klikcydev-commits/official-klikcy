@@ -5,8 +5,8 @@ type SectionVariant = "default" | "muted" | "ink" | "navy";
 const shell: Record<SectionVariant, string> = {
   default: "bg-background",
   muted: "bg-[hsl(var(--soft-bg))]",
-  ink: "bg-ink text-white",
-  navy: "bg-navy text-white",
+  ink: "surface-dark bg-ink text-white",
+  navy: "surface-dark bg-navy text-white",
 };
 
 interface PageSectionProps {

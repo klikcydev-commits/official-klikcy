@@ -4,17 +4,21 @@ import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { states } from "@/lib/states";
-import { breadcrumbSchema, SITE } from "@/lib/schema";
+import { getServiceAreasSeo } from "@/lib/seo";
 
 const regions = ["Northeast", "Midwest", "South", "West"] as const;
+const serviceAreasSeo = getServiceAreasSeo();
 
 const ServiceAreas = () => (
   <>
     <SEO
-      title="Service Areas — Klikcy Across the United States"
-      description="Klikcy serves businesses in all 50 U.S. states + Washington DC. Explore digital agency services by state and city."
-      canonical={`${SITE.url}/service-areas`}
-      jsonLd={[breadcrumbSchema([{ name: "Home", url: SITE.url }, { name: "Service Areas", url: `${SITE.url}/service-areas` }])]}
+      title={serviceAreasSeo.title}
+      description={serviceAreasSeo.description}
+      keywords={serviceAreasSeo.keywords}
+      canonical={serviceAreasSeo.canonical}
+      robots={serviceAreasSeo.robots}
+      ogImage={serviceAreasSeo.ogImage}
+      jsonLd={serviceAreasSeo.jsonLd}
     />
     <Header />
     <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Service Areas" }]} />

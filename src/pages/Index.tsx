@@ -31,10 +31,10 @@ import { StaggerReveal } from "@/components/animations/StaggerReveal";
 import { TiltCard } from "@/components/ui/TiltCard";
 import { SplitText } from "@/components/motion/SplitText";
 import { FadeUp } from "@/components/motion/FadeUp";
-import { MagneticButton } from "@/components/motion/MagneticButton";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 import { categories } from "@/lib/categories";
 import { priorityStates } from "@/lib/states";
-import { orgSchema, websiteSchema, faqSchema } from "@/lib/schema";
+import { getHomeSeo } from "@/lib/seo";
 import {
   credibilityStrip,
   experienceTiles,
@@ -73,13 +73,18 @@ function iconFor(key: string): LucideIcon {
   return tileIcons[key] ?? Code2;
 }
 
+const homeSeo = getHomeSeo(homeFaqs);
+
 const Index = () => (
   <>
     <SEO
-      title="Klikcy — Websites, SEO, AEO & AI Automation Agency"
-      description="Klikcy builds scalable websites, SEO/AEO systems, AI automations and e-commerce platforms for businesses across the United States."
-      canonical="https://klikcy.com/"
-      jsonLd={[orgSchema(), websiteSchema(), faqSchema(homeFaqs)]}
+      title={homeSeo.title}
+      description={homeSeo.description}
+      keywords={homeSeo.keywords}
+      canonical={homeSeo.canonical}
+      robots={homeSeo.robots}
+      ogImage={homeSeo.ogImage}
+      jsonLd={homeSeo.jsonLd}
     />
     <Header />
     <main id="main-content" className="bg-background">
@@ -307,12 +312,12 @@ const Index = () => (
 
       <PageSection className="bg-transparent pb-[var(--space-section-y-lg)] pt-4">
         <div className="k-container">
-          <div className="relative overflow-hidden rounded-[var(--radius-xl)] border border-white/10 bg-gradient-to-br from-navy via-ink to-void px-8 py-16 text-white shadow-[0_40px_100px_-40px_hsl(184_100%_37%/0.45)] sm:px-14 lg:px-16 lg:py-20">
+          <div className="surface-dark relative overflow-hidden rounded-[var(--radius-xl)] border border-white/10 bg-gradient-to-br from-navy via-ink to-void px-8 py-16 text-white shadow-[0_40px_100px_-40px_hsl(184_100%_37%/0.45)] sm:px-14 lg:px-16 lg:py-20">
             <div className="pointer-events-none absolute -right-[10%] top-0 h-72 w-72 rounded-full bg-primary/30 blur-[100px]" aria-hidden />
             <div className="pointer-events-none absolute -bottom-24 left-10 h-56 w-56 rounded-full bg-primary/15 blur-[90px]" aria-hidden />
             <div className="relative mx-auto max-w-3xl text-left sm:text-center">
               <p className="font-display text-[length:var(--type-eyebrow)] font-bold uppercase tracking-[0.28em] text-primary-light">Let’s build</p>
-              <h2 className="font-display mt-4 text-[length:var(--type-h2)] font-extrabold leading-[var(--leading-tight)] tracking-tight">
+              <h2 className="font-display mt-4 text-[length:var(--type-h2)] font-extrabold leading-[var(--leading-tight)] tracking-tight text-white">
                 Ready for a digital system that looks, reads, and performs like a category leader?
               </h2>
               <p className="mt-5 text-[length:var(--type-body-lg)] leading-[var(--leading-body)] text-white/75">

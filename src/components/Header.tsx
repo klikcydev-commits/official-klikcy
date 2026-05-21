@@ -7,7 +7,7 @@ import { getAllServicesNavCategories, getPrimaryNavCategories, isAllServicesSect
 import { getService, getServicesByCategory } from "@/lib/services";
 import { cn } from "@/utils/cn";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { MagneticButton } from "@/components/motion/MagneticButton";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 import { ScrambleText } from "@/components/motion/ScrambleText";
 
 /** Light bar — editorial sans, generous spacing (reference layout); tokens: `src/styles/globals.css` */

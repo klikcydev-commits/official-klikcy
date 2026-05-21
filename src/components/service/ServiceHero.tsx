@@ -25,7 +25,7 @@ export function ServiceHero({
   breadcrumbs,
 }: ServiceHeroProps) {
   return (
-    <section className="relative overflow-hidden text-white mesh-bg-layer" aria-labelledby="service-hero-heading">
+    <section className="surface-dark relative overflow-hidden text-white mesh-bg-layer" aria-labelledby="service-hero-heading">
       <div className="pointer-events-none absolute inset-0 opacity-90" aria-hidden>
         <div className="absolute inset-0" style={{ backgroundImage: "var(--gradient-hero)" }} />
         <div className="absolute inset-0 hero-grid-bg opacity-35" aria-hidden />

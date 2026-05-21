@@ -7,7 +7,7 @@ const Footer = () => {
   const nestedCategories = getAllServicesNavCategories();
 
   return (
-    <footer className="relative border-t border-white/10 bg-void text-white">
+    <footer className="surface-dark relative border-t border-white/10 bg-void text-white">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" aria-hidden />
       <div className="pointer-events-none absolute -left-40 top-20 h-72 w-72 rounded-full bg-primary/15 blur-[100px]" aria-hidden />
 

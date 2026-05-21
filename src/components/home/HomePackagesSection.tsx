@@ -50,7 +50,7 @@ export function HomePackagesSection() {
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className={`package-card__eyebrow ${plan.popular ? "text-primary" : "text-primary-light"}`}>Package</p>
+                  <p className="package-card__eyebrow text-white/70">Package</p>
                   <h3 className="mt-3 font-display text-[length:var(--type-h3)] font-bold tracking-tight text-white">
                     {plan.title}
                   </h3>

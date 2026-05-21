@@ -1,0 +1,75 @@
+---
+description: Safe dependency and dead-code cleanup using docs/npm-packages-and-tools.md as source of truth
+globs:
+  - package.json
+  - package-lock.json
+  - src/**/*
+  - docs/npm-packages-and-tools.md
+---
+
+# UNUSED PACKAGE AND DEAD CODE CLEANUP
+
+Also remove unused packages, unused files, unused components, unused imports, and dead code — but only when it is safe.
+
+Use `docs/npm-packages-and-tools.md` as the dependency audit source of truth. It already identifies core packages, scaffolded UI packages, and packages that may be removable only after verification. Do not guess.
+
+Important:
+
+- Do NOT remove anything blindly.
+- Do NOT remove Radix/shadcn packages unless the related unused UI component files are also removed.
+- Do NOT remove config/build packages like PostCSS, Autoprefixer, Tailwind, Vite, TypeScript, ESLint, Vitest, or React types.
+- Do NOT remove packages used indirectly by config files or scripts.
+- Do NOT remove anything that breaks build, lint, tests, routes, SEO, sitemap generation, contact API, or UI.
+
+Start by running or checking:
+
+```bash
+npm run lint
+npm run build
+npm run test
+npm ls
+npx depcheck
+```
+
+If `depcheck` reports false positives, document them instead of removing them.
+
+## Core packages that must stay
+
+react, react-dom, react-router-dom, react-helmet-async, vite, typescript, tailwindcss, zod, express, nodemailer, dotenv, cors, gsap, @gsap/react, lenis, split-type, lucide-react, sonner, clsx, tailwind-merge, class-variance-authority
+
+## Potentially removable after verification
+
+- `@hookform/resolvers`
+- `date-fns` (direct dep only; may remain transitive via react-day-picker)
+- `@testing-library/react`
+
+## Check before removing
+
+- `@tanstack/react-query` — provider without useQuery/useMutation
+- `next-themes` — replace with ThemeRoot in Sonner before removal
+- Dual toast (Radix + Sonner) — standardize on Sonner for app toasts
+- Unused motion files (CountUp, ParallaxLayer, SmoothScrollProvider, duplicate MagneticButton)
+- Unused shadcn UI scaffold — do not remove Radix packages unless UI files are deleted
+
+## Do NOT remove
+
+SEO metadata generators, schema helpers, sitemap scripts, robots.txt, priority market data, service/state/city data, contact API validation, security middleware, environment examples, README, deployment/security/SEO docs.
+
+## After every removal
+
+1. Confirm no direct imports and no config usage.
+2. Run: `npm install`, `npm run lint`, `npm run build`, `npm run test`
+3. Update `docs/npm-packages-and-tools.md` and README dependency summary.
+
+## Final validation
+
+```bash
+npm install
+npm run lint
+npm run build
+npm run test
+npm run sitemap:generate
+npm run sitemap:split
+npm run seo:validate
+npm audit
+```

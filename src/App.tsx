@@ -1,8 +1,6 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeRoot } from "@/components/layout/ThemeRoot";
 import { LenisGsapProvider } from "@/components/layout/LenisGsapProvider";
@@ -20,8 +18,6 @@ import ServiceStatePage from "./pages/ServiceStatePage.tsx";
 import CityPage from "./pages/CityPage.tsx";
 import ServiceCityPage from "./pages/ServiceCityPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
-
-const queryClient = new QueryClient();
 
 function RoutedShell() {
   return (
@@ -47,20 +43,17 @@ function RoutedShell() {
 
 const App = () => (
   <HelmetProvider>
-    <QueryClientProvider client={queryClient}>
-      <ThemeRoot>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <LenisGsapProvider>
-              <CustomCursor />
-              <RoutedShell />
-            </LenisGsapProvider>
-          </BrowserRouter>
-        </TooltipProvider>
-      </ThemeRoot>
-    </QueryClientProvider>
+    <ThemeRoot>
+      <TooltipProvider>
+        <Sonner />
+        <BrowserRouter>
+          <LenisGsapProvider>
+            <CustomCursor />
+            <RoutedShell />
+          </LenisGsapProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeRoot>
   </HelmetProvider>
 );
 

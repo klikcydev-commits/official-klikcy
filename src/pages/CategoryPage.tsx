@@ -7,22 +7,25 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { CategoryServiceGrid } from "@/components/category/CategoryServiceGrid";
 import { getCategory, categories } from "@/lib/categories";
 import { getServicesByCategory } from "@/lib/services";
-import { breadcrumbSchema, SITE } from "@/lib/schema";
+import { getCategorySeo } from "@/lib/seo";
 
 const CategoryPage = () => {
   const { slug = "" } = useParams();
   const cat = getCategory(slug);
   if (!cat) return <Navigate to="/404" replace />;
   const services = getServicesByCategory(cat.slug);
-  const url = `${SITE.url}/categories/${cat.slug}`;
+  const seo = getCategorySeo(cat);
 
   return (
     <>
       <SEO
-        title={`${cat.name} Services | Klikcy`}
-        description={`${cat.description} Klikcy delivers ${cat.name.toLowerCase()} for businesses across the United States.`}
-        canonical={url}
-        jsonLd={[breadcrumbSchema([{ name: "Home", url: SITE.url }, { name: cat.name, url }])]}
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonical={seo.canonical}
+        robots={seo.robots}
+        ogImage={seo.ogImage}
+        jsonLd={seo.jsonLd}
       />
       <Header />
       <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: cat.name }]} />

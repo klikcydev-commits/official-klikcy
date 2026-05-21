@@ -6,8 +6,9 @@ import SEO from "@/components/SEO";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getService } from "@/lib/services";
 import { getState } from "@/lib/states";
-import { serviceSchema, faqSchema, breadcrumbSchema, SITE } from "@/lib/schema";
 import { buildServiceStateContent } from "@/lib/content";
+import { buildGeoAeoFaqs, mergeFaqs } from "@/lib/metadata";
+import { getServiceStateSeo } from "@/lib/seo";
 import { getCitiesForState } from "@/lib/cities";
 
 const ServiceStatePage = () => {
@@ -16,32 +17,20 @@ const ServiceStatePage = () => {
   const state = getState(stateSlug);
   if (!service || !state) return <Navigate to="/404" replace />;
 
-  const url = `${SITE.url}/${service.slug}/${state.slug}`;
   const sections = buildServiceStateContent(service, state);
-  const title = `${service.name} in ${state.name} | Klikcy`;
-  const description = `${service.name} for ${state.name} businesses. ${service.shortDescription} Klikcy serves ${state.cities.slice(0, 3).join(", ")} and every ${state.name} city.`;
-
-  const faqs = [
-    { q: `Do you offer ${service.name.toLowerCase()} in ${state.name}?`, a: `Yes — Klikcy delivers ${service.name.toLowerCase()} for businesses across ${state.name}, including ${state.cities.slice(0, 4).join(", ")} and every other city.` },
-    { q: `How does Klikcy work with ${state.name} clients remotely?`, a: `We run discovery, design and delivery over video and async tools. ${state.name} clients get the same quality and timelines as on-site engagements, without travel overhead.` },
-    ...service.faqs.slice(0, 3),
-  ];
+  const seo = getServiceStateSeo(service, state);
+  const faqs = mergeFaqs(service.faqs, buildGeoAeoFaqs(service, { state }), 8);
 
   return (
     <>
       <SEO
-        title={title}
-        description={description}
-        canonical={url}
-        jsonLd={[
-          serviceSchema(service),
-          faqSchema(faqs),
-          breadcrumbSchema([
-            { name: "Home", url: SITE.url },
-            { name: state.name, url: `${SITE.url}/service-areas/${state.slug}` },
-            { name: `${service.name} in ${state.name}`, url },
-          ]),
-        ]}
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonical={seo.canonical}
+        robots={seo.robots}
+        ogImage={seo.ogImage}
+        jsonLd={seo.jsonLd}
       />
       <Header />
       <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: state.name, href: `/service-areas/${state.slug}` }, { name: service.name }]} />

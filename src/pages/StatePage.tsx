@@ -8,7 +8,7 @@ import { getState } from "@/lib/states";
 import { categories } from "@/lib/categories";
 import { services as allServices } from "@/lib/services";
 import { getCitiesForState } from "@/lib/cities";
-import { breadcrumbSchema, SITE } from "@/lib/schema";
+import { getStateAreaSeo } from "@/lib/seo";
 import { stateIntroContent } from "@/lib/content";
 
 const featured = ["custom-website-development", "technical-seo", "ai-automation-services", "shopify-development", "local-seo", "ecommerce-development"];
@@ -18,16 +18,19 @@ const StatePage = () => {
   const state = getState(slug);
   if (!state) return <Navigate to="/404" replace />;
   const c = stateIntroContent(state);
-  const url = `${SITE.url}/service-areas/${state.slug}`;
+  const seo = getStateAreaSeo(state);
   const featuredSvcs = allServices.filter((s) => featured.includes(s.slug));
 
   return (
     <>
       <SEO
-        title={`Digital Agency in ${state.name} | Klikcy`}
-        description={`Klikcy is a digital agency serving ${state.name} businesses with websites, SEO, AEO, AI automation and e-commerce. Remote-first delivery across ${state.cities.slice(0, 3).join(", ")} and every ${state.name} city.`}
-        canonical={url}
-        jsonLd={[breadcrumbSchema([{ name: "Home", url: SITE.url }, { name: "Service Areas", url: `${SITE.url}/service-areas` }, { name: state.name, url }])]}
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonical={seo.canonical}
+        robots={seo.robots}
+        ogImage={seo.ogImage}
+        jsonLd={seo.jsonLd}
       />
       <Header />
       <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Service Areas" }, { name: state.name }]} />

@@ -1,49 +1,99 @@
 import { useState } from "react";
-import { Mail, MapPin, CheckCircle2 } from "lucide-react";
+import { Mail, MapPin, CheckCircle2, Loader2 } from "lucide-react";
 import { z } from "zod";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { breadcrumbSchema, orgSchema, SITE } from "@/lib/schema";
+import { getContactSeo } from "@/lib/seo";
 import { toast } from "sonner";
 
 const schema = z.object({
-  name: z.string().min(2, "Please enter your name"),
-  email: z.string().email("Please enter a valid email"),
+  name: z.string().trim().min(2, "Please enter your name"),
+  email: z.string().trim().email("Please enter a valid email"),
+  phone: z
+    .string()
+    .trim()
+    .min(7, "Please enter your phone number")
+    .max(30, "Phone number is too long")
+    .refine((v) => v.replace(/\D/g, "").length >= 7, "Please enter a valid phone number"),
   company: z.string().optional(),
   service: z.string().min(1, "Please select a service"),
-  message: z.string().min(10, "Please share a few sentences"),
+  message: z.string().trim().min(10, "Please share a few sentences about your project"),
 });
 
-const services = ["Website Development", "SEO & AEO", "AI Automation", "E-Commerce", "Branding & Design", "App & Software", "Marketing & Growth", "Other"];
+const services = [
+  "Website Development",
+  "App & Software",
+  "AI Automation",
+  "E-Commerce",
+  "Branding & Design",
+  "Marketing & Growth",
+  "SEO & AEO",
+  "Other",
+];
+
+const contactSeo = getContactSeo();
+const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || "build@klikcy.com";
 
 const Contact = () => {
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget).entries());
     const res = schema.safeParse(data);
     if (!res.success) {
       const errs: Record<string, string> = {};
-      res.error.issues.forEach((i) => { errs[i.path[0] as string] = i.message; });
+      res.error.issues.forEach((i) => {
+        errs[i.path[0] as string] = i.message;
+      });
       setErrors(errs);
       return;
     }
     setErrors({});
-    setSent(true);
-    toast.success("Thanks! We'll be in touch within one business day.");
+    setSubmitting(true);
+    try {
+      const payload = {
+        name: res.data.name,
+        email: res.data.email,
+        phone: res.data.phone,
+        company: res.data.company?.trim() ?? "",
+        service: res.data.service,
+        message: res.data.message,
+      };
+
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const body = (await response.json().catch(() => ({}))) as { error?: string };
+      if (!response.ok) {
+        throw new Error(body.error || "Unable to send message.");
+      }
+      setSent(true);
+      toast.success("Thanks! We'll be in touch within one business day.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unable to send message.";
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <>
       <SEO
-        title="Contact Klikcy — Strategy Call & Project Inquiry"
-        description="Contact Klikcy to plan websites, SEO, AEO, AI automation, e-commerce and growth systems. Serving businesses across the United States."
-        canonical={`${SITE.url}/contact`}
-        jsonLd={[orgSchema(), breadcrumbSchema([{ name: "Home", url: SITE.url }, { name: "Contact", url: `${SITE.url}/contact` }])]}
+        title={contactSeo.title}
+        description={contactSeo.description}
+        keywords={contactSeo.keywords}
+        canonical={contactSeo.canonical}
+        robots={contactSeo.robots}
+        ogImage={contactSeo.ogImage}
+        jsonLd={contactSeo.jsonLd}
       />
       <Header />
       <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Contact" }]} />
@@ -52,7 +102,9 @@ const Contact = () => {
           <div className="container-x py-14">
             <span className="micro-label">Contact</span>
             <h1 className="mt-3 max-w-3xl text-4xl font-extrabold sm:text-5xl">Tell us about your project.</h1>
-            <p className="mt-5 max-w-2xl text-lg text-muted-foreground">We respond within one business day with a clear next step — discovery, scope or a strategy call.</p>
+            <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
+              We respond within one business day with a clear next step — discovery, scope or a strategy call.
+            </p>
           </div>
         </section>
 
@@ -62,7 +114,9 @@ const Contact = () => {
               <div className="card-soft">
                 <Mail className="h-5 w-5 text-primary" />
                 <div className="mt-3 micro-label">Email</div>
-                <a href="mailto:hello@klikcy.com" className="mt-1 block text-lg font-semibold text-navy-deep hover:text-primary">hello@klikcy.com</a>
+                <a href={`mailto:${contactEmail}`} className="mt-1 block text-lg font-semibold text-navy-deep hover:text-primary">
+                  {contactEmail}
+                </a>
               </div>
               <div className="card-soft">
                 <MapPin className="h-5 w-5 text-primary" />
@@ -80,26 +134,57 @@ const Contact = () => {
                   <p className="mt-2 text-muted-foreground">We'll reach out within one business day.</p>
                 </div>
               ) : (
-                <form onSubmit={onSubmit} className="card-soft space-y-5">
+                <form onSubmit={onSubmit} className="card-soft space-y-5" noValidate>
                   <div className="grid gap-5 sm:grid-cols-2">
-                    <Field label="Name" name="name" error={errors.name} />
-                    <Field label="Email" name="email" type="email" error={errors.email} />
+                    <Field label="Name" name="name" required error={errors.name} disabled={submitting} />
+                    <Field label="Email" name="email" type="email" required error={errors.email} disabled={submitting} />
                   </div>
-                  <Field label="Company (optional)" name="company" />
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <Field label="Phone" name="phone" type="tel" required error={errors.phone} disabled={submitting} />
+                    <Field label="Company (optional)" name="company" disabled={submitting} />
+                  </div>
                   <div>
-                    <label className="block text-sm font-semibold text-navy-deep">Service</label>
-                    <select name="service" className="mt-1 w-full rounded-xl border border-input bg-white px-4 py-3 text-sm focus:border-primary focus:outline-none">
+                    <label className="block text-sm font-semibold text-navy-deep">
+                      Service <span className="text-destructive">*</span>
+                    </label>
+                    <select
+                      name="service"
+                      required
+                      disabled={submitting}
+                      className="mt-1 w-full rounded-xl border border-input bg-white px-4 py-3 text-sm focus:border-primary focus:outline-none disabled:opacity-60"
+                    >
                       <option value="">Select a service</option>
-                      {services.map((s) => <option key={s} value={s}>{s}</option>)}
+                      {services.map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
                     </select>
                     {errors.service && <p className="mt-1 text-xs text-destructive">{errors.service}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-navy-deep">Project details</label>
-                    <textarea name="message" rows={5} className="mt-1 w-full rounded-xl border border-input bg-white px-4 py-3 text-sm focus:border-primary focus:outline-none" />
+                    <label className="block text-sm font-semibold text-navy-deep">
+                      Message <span className="text-destructive">*</span>
+                    </label>
+                    <textarea
+                      name="message"
+                      rows={5}
+                      required
+                      disabled={submitting}
+                      className="mt-1 w-full rounded-xl border border-input bg-white px-4 py-3 text-sm focus:border-primary focus:outline-none disabled:opacity-60"
+                    />
                     {errors.message && <p className="mt-1 text-xs text-destructive">{errors.message}</p>}
                   </div>
-                  <button type="submit" className="btn-primary w-full">Send message</button>
+                  <button type="submit" className="btn-primary w-full inline-flex items-center justify-center gap-2" disabled={submitting}>
+                    {submitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                        Sending…
+                      </>
+                    ) : (
+                      "Send message"
+                    )}
+                  </button>
                 </form>
               )}
             </div>
@@ -111,10 +196,34 @@ const Contact = () => {
   );
 };
 
-const Field = ({ label, name, type = "text", error }: { label: string; name: string; type?: string; error?: string }) => (
+const Field = ({
+  label,
+  name,
+  type = "text",
+  required: isRequired,
+  error,
+  disabled,
+}: {
+  label: string;
+  name: string;
+  type?: string;
+  required?: boolean;
+  error?: string;
+  disabled?: boolean;
+}) => (
   <div>
-    <label className="block text-sm font-semibold text-navy-deep">{label}</label>
-    <input name={name} type={type} className="mt-1 w-full rounded-xl border border-input bg-white px-4 py-3 text-sm focus:border-primary focus:outline-none" />
+    <label className="block text-sm font-semibold text-navy-deep">
+      {label}
+      {isRequired && <span className="text-destructive"> *</span>}
+    </label>
+    <input
+      name={name}
+      type={type}
+      required={isRequired}
+      autoComplete={name === "phone" ? "tel" : name === "email" ? "email" : name === "name" ? "name" : undefined}
+      disabled={disabled}
+      className="mt-1 w-full rounded-xl border border-input bg-white px-4 py-3 text-sm focus:border-primary focus:outline-none disabled:opacity-60"
+    />
     {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
   </div>
 );

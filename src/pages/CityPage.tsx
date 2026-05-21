@@ -1,4 +1,6 @@
 import { useParams, Link, Navigate } from "react-router-dom";
+import { getCitySlugRedirect } from "@/lib/cities";
+import { getCityAreaSeo } from "@/lib/seo";
 import { ArrowRight } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -6,30 +8,32 @@ import SEO from "@/components/SEO";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getCity, getCitiesForState } from "@/lib/cities";
 import { services as allServices } from "@/lib/services";
-import { breadcrumbSchema, SITE } from "@/lib/schema";
 
 const featured = ["custom-website-development", "technical-seo", "ai-automation-services", "shopify-development", "local-seo", "ecommerce-development"];
 
 const CityPage = () => {
   const { state: stateSlug = "", city: citySlugStr = "" } = useParams();
+  const redirectSlug = getCitySlugRedirect(stateSlug, citySlugStr);
+  if (redirectSlug) {
+    return <Navigate to={`/service-areas/${stateSlug}/${redirectSlug}`} replace />;
+  }
   const city = getCity(stateSlug, citySlugStr);
   if (!city) return <Navigate to="/404" replace />;
 
-  const url = `${SITE.url}/service-areas/${city.state.slug}/${city.slug}`;
+  const seo = getCityAreaSeo(city);
   const featuredSvcs = allServices.filter((s) => featured.includes(s.slug));
   const otherCities = getCitiesForState(city.state).filter((c) => c.slug !== city.slug);
 
   return (
     <>
       <SEO
-        title={`Digital Agency in ${city.name}, ${city.state.abbr} | Klikcy`}
-        description={`Klikcy serves ${city.name}, ${city.state.name} businesses with websites, SEO, AEO, AI automation and e-commerce. Remote-first delivery for every ${city.name} company.`}
-        canonical={url}
-        jsonLd={[breadcrumbSchema([
-          { name: "Home", url: SITE.url },
-          { name: city.state.name, url: `${SITE.url}/service-areas/${city.state.slug}` },
-          { name: city.name, url },
-        ])]}
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonical={seo.canonical}
+        robots={seo.robots}
+        ogImage={seo.ogImage}
+        jsonLd={seo.jsonLd}
       />
       <Header />
       <Breadcrumbs items={[

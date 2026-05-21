@@ -178,6 +178,7 @@ body::after {
 }
 
 .mesh-bg-layer {
+  /* surface-dark: see index.css — headings must stay white on mesh heroes */
   background-color: hsl(var(--ink));
   background-image: radial-gradient(ellipse 120% 80% at 10% 0%, var(--c-mesh-2), transparent 55%),
     radial-gradient(ellipse 90% 70% at 90% 10%, var(--c-mesh-1), transparent 50%),
@@ -236,9 +237,9 @@ body::after {
     scroll-behavior: auto !important;
   }
 
-  *,
-  *::before,
-  *::after {
+  *:not(.orbit-rotator):not(.orbit-rotator *),
+  *:not(.orbit-rotator):not(.orbit-rotator *)::before,
+  *:not(.orbit-rotator):not(.orbit-rotator *)::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

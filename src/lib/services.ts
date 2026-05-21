@@ -1,4 +1,5 @@
 import type { CategorySlug } from "./categories";
+import { applyLegacyEnrichment } from "./apply-legacy-enrichment";
 
 export interface Service {
   slug: string;
@@ -1467,10 +1468,16 @@ export const services: Service[] = [
   }),
 ];
 
-export const getService = (slug: string) => services.find((s) => s.slug === slug);
-export const getServicesByCategory = (cat: string) => services.filter((s) => s.category === cat);
+const serviceBySlug = new Map(services.map((s) => [s.slug, s]));
+
+export const getService = (slug: string) => {
+  const base = serviceBySlug.get(slug);
+  if (!base) return undefined;
+  return applyLegacyEnrichment(base);
+};
+export const getServicesByCategory = (cat: string) => services.filter((s) => s.category === cat).map(applyLegacyEnrichment);
 export const getRelatedServices = (slug: string) => {
   const s = getService(slug);
   if (!s) return [];
-  return s.related.map(getService).filter(Boolean) as Service[];
+  return s.related.map((r) => getService(r)).filter(Boolean) as Service[];
 };

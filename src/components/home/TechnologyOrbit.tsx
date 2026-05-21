@@ -7,7 +7,7 @@ const techIcons = [
   { name: "React Native", logo: "https://cdn.simpleicons.org/react/000000", bgColor: "#61DAFB" },
   { name: "Figma", logo: "https://cdn.simpleicons.org/figma/ffffff", bgColor: "#F24E1E" },
   { name: "MongoDB", logo: "https://cdn.simpleicons.org/mongodb/ffffff", bgColor: "#47A248" },
-  { name: "AWS", logo: "https://www.vectorlogo.zone/logos/amazon_aws/amazon_aws-icon.svg", bgColor: "#FF9900" },
+  { name: "AWS", logo: "/brand/tech/aws.svg", bgColor: "#232F3E", logoScale: 0.64 },
   { name: "Vercel", logo: "https://cdn.simpleicons.org/vercel/ffffff", bgColor: "#000000" },
   { name: "Security", logo: "https://cdn.simpleicons.org/cloudflare/ffffff", bgColor: "#2BA8A0" },
   { name: "Wix", logo: "https://cdn.simpleicons.org/wix/ffffff", bgColor: "#FAAD4A" },
@@ -15,7 +15,24 @@ const techIcons = [
   { name: "Shopify", logo: "https://cdn.simpleicons.org/shopify/ffffff", bgColor: "#96BF48" },
 ] as const;
 
-type TechIcon = (typeof techIcons)[number];
+type TechIcon = (typeof techIcons)[number] & { logoScale?: number };
+
+function AwsOrbitMark({ size }: { size: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="208 98 52 56"
+      aria-hidden
+      className="block shrink-0"
+    >
+      <path
+        fill="#FF9900"
+        d="M230.993 120.964c-27.888 20.599-68.408 31.534-103.247 31.534-48.827 0-92.821-18.056-126.05-48.064-2.628-2.373-.255-5.594 2.881-3.73c35.942 20.854 80.276 33.484 126.136 33.484 30.94 0 64.932-6.442 96.212-19.666 4.662-2.12 8.646 3.052 4.068 6.442m11.614-13.224c-3.56-4.577-23.566-2.204-32.636-1.102-2.713.34-3.137-2.034-.678-3.814c15.936-11.19 42.13-7.968 45.181-4.239 3.052 3.815-.848 30.008-15.767 42.554-2.288 1.95-4.492.933-3.475-1.61c3.39-8.393 10.935-27.296 7.375-31.789"
+      />
+    </svg>
+  );
+}
 
 function TechIconWrapper({
   tech,
@@ -29,6 +46,8 @@ function TechIconWrapper({
   iconSize: number;
 }) {
   const [imageError, setImageError] = useState(false);
+  const logoScale = tech.logoScale ?? 0.5;
+  const logoPx = iconSize * logoScale;
 
   return (
     <div
@@ -36,15 +55,11 @@ function TechIconWrapper({
       style={
         {
           "--orbit-start": `${initialAngle}deg`,
+          "--orbit-radius": `${radius}px`,
         } as CSSProperties
       }
     >
-      <div
-        className="orbit-source__satellite"
-        style={{
-          transform: `translateX(${radius}px) translateY(-50%)`,
-        }}
-      >
+      <div className="orbit-source__satellite">
         <div
           className="orbit-source__icon"
           style={{
@@ -55,28 +70,33 @@ function TechIconWrapper({
             padding: `${iconSize * 0.125}px`,
           }}
         >
-          {!imageError ? (
+          {tech.name === "AWS" ? (
+            <AwsOrbitMark size={logoPx} />
+          ) : !imageError ? (
             <img
               src={tech.logo}
               alt={tech.name}
               title={tech.name}
-              width={iconSize * 0.5}
-              height={iconSize * 0.5}
+              width={logoPx}
+              height={logoPx}
               className="object-contain"
+              decoding="async"
+              referrerPolicy="no-referrer"
               style={{
-                width: `${iconSize * 0.5}px`,
-                height: `${iconSize * 0.5}px`,
+                width: `${logoPx}px`,
+                height: `${logoPx}px`,
               }}
               onError={() => setImageError(true)}
             />
           ) : (
             <span
-              className="text-white font-bold"
+              className="font-bold text-white"
               style={{
-                fontSize: `${iconSize * 0.25}px`,
+                fontSize: tech.name.length <= 3 ? `${iconSize * 0.2}px` : `${iconSize * 0.25}px`,
+                letterSpacing: "-0.02em",
               }}
             >
-              {tech.name.charAt(0)}
+              {tech.name.length <= 3 ? tech.name : tech.name.charAt(0)}
             </span>
           )}
         </div>
@@ -125,9 +145,28 @@ export const TechnologyOrbit = memo(function TechnologyOrbit() {
           height: `${containerSize}px`,
         }}
       >
-        <div className="absolute inset-[14%] rounded-full border border-[rgba(43,168,160,0.18)]" />
-        <div className="absolute inset-[26%] rounded-full border border-[rgba(30,136,229,0.12)]" />
-        <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_center,rgba(43,168,160,0.08),transparent_62%)]" />
+        <div className="absolute inset-[14%] rounded-full border border-[rgba(43,168,160,0.18)]" aria-hidden />
+        <div className="absolute inset-[26%] rounded-full border border-[rgba(30,136,229,0.12)]" aria-hidden />
+        <div
+          className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_center,rgba(43,168,160,0.08),transparent_62%)]"
+          aria-hidden
+        />
+
+        {/* Single rotator — tech icons orbit; rings/gradient stay fixed */}
+        <div className="orbit-rotator">
+          {techIcons.map((tech, index) => {
+            const initialAngle = (index * 360) / techIcons.length;
+            return (
+              <TechIconWrapper
+                key={tech.name}
+                tech={tech}
+                radius={radius}
+                initialAngle={initialAngle}
+                iconSize={iconSize}
+              />
+            );
+          })}
+        </div>
 
         <div
           className="absolute z-30 flex flex-col items-center justify-center rounded-full border border-[rgba(43,168,160,0.2)] bg-white/92 text-center shadow-[0_22px_52px_rgba(13,66,63,0.12)] backdrop-blur-sm"
@@ -147,19 +186,6 @@ export const TechnologyOrbit = memo(function TechnologyOrbit() {
             Digital Solutions
           </p>
         </div>
-
-        {techIcons.map((tech, index) => {
-          const initialAngle = (index * 360) / techIcons.length;
-          return (
-            <TechIconWrapper
-              key={tech.name}
-              tech={tech}
-              radius={radius}
-              initialAngle={initialAngle}
-              iconSize={iconSize}
-            />
-          );
-        })}
       </div>
     </div>
   );

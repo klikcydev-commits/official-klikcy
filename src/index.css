@@ -42,13 +42,13 @@
     animation: none !important;
     opacity: 1 !important;
   }
+  .orbit-rotator {
+    animation-duration: 28s !important;
+    animation-iteration-count: infinite !important;
+    animation-timing-function: linear !important;
+  }
   .orbit-source__wrapper {
     opacity: 1 !important;
-    transform: rotate(var(--orbit-start)) !important;
-    animation-name: orbit-spin-source !important;
-    animation-duration: 28s !important;
-    animation-timing-function: linear !important;
-    animation-iteration-count: infinite !important;
   }
   .btn-primary:hover,
   .btn-secondary:hover,
@@ -113,6 +113,13 @@
   }
   .btn-secondary:focus-visible {
     @apply outline outline-2 outline-offset-2 outline-primary;
+  }
+  /* Dark panels (ink/navy/void): base layer sets headings to navy-deep — override for contrast. */
+  .surface-dark h1,
+  .surface-dark h2,
+  .surface-dark h3,
+  .surface-dark h4 {
+    @apply text-white;
   }
   .section-kicker {
     font-size: var(--type-eyebrow);
@@ -214,18 +221,32 @@
     box-shadow: 0 24px 50px -18px hsl(var(--void) / 0.6);
     padding: 1.5rem;
   }
+  .orbit-rotator {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    transform-origin: center center;
+    animation: orbit-rotator-spin 20s linear infinite;
+    will-change: transform;
+  }
   .orbit-source__wrapper {
     position: absolute;
     left: 50%;
     top: 50%;
-    z-index: 10;
+    z-index: 1;
+    width: 0;
+    height: 0;
     transform-origin: 0 0;
-    transform: rotate(var(--orbit-start));
-    will-change: transform;
-    animation: orbit-spin-source 20s linear infinite;
+    transform: rotate(var(--orbit-start)) translateX(var(--orbit-radius));
+    pointer-events: none;
   }
   .orbit-source__satellite {
     position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: auto;
+    transform: translateY(-50%);
+    animation: orbit-rotator-spin 20s linear infinite reverse;
   }
   .orbit-source__icon {
     display: flex;
@@ -410,11 +431,17 @@
   }
 }
 
-@keyframes orbit-spin-source {
+@keyframes orbit-rotator-spin {
   from {
-    transform: rotate(var(--orbit-start));
+    transform: rotate(0deg);
   }
   to {
-    transform: rotate(calc(var(--orbit-start) + 360deg));
+    transform: rotate(360deg);
   }
+}
+
+/* Unlayered — wins over globals reduced-motion blanket when paired with rules above */
+.orbit-rotator {
+  animation: orbit-rotator-spin 20s linear infinite;
+  transform-origin: center center;
 }

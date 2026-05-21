@@ -6,17 +6,20 @@ import SEO from "@/components/SEO";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { categories } from "@/lib/categories";
 import { getServicesByCategory } from "@/lib/services";
-import { breadcrumbSchema, SITE } from "@/lib/schema";
+import { getAllServicesSeo } from "@/lib/seo";
 
-const url = `${SITE.url}/all-services`;
+const allServicesSeo = getAllServicesSeo();
 
 const AllServicesPage = () => (
   <>
     <SEO
-      title="All Services | Klikcy"
-      description="Explore every Klikcy practice — web development, SEO & AEO, AI automation, apps, e-commerce, branding, marketing growth, and technical hosting — with direct links to each service."
-      canonical={url}
-      jsonLd={[breadcrumbSchema([{ name: "Home", url: SITE.url }, { name: "All Services", url }])]}
+      title={allServicesSeo.title}
+      description={allServicesSeo.description}
+      keywords={allServicesSeo.keywords}
+      canonical={allServicesSeo.canonical}
+      robots={allServicesSeo.robots}
+      ogImage={allServicesSeo.ogImage}
+      jsonLd={allServicesSeo.jsonLd}
     />
     <Header />
     <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "All Services" }]} />

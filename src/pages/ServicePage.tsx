@@ -10,32 +10,34 @@ import { ServiceMetroCities } from "@/components/service/ServiceMetroCities";
 import { PageSection, SectionIntro } from "@/components/layout/PageSection";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { LEGACY_SERVICE_SLUG_REDIRECTS } from "@/lib/legacy-service-slugs";
+import { getServiceSeo } from "@/lib/seo";
 import { getService, getRelatedServices } from "@/lib/services";
 import { getCategory } from "@/lib/categories";
 import { priorityStates } from "@/lib/states";
-import { serviceSchema, faqSchema, breadcrumbSchema, SITE } from "@/lib/schema";
 
 const ServicePage = () => {
   const { slug = "" } = useParams();
+  const canonicalSlug = LEGACY_SERVICE_SLUG_REDIRECTS[slug] ?? slug;
+  if (canonicalSlug !== slug) {
+    return <Navigate to={`/services/${canonicalSlug}`} replace />;
+  }
   const service = getService(slug);
   if (!service) return <Navigate to="/404" replace />;
   const cat = getCategory(service.category);
   const related = getRelatedServices(slug);
-
-  const url = `${SITE.url}/services/${service.slug}`;
-  const crumbs = [
-    { name: "Home", url: SITE.url },
-    { name: cat?.name || "Services", url: `${SITE.url}/categories/${service.category}` },
-    { name: service.name, url },
-  ];
+  const seo = getServiceSeo(service);
 
   return (
     <>
       <SEO
-        title={service.metaTitle}
-        description={service.metaDescription}
-        canonical={url}
-        jsonLd={[serviceSchema(service), faqSchema(service.faqs), breadcrumbSchema(crumbs)]}
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonical={seo.canonical}
+        robots={seo.robots}
+        ogImage={seo.ogImage}
+        jsonLd={seo.jsonLd}
       />
       <Header />
       <main id="main-content" className="bg-background">

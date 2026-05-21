@@ -1,0 +1,492 @@
+import type { Service } from "../services";
+import type { State } from "../states";
+import type { CityRef } from "../cities";
+import type { Category } from "../categories";
+import { SITE } from "../schema";
+import {
+  getPriorityNearbyPhrase,
+  isPriorityCity,
+  isPriorityState,
+  type PriorityStateSlug,
+} from "../seo/priorityMarkets";
+import { getVerticalProfile, type ServiceVertical } from "./positioning";
+import { pickIndex } from "./hash";
+
+export interface PageMetadata {
+  title: string;
+  description: string;
+  keywords: string[];
+  primaryKeyword: string;
+}
+
+function dedupeKeywords(items: string[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const item of items) {
+    const key = item.trim().toLowerCase();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push(item.trim());
+  }
+  return out;
+}
+
+function geoLabel(geo?: { state: State; city?: CityRef }): string {
+  if (geo?.city) return geo.city.name;
+  if (geo?.state) return geo.state.name;
+  return "the United States";
+}
+
+function geoLabelWithAbbr(geo?: { state: State; city?: CityRef }): string {
+  if (geo?.city) return `${geo.city.name}, ${geo.state.abbr}`;
+  if (geo?.state) return geo.state.name;
+  return "United States";
+}
+
+function fillGeo(template: string, geo?: { state: State; city?: CityRef }): string {
+  return template.replace(/\{geo\}/g, geoLabel(geo));
+}
+
+/** Build exactly 20 keywords: 1 primary + 4 commercial + 5 location + 5 AEO + 5 semantic. */
+export function buildKeywords20(service: Service, geo?: { state: State; city?: CityRef }): string[] {
+  const profile = getVerticalProfile(service.category);
+  const loc = geoLabel(geo);
+  const locAbbr = geoLabelWithAbbr(geo);
+  const stateName = geo?.state?.name ?? "United States";
+  const abbr = geo?.state?.abbr ?? "U.S.";
+
+  const primary = geo
+    ? `${service.focusKeyword} in ${loc}`
+    : service.focusKeyword;
+
+  const commercial = profile.commercialKeywordStems.map((stem, i) => {
+    const variants = [
+      `${stem} ${loc}`,
+      `${stem} in ${locAbbr}`,
+      `${loc} ${stem}`,
+      `${stem} company ${loc}`,
+    ];
+    return variants[i % variants.length];
+  });
+
+  const location = geo
+    ? [
+        `${loc} digital agency`,
+        `${stateName} ${profile.agencyLabel}`,
+        `${service.name.toLowerCase()} near ${loc}`,
+        `${loc} ${profile.partnerLabel}`,
+        `${profile.agencyLabel} in ${locAbbr}`,
+      ]
+    : [
+        "United States digital agency",
+        "nationwide web and app development",
+        "U.S. software development partner",
+        "remote digital agency USA",
+        "Klikcy digital agency United States",
+      ];
+
+  const aeo = profile.aeoQuestionStems.map((q) => fillGeo(q, geo));
+
+  const semanticBase = [
+    ...profile.semanticKeywordStems,
+    ...service.technical.slice(0, 3).map((t) => t.toLowerCase()),
+    service.name.toLowerCase(),
+  ];
+  const semantic = semanticBase.slice(0, 5).map((s, i) => {
+    if (geo && i < 2) return `${s} ${loc}`;
+    return s;
+  });
+
+  const merged = dedupeKeywords([primary, ...commercial, ...location, ...aeo, ...semantic]);
+
+  // Pad to 20 with service keywords + focus variations if short
+  const pad = [
+    ...service.keywords,
+    `${service.name} ${loc}`,
+    `${profile.agencyLabel} ${loc}`,
+    `best ${service.focusKeyword} ${loc}`,
+    `${service.focusKeyword} for ${stateName} businesses`,
+    `how to choose ${service.focusKeyword} in ${loc}`,
+    `${service.focusKeyword} structured for AI search`,
+  ];
+
+  const final = dedupeKeywords([...merged, ...pad]);
+  return final.slice(0, 20);
+}
+
+const PRIORITY_STATE_TITLE: Record<PriorityStateSlug, Partial<Record<ServiceVertical, string>>> = {
+  "new-york": { web: "Web Development in New York | Klikcy", ecommerce: "E-commerce Development in New York | Klikcy" },
+  "new-jersey": { web: "Web Development Agency in New Jersey | Klikcy" },
+  connecticut: { app: "App Development Company in Connecticut | Klikcy" },
+  pennsylvania: { app: "Custom Software Development in Pennsylvania | Klikcy" },
+};
+
+function stateTitle(service: Service, state: State): string {
+  const profile = getVerticalProfile(service.category);
+  if (isPriorityState(state.slug)) {
+    const override = PRIORITY_STATE_TITLE[state.slug as PriorityStateSlug]?.[profile.vertical];
+    if (override) return override;
+  }
+  const seed = `${service.slug}:${state.slug}:title`;
+  const templates: Record<string, ((s: Service, st: State) => string)[]> = {
+    web: [
+      (s, st) => `${s.name} in ${st.name} | Klikcy`,
+      (s, st) => `${st.name} ${s.name} Company | Klikcy`,
+      (s, st) => `${s.name} for ${st.name} Businesses | Klikcy`,
+    ],
+    app: [
+      (s, st) => `${s.name} Company in ${st.name} | Klikcy`,
+      (s, st) => `${s.name} in ${st.name} | Klikcy`,
+      (s, st) => `${s.name} for ${st.name} Companies | Klikcy`,
+    ],
+    ai: [
+      (s, st) => `${s.name} Agency for ${st.name} Businesses | Klikcy`,
+      (s, st) => `AI Automation Agency for ${st.name} Businesses | Klikcy`,
+      (s, st) => `${s.name} in ${st.name} | Klikcy`,
+    ],
+    ecommerce: [
+      (s, st) => `${s.name} in ${st.name} | Klikcy`,
+      (s, st) => `E-commerce Development in ${st.name} | Klikcy`,
+      (s, st) => `${st.name} ${s.name} Agency | Klikcy`,
+    ],
+    seo: [
+      (s, st) => `${s.name} in ${st.name} | Klikcy`,
+      (s, st) => `${st.name} Search Visibility Partner | Klikcy`,
+      (s, st) => `${s.name} for ${st.name} | Klikcy`,
+    ],
+    branding: [
+      (s, st) => `${s.name} in ${st.name} | Klikcy`,
+      (s, st) => `${st.name} Design Partner | Klikcy`,
+      (s, st) => `${s.name} Studio in ${st.name} | Klikcy`,
+    ],
+    marketing: [
+      (s, st) => `${s.name} in ${st.name} | Klikcy`,
+      (s, st) => `Digital Growth Partner in ${st.name} | Klikcy`,
+      (s, st) => `${s.name} for ${st.name} Companies | Klikcy`,
+    ],
+    hosting: [
+      (s, st) => `${s.name} in ${st.name} | Klikcy`,
+      (s, st) => `Technical Infrastructure in ${st.name} | Klikcy`,
+      (s, st) => `${s.name} for ${st.name} | Klikcy`,
+    ],
+  };
+
+  const list = templates[profile.vertical] ?? templates.web;
+  return list[pickIndex(seed, list.length)](service, state);
+}
+
+const PRIORITY_CITY_TITLE: Record<string, Partial<Record<ServiceVertical, string>>> = {
+  manhattan: { web: "Web Development Agency in Manhattan | Klikcy" },
+  brooklyn: { app: "App Development Company in Brooklyn | Klikcy" },
+  queens: { app: "Custom Software Development in Queens | Klikcy" },
+  "the-bronx": { ai: "AI Automation Agency in The Bronx | Klikcy" },
+  "staten-island": { web: "Website Development in Staten Island | Klikcy" },
+  "jersey-city": { web: "Web Development Agency in Jersey City | Klikcy" },
+  stamford: { app: "App Development Company in Stamford | Klikcy" },
+  philadelphia: { app: "Custom Software Development in Philadelphia | Klikcy" },
+  "king-of-prussia": { ai: "AI Automation Agency in King of Prussia | Klikcy" },
+};
+
+function cityTitle(service: Service, city: CityRef): string {
+  const profile = getVerticalProfile(service.category);
+  if (isPriorityCity(city.state.slug, city.slug)) {
+    const override = PRIORITY_CITY_TITLE[city.slug]?.[profile.vertical];
+    if (override) return override;
+  }
+  const seed = `${service.slug}:${city.state.slug}:${city.slug}:title`;
+  const templates: ((s: Service, c: CityRef) => string)[] = [
+    (s, c) => `${profile.agencyLabel} in ${c.name}, ${c.state.abbr} | Klikcy`,
+    (s, c) => `${s.name} in ${c.name}, ${c.state.abbr} | Klikcy`,
+    (s, c) => `${s.name} Company in ${c.name}, ${c.state.abbr} | Klikcy`,
+    (s, c) => `${s.name} for ${c.name} Businesses | Klikcy`,
+  ];
+  return templates[pickIndex(seed, templates.length)](service, city);
+}
+
+const PRIORITY_STATE_DESC: Partial<Record<PriorityStateSlug, string>> = {
+  "new-york":
+    "Klikcy builds custom websites, apps, software platforms, and AI automation systems for New York businesses that need premium digital experiences, stronger visibility, and scalable growth.",
+  "new-jersey":
+    "Klikcy builds websites, apps, e-commerce stores, AI automation systems, and digital growth platforms for New Jersey businesses across Bergen County, Jersey City, Newark, Hoboken, and beyond.",
+  connecticut:
+    "Klikcy helps Connecticut companies build custom apps, websites, dashboards, automation systems, and search-ready digital platforms for long-term growth.",
+  pennsylvania:
+    "Klikcy creates websites, apps, SaaS platforms, AI automations, and e-commerce systems for Pennsylvania businesses in Philadelphia, Pittsburgh, Allentown, Lancaster, and beyond.",
+};
+
+function stateDescription(service: Service, state: State): string {
+  const profile = getVerticalProfile(service.category);
+  if (isPriorityState(state.slug) && PRIORITY_STATE_DESC[state.slug as PriorityStateSlug]) {
+    const base = PRIORITY_STATE_DESC[state.slug as PriorityStateSlug]!;
+    const variant = pickIndex(`${service.slug}:${state.slug}:desc`, 2);
+    if (variant === 0) return base;
+    return `${base} ${service.shortDescription} Structured for Google, local visibility, and AI search — not vanity metrics.`;
+  }
+  const nearby = getPriorityNearbyPhrase(state.slug);
+  const cities = nearby ?? state.cities.slice(0, 4).join(", ");
+  const variant = pickIndex(`${service.slug}:${state.slug}:desc`, 3);
+  const intros = [
+    `Klikcy is a ${profile.partnerLabel} delivering ${service.name.toLowerCase()} across ${state.name} — including ${cities} and every metro. ${service.shortDescription} Built to compete with ${profile.outcomePhrase}.`,
+    `${state.name} businesses choose Klikcy for ${service.name.toLowerCase()} tailored to ${state.blurb}. ${service.intro.slice(0, 120)}… Remote-first delivery nationwide.`,
+    `Need ${service.name.toLowerCase()} in ${state.name}? Klikcy ships ${profile.outcomePhrase} with clear scope, UX discipline, and structure designed for Google and AI search — serving ${cities} and beyond.`,
+  ];
+  return intros[variant].replace(/\s+/g, " ").trim();
+}
+
+const PRIORITY_CITY_DESC: Record<string, string> = {
+  manhattan:
+    "Klikcy builds custom websites, apps, software platforms, and AI automation systems for Manhattan businesses that need premium digital experiences, stronger visibility, and scalable growth.",
+  brooklyn:
+    "Klikcy helps Brooklyn businesses launch high-performance apps, websites, e-commerce platforms, and AI-powered workflows designed for local growth and modern search visibility.",
+  queens:
+    "Klikcy provides web development, app development, software, AI automation, and SEO/AEO systems for Queens businesses looking to compete online and attract better leads.",
+  "the-bronx":
+    "Klikcy creates websites, apps, automation systems, and digital growth platforms for Bronx businesses that need practical technology and stronger local discoverability.",
+  "staten-island":
+    "Klikcy supports Staten Island businesses with custom websites, app development, AI automation, e-commerce, and SEO-ready digital systems built for long-term growth.",
+};
+
+function cityDescription(service: Service, city: CityRef): string {
+  const profile = getVerticalProfile(service.category);
+  if (isPriorityCity(city.state.slug, city.slug) && PRIORITY_CITY_DESC[city.slug]) {
+    const base = PRIORITY_CITY_DESC[city.slug];
+    const variant = pickIndex(`${service.slug}:${city.state.slug}:${city.slug}:desc`, 2);
+    if (variant === 0) return base;
+    return `${base} ${service.name} by Klikcy — ${profile.outcomePhrase}.`;
+  }
+  const variant = pickIndex(`${service.slug}:${city.state.slug}:${city.slug}:desc`, 3);
+  const intros = [
+    `Klikcy delivers ${service.name.toLowerCase()} for ${city.name}, ${city.state.name} companies. ${service.shortDescription} ${profile.outcomePhrase} — optimized for discoverability, not vanity metrics.`,
+    `${city.name} teams work with Klikcy as their ${profile.partnerLabel} for ${service.name.toLowerCase()}. ${city.state.name}'s ${city.state.blurb} — we align builds to how local companies win online.`,
+    `Looking for ${service.focusKeyword} in ${city.name}, ${city.state.abbr}? Klikcy provides ${service.name.toLowerCase()} with production-grade delivery and content structured for search and answer engines.`,
+  ];
+  return intros[variant].replace(/\s+/g, " ").trim();
+}
+
+export function buildServicePageMetadata(service: Service): PageMetadata {
+  const profile = getVerticalProfile(service.category);
+  const title =
+    service.metaTitle.includes("Klikcy")
+      ? service.metaTitle
+      : `${service.name} | ${profile.agencyLabel} | Klikcy`;
+
+  const description =
+    service.metaDescription.length > 50
+      ? service.metaDescription
+      : `Klikcy — ${profile.agencyLabel} for ${service.name.toLowerCase()}. ${service.shortDescription} ${profile.outcomePhrase}. Structured for discoverability across the U.S.`;
+
+  return {
+    title,
+    description,
+    keywords: buildKeywords20(service),
+    primaryKeyword: service.focusKeyword,
+  };
+}
+
+export function buildServiceStateMetadata(service: Service, state: State): PageMetadata {
+  return {
+    title: stateTitle(service, state),
+    description: stateDescription(service, state),
+    keywords: buildKeywords20(service, { state }),
+    primaryKeyword: `${service.focusKeyword} in ${state.name}`,
+  };
+}
+
+export function buildServiceCityMetadata(service: Service, city: CityRef): PageMetadata {
+  return {
+    title: cityTitle(service, city),
+    description: cityDescription(service, city),
+    keywords: buildKeywords20(service, { state: city.state, city }),
+    primaryKeyword: `${service.focusKeyword} in ${city.name}`,
+  };
+}
+
+export function buildCategoryPageMetadata(category: Category): PageMetadata {
+  const profile = getVerticalProfile(category.slug);
+  return {
+    title: `${category.name} Services | ${profile.agencyLabel} | Klikcy`,
+    description: `${category.description} Klikcy is a U.S. ${profile.partnerLabel} — ${profile.outcomePhrase}. Explore every ${category.name.toLowerCase()} practice we ship.`,
+    keywords: buildCategoryKeywords(category),
+    primaryKeyword: category.name.toLowerCase(),
+  };
+}
+
+function buildCategoryKeywords(category: Category): string[] {
+  const profile = getVerticalProfile(category.slug);
+  return dedupeKeywords([
+    `${category.name.toLowerCase()} services`,
+    `${profile.agencyLabel}`,
+    ...profile.commercialKeywordStems,
+    ...profile.semanticKeywordStems.slice(0, 5),
+    "United States digital agency",
+    "Klikcy digital agency",
+    ...profile.aeoQuestionStems.map((q) => fillGeo(q)),
+  ]).slice(0, 20);
+}
+
+export function buildHomeMetadata(): PageMetadata {
+  return {
+    title: "Klikcy — Web Development, Apps & AI Automation Digital Agency",
+    description:
+      "Klikcy is a U.S. digital agency for custom websites, web apps, mobile apps, SaaS, AI automation, e-commerce, branding, and search visibility (SEO, AEO, GEO). Built to compete — structured for Google and AI discoverability.",
+    keywords: dedupeKeywords([
+      "digital agency United States",
+      "web development agency",
+      "custom website development company",
+      "app development company",
+      "SaaS development agency",
+      "AI automation agency",
+      "e-commerce development agency",
+      "UI UX design agency",
+      "software development partner",
+      "custom software development",
+      "web app development company",
+      "mobile app developers",
+      "Shopify development agency",
+      "WordPress development company",
+      "who builds business websites in the US",
+      "how to choose a digital agency",
+      "AI-ready website development",
+      "answer engine optimization agency",
+      "digital growth partner",
+      "Klikcy digital agency",
+    ]).slice(0, 20),
+    primaryKeyword: "digital agency",
+  };
+}
+
+export function buildAboutMetadata(): PageMetadata {
+  return {
+    title: "About Klikcy — Web, App & Software Digital Agency",
+    description:
+      "About Klikcy: a U.S. digital agency for web development, app and SaaS development, AI automation, e-commerce, branding, and SEO/AEO/GEO. Engineers, designers, and growth specialists — remote-first, nationwide.",
+    keywords: dedupeKeywords([
+      "about Klikcy",
+      "digital agency team",
+      "web development company",
+      "app development team",
+      "custom software development agency",
+      "AI automation experts",
+      "e-commerce development team",
+      "UI UX design agency",
+      "remote digital agency USA",
+      "who is Klikcy",
+      "what services does Klikcy offer",
+      "how does Klikcy work with clients",
+      "digital agency for startups",
+      "enterprise web development partner",
+      "nationwide digital agency",
+      "software development partner",
+      "AI automation partner",
+      "growth and technology partner",
+      "Klikcy company overview",
+      "U.S. digital agency",
+    ]).slice(0, 20),
+    primaryKeyword: "about Klikcy digital agency",
+  };
+}
+
+export function buildAllServicesMetadata(): PageMetadata {
+  return {
+    title: "All Services | Web, Apps, AI & Digital Growth | Klikcy",
+    description:
+      "Explore every Klikcy practice — web development, app and SaaS development, AI automation, e-commerce, branding, marketing growth, technical hosting, and SEO/AEO/GEO — with links to each service.",
+    keywords: dedupeKeywords([
+      "all digital agency services",
+      "web development services",
+      "app development services",
+      "SaaS development services",
+      "AI automation services",
+      "e-commerce development services",
+      "SEO and AEO services",
+      "branding and UI UX services",
+      "marketing growth services",
+      "technical hosting services",
+      "Klikcy service catalog",
+      "United States digital agency services",
+      "custom website development services",
+      "mobile app development services",
+      "workflow automation services",
+      "Shopify development services",
+      "WordPress development services",
+      "what services does Klikcy offer",
+      "digital agency service list",
+      "full stack digital agency",
+    ]).slice(0, 20),
+    primaryKeyword: "digital agency services",
+  };
+}
+
+export function buildContactMetadata(): PageMetadata {
+  return {
+    title: "Contact Klikcy — Web, App & AI Project Inquiry",
+    description:
+      "Contact Klikcy to plan websites, web apps, mobile apps, SaaS, AI automation, e-commerce, branding, or search visibility. Remote-first digital agency serving businesses across the United States.",
+    keywords: dedupeKeywords([
+      "contact Klikcy",
+      "digital agency contact",
+      "web development quote",
+      "app development consultation",
+      "SaaS development inquiry",
+      "AI automation consultation",
+      "e-commerce project inquiry",
+      "request strategy call",
+      "hire web developers USA",
+      "hire app developers USA",
+      "custom software quote",
+      "website project inquiry",
+      "how to start a web project",
+      "how to start an app project",
+      "Klikcy project inquiry",
+      "digital agency near me",
+      "remote digital agency contact",
+      "United States digital agency contact",
+      "book strategy call Klikcy",
+      "Klikcy hello",
+    ]).slice(0, 20),
+    primaryKeyword: "contact Klikcy",
+  };
+}
+
+/** AEO-style FAQs appended to geo pages (deterministic). */
+export function buildGeoAeoFaqs(
+  service: Service,
+  geo: { state: State; city?: CityRef },
+): { q: string; a: string }[] {
+  const profile = getVerticalProfile(service.category);
+  const loc = geoLabel(geo);
+  const geoState = geo.state;
+  const cityList = geoState.cities.slice(0, 4).join(", ");
+
+  const questions = profile.aeoQuestionStems.map((stem) => fillGeo(stem, geo));
+
+  return questions.map((q, i) => {
+    const answers = [
+      `Yes — Klikcy delivers ${service.name.toLowerCase()} for businesses in ${loc}, including ${cityList} and across ${geoState.name}. We are a ${profile.partnerLabel} focused on ${profile.outcomePhrase}.`,
+      `Klikcy is a ${profile.agencyLabel} serving ${geoState.name} remotely with the same standards as on-site engagements. ${service.shortDescription}`,
+      `We scope ${service.name.toLowerCase()} around business outcomes — leads, product velocity, or operational efficiency — not deliverable checklists alone. Content and architecture are structured for Google and AI search visibility.`,
+      `Typical ${service.name.toLowerCase()} timelines depend on scope; marketing sites and automations can ship in weeks, while apps and SaaS take longer. We provide clear milestones after discovery.`,
+      `Every engagement includes discoverability foundations where relevant: clean IA, schema, performance, and FAQ-rich pages — without positioning Klikcy as an SEO-only vendor.`,
+    ];
+    return { q, a: answers[i % answers.length] };
+  });
+}
+
+export function mergeFaqs(
+  base: { q: string; a: string }[],
+  extra: { q: string; a: string }[],
+  max = 8,
+): { q: string; a: string }[] {
+  const seen = new Set<string>();
+  const out: { q: string; a: string }[] = [];
+  for (const item of [...extra, ...base]) {
+    const key = item.q.trim().toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(item);
+    if (out.length >= max) break;
+  }
+  return out;
+}
+
+export { SITE };

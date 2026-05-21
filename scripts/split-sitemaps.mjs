@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
+import "dotenv/config";
 
-const SITE_URL = "https://klikcy.com";
+const SITE_URL = (process.env.SITE_URL || "https://www.klikcy.com").replace(/\/$/, "");
 const publicDir = path.resolve(process.cwd(), "public");
 const sourcePath = path.join(publicDir, "sitemap.xml");
 
