@@ -2,25 +2,38 @@ import fs from "node:fs";
 import path from "node:path";
 import "dotenv/config";
 
-const SITE_URL = (process.env.SITE_URL || "https://www.klikcy.com").replace(/\/$/, "");
+const SITE_URL = (process.env.SITE_URL || process.env.VITE_SITE_URL || "https://www.klikcy.com").replace(/\/$/, "");
+const SITE_ORIGIN = SITE_URL.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const publicDir = path.resolve(process.cwd(), "public");
 const sourcePath = path.join(publicDir, "sitemap.xml");
 
-const extractPageLocs = (xml) => [...xml.matchAll(/<url>\s*<loc>(https:\/\/klikcy\.com\/[^<]*)<\/loc>/g)].map((m) => m[1]);
-const extractSitemapLocs = (xml) => [...xml.matchAll(/<sitemap>\s*<loc>(https:\/\/klikcy\.com\/[^<]+\.xml)<\/loc>/g)].map((m) => m[1]);
+const extractPageLocs = (xml) =>
+  [...xml.matchAll(new RegExp(`<url>\\s*<loc>(${SITE_ORIGIN}[^<]*)</loc>`, "g"))].map((m) => m[1]);
+const extractSitemapLocs = (xml) =>
+  [...xml.matchAll(new RegExp(`<sitemap>\\s*<loc>(${SITE_ORIGIN}[^<]+\\.xml)</loc>`, "g"))].map((m) => m[1]);
 
-const readXml = fs.readFileSync(sourcePath, "utf8");
-let allUrls = extractPageLocs(readXml);
+const readSourceXml = (filePath) => fs.readFileSync(filePath, "utf8");
 
-// If source is already a sitemap index, rebuild from child sitemap files.
-if (!allUrls.length && readXml.includes("<sitemapindex")) {
-  const childSitemaps = extractSitemapLocs(readXml);
-  for (const childUrl of childSitemaps) {
-    const childFile = childUrl.replace(`${SITE_URL}/`, "");
-    const childPath = path.join(publicDir, childFile);
-    if (!fs.existsSync(childPath)) continue;
-    const childXml = fs.readFileSync(childPath, "utf8");
-    allUrls.push(...extractPageLocs(childXml));
+const collectUrlsFromXml = (xml) => {
+  let urls = extractPageLocs(xml);
+  if (!urls.length && xml.includes("<sitemapindex")) {
+    for (const childUrl of extractSitemapLocs(xml)) {
+      const childFile = childUrl.replace(`${SITE_URL}/`, "");
+      const childPath = path.join(publicDir, childFile);
+      if (!fs.existsSync(childPath)) continue;
+      urls.push(...extractPageLocs(readSourceXml(childPath)));
+    }
+  }
+  return urls;
+};
+
+let allUrls = collectUrlsFromXml(readSourceXml(sourcePath));
+
+// Full urlset from generate step (when sitemap.xml is already the split index).
+if (!allUrls.length) {
+  const fullPath = path.join(publicDir, "sitemap-full.xml");
+  if (fs.existsSync(fullPath)) {
+    allUrls = collectUrlsFromXml(readSourceXml(fullPath));
   }
 }
 

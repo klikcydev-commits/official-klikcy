@@ -80,10 +80,12 @@ const today = new Date().toISOString().slice(0, 10);
 
 const urlEntry = (loc) => `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`;
 
+const fullXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${allUrls.map(urlEntry).join("\n")}\n</urlset>\n`;
+fs.writeFileSync(path.join(publicDir, "sitemap-full.xml"), fullXml);
+
 if (allUrls.length <= MAX_PER_FILE) {
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${allUrls.map(urlEntry).join("\n")}\n</urlset>\n`;
-  fs.writeFileSync(path.join(publicDir, "sitemap.xml"), xml);
-  console.log(`[sitemap] Wrote ${allUrls.length} URLs to public/sitemap.xml`);
+  fs.writeFileSync(path.join(publicDir, "sitemap.xml"), fullXml);
+  console.log(`[sitemap] Wrote ${allUrls.length} URLs to public/sitemap.xml (+ sitemap-full.xml for split)`);
 } else {
   const chunks = [];
   for (let i = 0; i < allUrls.length; i += MAX_PER_FILE) {
@@ -100,7 +102,7 @@ if (allUrls.length <= MAX_PER_FILE) {
     .map((f) => `  <sitemap>\n    <loc>${SITE_URL}/${f}</loc>\n    <lastmod>${today}</lastmod>\n  </sitemap>`)
     .join("\n")}\n</sitemapindex>\n`;
   fs.writeFileSync(path.join(publicDir, "sitemap.xml"), index);
-  console.log(`[sitemap] Wrote index + ${chunks.length} child files (${allUrls.length} URLs)`);
+  console.log(`[sitemap] Wrote index + ${chunks.length} child files (${allUrls.length} URLs); sitemap-full.xml kept for split`);
 }
 
 console.log(`[sitemap] Services: ${serviceSlugs.length}, States: ${states.length}, Total URLs: ${allUrls.length}`);

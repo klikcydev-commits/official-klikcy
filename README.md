@@ -126,7 +126,9 @@ npm outdated
 
 ### Deployment platform
 
-No `vercel.json`, `netlify.toml`, or `.env` files are committed. The app builds to **`dist/`** and expects a static host with **SPA fallback** (all routes → `index.html`). Canonical URLs and schema assume production domain **`https://www.klikcy.com`** (`VITE_SITE_URL` / `SITE_URL`).
+**Hostinger** (Git deploy from `main` on GitHub). This project does **not** use the Vercel CLI, `vercel.json`, or Netlify config.
+
+The app builds to **`dist/`** and expects a static host with **SPA fallback** (all routes → `index.html`). Canonical URLs and schema assume production domain **`https://www.klikcy.com`** (`VITE_SITE_URL` / `SITE_URL`).
 
 ---
 
@@ -675,13 +677,21 @@ Contact emails list **all** fields: Name, Email, Phone, Company, Service, Messag
 | HTTPS | Canonicals and SEO assume HTTPS |
 | `/api` → contact API (production) | Contact form POSTs to `/api/contact` |
 
-### Vercel / Netlify / Cloudflare Pages
+### Hostinger (production)
 
-Not configured in-repo. Typical setup:
+Deploy by pushing to **`main`** on GitHub (`klikcydev-commits/klikcy-catalyst`). Hostinger pulls the repo and runs the build — **do not** use `vercel`, `npx vercel`, or upload `dist/` manually unless you are debugging.
 
-- Build command: `npm run build`  
-- Output directory: `dist`  
-- Rewrite all routes → `/index.html` (200)
+| Hostinger setting | Value |
+|-------------------|--------|
+| Repository branch | `main` |
+| Install command | `npm install` |
+| Build command | `npm run build` |
+| Output / publish directory | `dist` |
+| SPA / fallback | All routes → `/index.html` (200) |
+
+**Contact API (Node):** `server/index.mjs` is not served from `dist/`. On Hostinger, run it as a separate Node app (or process) and reverse-proxy **`/api`** → that server. Set SMTP vars from `.env.example` on the host (never in the client bundle).
+
+**Manual fallback (no CLI):** build locally (`npm run build`), then upload the contents of **`dist/`** via Hostinger File Manager or FTP if Git deploy is unavailable.
 
 ### Post-deploy SEO checks
 

@@ -3,7 +3,11 @@ import { createPortal } from "react-dom";
 import { Link, useLocation, useMatch } from "react-router-dom";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { type Category } from "@/lib/categories";
-import { getAllServicesNavCategories, getPrimaryNavCategories, isAllServicesSectionSlug } from "@/lib/nav-categories";
+import {
+  getAllServicesNavTree,
+  getPrimaryNavCategories,
+  isAllServicesSectionSlug,
+} from "@/lib/nav-categories";
 import { getService, getServicesByCategory } from "@/lib/services";
 import { cn } from "@/utils/cn";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
@@ -27,13 +31,13 @@ const dropdownPanelClass =
 
 /** Wider panel for “All Services” (two columns + overview). */
 const dropdownPanelAllServicesClass =
-  "absolute left-1/2 top-full z-[1050] -mt-2 w-[min(40rem,calc(100vw-1.5rem))] max-w-[calc(100vw-2rem)] -translate-x-1/2 pt-2 opacity-0 invisible pointer-events-none transition-[opacity,visibility] duration-200 ease-out group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:visible group-focus-within:pointer-events-auto";
+  "absolute left-1/2 top-full z-[1050] -mt-2 w-[min(56rem,calc(100vw-1rem))] max-w-[calc(100vw-1.5rem)] -translate-x-1/2 pt-2 opacity-0 invisible pointer-events-none transition-[opacity,visibility] duration-200 ease-out group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:visible group-focus-within:pointer-events-auto";
 
 const themeToggleOnLightBar =
   "border-slate-200 bg-white text-slate-700 shadow-sm hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900";
 
 const PRIMARY_NAV_CATEGORIES = getPrimaryNavCategories();
-const ALL_SERVICES_NESTED_CATEGORIES = getAllServicesNavCategories();
+const ALL_SERVICES_NAV_TREE = getAllServicesNavTree();
 
 function useActiveCategorySlug(): string | null {
   const { pathname } = useLocation();
@@ -91,8 +95,6 @@ function DesktopBarLink({
 }
 
 function DesktopAllServicesNavItem({ isActive }: { isActive: boolean }) {
-  const nested = ALL_SERVICES_NESTED_CATEGORIES;
-
   return (
     <div className="group relative z-10 shrink-0 hover:z-[120] focus-within:z-[120]">
       <div className={cn(navCategoryTriggerClass, isActive && navCategoryTriggerActive)}>
@@ -121,36 +123,45 @@ function DesktopAllServicesNavItem({ isActive }: { isActive: boolean }) {
               <span className="ml-1 text-[length:var(--type-label)] font-normal text-primary-light/90">— overview</span>
             </Link>
             <p className="mt-1 text-[length:var(--type-label)] leading-snug text-white/50">
-              Growth, infrastructure, and the full list of deliverables across every practice.
+              Every practice and deliverable — same categories as the nav bar (Websites, Apps, SEO, and more).
             </p>
           </div>
-          <div className="mt-3 grid gap-4 sm:grid-cols-2">
-            {nested.map((cat) => {
-              const subs = getServicesByCategory(cat.slug);
-              return (
-                <div key={cat.slug} className="min-w-0">
-                  <Link
-                    to={`/categories/${cat.slug}`}
-                    className="font-display text-[length:var(--type-body)] font-bold text-white transition hover:text-primary-light"
-                  >
-                    {cat.name}
-                  </Link>
-                  <p className="mt-0.5 text-[length:var(--type-label)] leading-snug text-white/45">{cat.tagline}</p>
-                  <ul className="mt-2 space-y-0.5 border-t border-white/10 pt-2" role="list">
-                    {subs.map((s) => (
-                      <li key={s.slug}>
+          <div className="mt-3 max-h-[min(70vh,28rem)] overflow-y-auto overscroll-contain pr-1">
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+              {ALL_SERVICES_NAV_TREE.map((group) => (
+                <div key={group.id} className="min-w-0">
+                  <p className="font-display text-[length:var(--type-label)] font-bold uppercase tracking-[0.14em] text-primary-light">
+                    {group.label}
+                  </p>
+                  <p className="mt-0.5 text-[length:var(--type-label)] leading-snug text-white/40">{group.tagline}</p>
+                  <div className="mt-3 space-y-4">
+                    {group.categories.map(({ category: cat, services: subs }) => (
+                      <div key={cat.slug} className="min-w-0 border-t border-white/10 pt-3 first:border-t-0 first:pt-0">
                         <Link
-                          to={`/services/${s.slug}`}
-                          className="flex min-h-[2.25rem] items-center rounded-[var(--radius-sm)] px-1 py-1 text-[length:var(--type-label)] leading-snug text-white/75 transition hover:bg-white/5 hover:text-white sm:text-[length:var(--type-body)]"
+                          to={`/categories/${cat.slug}`}
+                          className="font-display text-[length:var(--type-body)] font-bold text-white transition hover:text-primary-light"
                         >
-                          <span className="line-clamp-2">{s.name}</span>
+                          {cat.short}
+                          <span className="ml-1 font-normal text-white/45">· {cat.name}</span>
                         </Link>
-                      </li>
+                        <ul className="mt-1.5 space-y-0.5 border-l border-white/15 pl-2.5" role="list">
+                          {subs.map((s) => (
+                            <li key={s.slug}>
+                              <Link
+                                to={`/services/${s.slug}`}
+                                className="flex min-h-[2rem] items-center rounded-[var(--radius-sm)] py-0.5 pl-1 text-[length:var(--type-label)] leading-snug text-white/70 transition hover:bg-white/5 hover:text-white"
+                              >
+                                <span className="line-clamp-2">{s.name}</span>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -386,7 +397,7 @@ const Header = () => {
               <div className="mt-6 border-t border-white/10 pt-6">
                 <p className="font-display text-[length:var(--type-label)] font-bold uppercase tracking-[0.2em] text-primary-light">Services</p>
                 <p className="mt-1 text-[length:var(--type-body)] leading-[var(--leading-body)] text-white/50">
-                  Main practices first; Growth and Infrastructure live under All Services.
+                  Top bar: Websites, Search Growth, Apps, and more. Full list under All Services.
                 </p>
               </div>
 
@@ -428,35 +439,40 @@ const Header = () => {
                   All Services
                 </Link>
                 <p className="mt-1 text-[length:var(--type-body)] leading-snug text-white/45">
-                  Full catalog, plus marketing & growth and technical hosting.
+                  Full catalog — grouped like the desktop menu (Build, Growth, Systems, Brand).
                 </p>
-                {ALL_SERVICES_NESTED_CATEGORIES.map((cat) => {
-                  const services = getServicesByCategory(cat.slug);
-                  return (
-                    <div key={cat.slug} className="mt-5 border-l border-primary/35 pl-3">
-                      <Link
-                        to={`/categories/${cat.slug}`}
-                        onClick={closeMobile}
-                        className="font-display text-[length:var(--type-body)] font-bold text-white transition hover:text-primary-light"
-                      >
-                        {cat.name}
-                      </Link>
-                      <ul className="mt-2 space-y-1" role="list">
-                        {services.map((s) => (
-                          <li key={s.slug}>
-                            <Link
-                              to={`/services/${s.slug}`}
-                              onClick={closeMobile}
-                              className="flex min-h-[2.5rem] items-center py-1 text-[length:var(--type-body)] leading-snug text-white/75 transition hover:text-white"
-                            >
-                              {s.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  );
-                })}
+                {ALL_SERVICES_NAV_TREE.map((group) => (
+                  <div key={group.id} className="mt-5">
+                    <p className="font-display text-[length:var(--type-label)] font-bold uppercase tracking-[0.16em] text-primary-light">
+                      {group.label}
+                    </p>
+                    {group.categories.map(({ category: cat, services }) => (
+                      <div key={cat.slug} className="mt-4 border-l border-primary/35 pl-3">
+                        <Link
+                          to={`/categories/${cat.slug}`}
+                          onClick={closeMobile}
+                          className="font-display text-[length:var(--type-body)] font-bold text-white transition hover:text-primary-light"
+                        >
+                          {cat.short}
+                          <span className="ml-1 font-normal text-white/50">— {cat.name}</span>
+                        </Link>
+                        <ul className="mt-2 space-y-0.5 border-l border-white/10 pl-3" role="list">
+                          {services.map((s) => (
+                            <li key={s.slug}>
+                              <Link
+                                to={`/services/${s.slug}`}
+                                onClick={closeMobile}
+                                className="flex min-h-[2.5rem] items-center py-1 text-[length:var(--type-body)] leading-snug text-white/75 transition hover:text-white"
+                              >
+                                {s.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                ))}
               </div>
 
               <MagneticButton className="mt-4 block w-full">

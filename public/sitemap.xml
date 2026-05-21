@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <sitemap><loc>https://www.klikcy.com/sitemap-static.xml</loc><lastmod>2026-05-12</lastmod></sitemap>
-  <sitemap><loc>https://www.klikcy.com/sitemap-services.xml</loc><lastmod>2026-03-17</lastmod></sitemap>
-  <sitemap><loc>https://www.klikcy.com/sitemap-areas.xml</loc><lastmod>1970-01-01</lastmod></sitemap>
-  <sitemap><loc>https://www.klikcy.com/sitemap-service-state.xml</loc><lastmod>1970-01-01</lastmod></sitemap>
-  <sitemap><loc>https://www.klikcy.com/sitemap-service-state-city-1.xml</loc><lastmod>1970-01-01</lastmod></sitemap>
-  <sitemap><loc>https://www.klikcy.com/sitemap-service-state-city-2.xml</loc><lastmod>1970-01-01</lastmod></sitemap>
-  <sitemap><loc>https://www.klikcy.com/sitemap-service-state-city-3.xml</loc><lastmod>1970-01-01</lastmod></sitemap>
+  <sitemap><loc>https://www.klikcy.com/sitemap-static.xml</loc><lastmod>2026-05-14</lastmod></sitemap>
+  <sitemap><loc>https://www.klikcy.com/sitemap-services.xml</loc><lastmod>2026-05-14</lastmod></sitemap>
+  <sitemap><loc>https://www.klikcy.com/sitemap-areas.xml</loc><lastmod>2026-05-11</lastmod></sitemap>
+  <sitemap><loc>https://www.klikcy.com/sitemap-service-state.xml</loc><lastmod>2026-05-09</lastmod></sitemap>
+  <sitemap><loc>https://www.klikcy.com/sitemap-service-state-city-1.xml</loc><lastmod>2026-05-07</lastmod></sitemap>
+  <sitemap><loc>https://www.klikcy.com/sitemap-service-state-city-2.xml</loc><lastmod>2026-05-07</lastmod></sitemap>
+  <sitemap><loc>https://www.klikcy.com/sitemap-service-state-city-3.xml</loc><lastmod>2026-05-07</lastmod></sitemap>
 </sitemapindex>
