@@ -87,29 +87,27 @@ export function HomeHero({ className }: HomeHeroProps) {
       </div>
 
       <div className="relative k-container pb-[var(--space-section-y)] pt-10 sm:pt-14 lg:pt-16">
-        <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.75fr)] lg:gap-6 xl:gap-10">
-          <div className="lg:pr-[var(--container-bleed)]">
+        <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-6 xl:gap-10">
+          <div className="min-w-0 w-full lg:pr-[var(--container-bleed)]">
             <p
               ref={eyebrow}
-              className="font-display font-bold uppercase tracking-[0.28em] text-[length:var(--type-eyebrow)] text-[hsl(var(--primary-light))]"
+              className="font-display font-bold uppercase tracking-[0.22em] text-[length:var(--type-eyebrow)] text-[hsl(var(--primary-light))] sm:tracking-[0.28em]"
             >
               {homeHero.eyebrow}
             </p>
             <h1
               id="hero-heading"
-              className="font-display mt-5 max-w-full text-balance font-extrabold leading-[0.98] tracking-tight text-[clamp(2rem,10vw,3.1rem)] text-white sm:max-w-[22ch] sm:leading-[var(--leading-display)] sm:text-[length:var(--type-display)]"
+              className="font-display mt-5 w-full min-w-0 text-pretty font-extrabold leading-[0.98] tracking-tight text-[clamp(1.75rem,5.5vw+0.85rem,3.25rem)] text-white sm:leading-[var(--leading-display)] lg:text-[clamp(1.85rem,4.2vw+0.75rem,4.5rem)] xl:text-[length:var(--type-display)]"
             >
-              <span ref={h1Inner} className="block max-w-full [overflow-wrap:anywhere]">
-                <span className="inline-block whitespace-nowrap">{homeHero.headlineBefore}</span>{" "}
-                <span className="hero-accent inline-block whitespace-nowrap">
-                  {homeHero.headlineAccent}
-                </span>{" "}
+              <span ref={h1Inner} className="block w-full min-w-0 break-words [overflow-wrap:anywhere]">
+                {homeHero.headlineBefore}{" "}
+                <span className="hero-accent">{homeHero.headlineAccent}</span>{" "}
                 {homeHero.headlineAfter}
               </span>
             </h1>
             <p
               ref={sub}
-              className="mt-6 max-w-[34ch] text-[0.98rem] leading-[1.6] text-white/75 sm:max-w-xl sm:text-[length:var(--type-body-lg)] sm:leading-[var(--leading-body)]"
+              className="mt-6 w-full min-w-0 max-w-none text-[0.98rem] leading-[1.6] text-white/75 sm:text-[length:var(--type-body-lg)] sm:leading-[var(--leading-body)] lg:max-w-[36ch]"
             >
               {homeHero.sub}
             </p>
@@ -141,9 +139,9 @@ export function HomeHero({ className }: HomeHeroProps) {
             </dl>
           </div>
 
-          <div className="relative -mr-[var(--container-bleed)] hidden min-h-[20rem] lg:block">
+          <div className="relative hidden min-h-[20rem] min-w-0 w-full lg:block lg:-mr-[var(--container-bleed)]">
             <div className="absolute -left-10 top-6 h-40 w-40 rounded-full border border-white/10 bg-white/5 blur-2xl" aria-hidden />
-            <figure className="relative ml-auto max-w-md rotate-[2deg] overflow-hidden rounded-[var(--radius-xl)] border border-white/15 shadow-[var(--shadow-elevated)]">
+            <figure className="relative ml-auto w-full max-w-full rotate-[2deg] overflow-hidden rounded-[var(--radius-xl)] border border-white/15 shadow-[var(--shadow-elevated)]">
               <img
                 src={hi.src}
                 width={hi.width}

@@ -33,7 +33,7 @@ const AllServicesPage = () => (
             deliverable.
           </p>
           <Link to="/contact" className="btn-primary mt-7 inline-flex items-center gap-2">
-            Request a Strategy Call <ArrowRight className="h-4 w-4" aria-hidden />
+            Get Free Quote <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
         </div>
       </section>

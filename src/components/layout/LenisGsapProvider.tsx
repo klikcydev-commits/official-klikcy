@@ -23,6 +23,8 @@ export function LenisGsapProvider({ children }: LenisGsapProviderProps) {
       duration: 1.12,
       smoothWheel: true,
       touchMultiplier: 1.85,
+      /** Let native overflow scroll (nav dropdowns, drawers, tables) without moving the page. */
+      prevent: (node) => node instanceof Element && Boolean(node.closest("[data-lenis-prevent]")),
     });
 
     lenis.on("scroll", ScrollTrigger.update);

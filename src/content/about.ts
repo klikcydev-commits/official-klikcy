@@ -187,5 +187,5 @@ export const aboutFaqs = [
 
 export const aboutCta = {
   title: "Ready to transform your business?",
-  description: "Book a free strategy call — we'll map goals, timelines, and the right stack for your next chapter.",
+  description: "Get Free Quote — we'll map goals, timelines, and the right stack for your next chapter.",
 };

@@ -45,7 +45,7 @@ export function ServiceHero({
           <div className="mt-10 flex flex-wrap gap-3">
             <MagneticButton>
               <Link to="/contact" className="btn-primary inline-flex min-h-[48px] items-center gap-2 px-6">
-                Request a strategy call <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
+                Get Free Quote <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
               </Link>
             </MagneticButton>
             <Link to={`/categories/${categorySlug}`} className="btn-ghost-light inline-flex min-h-[48px] items-center px-6">

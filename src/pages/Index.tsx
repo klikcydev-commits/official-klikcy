@@ -128,37 +128,35 @@ const Index = () => (
           title={<>Eight practices. One continuous growth surface.</>}
           description="Each discipline is led with senior-level rigor — designed to compound: your site, your search footprint, your automation layer, and your brand all move together."
         />
-        <StaggerReveal className="mt-4 grid auto-rows-fr gap-5 sm:grid-cols-2 xl:grid-cols-4">
-          {categories.map((c, i) => {
+        <StaggerReveal className="mt-4 grid auto-rows-fr grid-cols-1 gap-5 sm:grid-cols-2">
+          {categories.map((c) => {
             const Icon = categoryIcons[c.icon] ?? Code2;
-            const featured = i === 0 || i === 3;
             return (
               <Link
                 key={c.slug}
                 data-reveal-item
                 to={`/categories/${c.slug}`}
-                className={cn(
-                  "service-showcase group flex flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-                  featured && "sm:col-span-2 xl:col-span-2 xl:min-h-[280px] xl:flex-row xl:items-stretch xl:gap-8",
-                )}
+                className="service-showcase group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
-                <div className={cn("flex shrink-0 items-start justify-between gap-4", featured && "xl:flex-col xl:justify-between")}>
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary text-white shadow-glow">
-                    <Icon className="h-6 w-6" aria-hidden />
+                <article className="service-showcase__card">
+                  <div className="service-showcase__media">
+                    <div className="service-showcase__media-head">
+                      <span className="service-showcase__badge">{c.short}</span>
+                    </div>
+                    <div className="service-showcase__content">
+                      <h3 className="service-showcase__heading">{c.name}</h3>
+                      <p className="service-showcase__copy">{c.tagline}</p>
+                      <span className="service-showcase__cta">
+                        Enter practice <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
+                      </span>
+                    </div>
                   </div>
-                  <span className="rounded-full border border-border bg-white/80 px-3 py-1 font-mono text-[length:var(--type-label)] font-bold uppercase tracking-widest text-muted-foreground">
-                    {c.short}
-                  </span>
-                </div>
-                <div className={cn("mt-5 flex flex-1 flex-col xl:mt-0", featured && "xl:justify-between")}>
-                  <div>
-                    <h3 className="font-display text-[length:var(--type-h3)] font-bold tracking-tight text-navy-deep dark:text-white"><SplitText type="words">{c.name}</SplitText></h3>
-                    <p className="mt-3 text-[length:var(--type-body)] leading-[var(--leading-body)] text-muted-foreground">{c.tagline}</p>
+                  <div className="service-showcase__category">
+                    <span className="service-showcase__icon" aria-hidden>
+                      <Icon className="h-5 w-5" />
+                    </span>
                   </div>
-                  <span className="mt-6 inline-flex items-center gap-2 text-[length:var(--type-body)] font-bold text-primary transition group-hover:gap-3">
-                    Enter practice <ArrowRight className="h-4 w-4" aria-hidden />
-                  </span>
-                </div>
+                </article>
               </Link>
             );
           })}
@@ -202,10 +200,10 @@ const Index = () => (
           {processSteps.map((s, idx) => (
             <li
               key={s.label}
-              className="relative rounded-[var(--radius-lg)] border border-border/80 bg-[hsl(var(--card))] p-5 shadow-card transition hover:-translate-y-1 hover:border-primary/30 hover:shadow-glow motion-reduce:hover:translate-y-0"
+              className="relative rounded-[var(--radius-lg)] border border-border/80 bg-[hsl(var(--card))] p-4 shadow-card transition hover:-translate-y-1 hover:border-primary/30 hover:shadow-glow motion-reduce:hover:translate-y-0"
             >
               <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/30 bg-primary/10 font-mono text-[length:var(--type-label)] font-bold text-primary">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-primary/30 bg-primary/10 font-mono text-base font-bold leading-none text-primary">
                   {s.n}
                 </span>
                 {idx < processSteps.length - 1 ? (
@@ -214,8 +212,8 @@ const Index = () => (
                   </span>
                 ) : null}
               </div>
-              <h3 className="mt-4 font-display text-[length:var(--type-body)] font-bold text-navy-deep dark:text-[hsl(var(--foreground))]"><SplitText type="words">{s.label}</SplitText></h3>
-              <FadeUp delay={100}><p className="mt-2 text-[length:var(--type-body)] leading-[var(--leading-body)] text-muted-foreground">{s.copy}</p></FadeUp>
+              <h3 className="mt-3 font-display text-[length:var(--type-body)] font-bold text-navy-deep dark:text-[hsl(var(--foreground))]"><SplitText type="words">{s.label}</SplitText></h3>
+              <FadeUp delay={100}><p className="mt-1.5 text-[length:var(--type-body)] leading-[var(--leading-body)] text-muted-foreground">{s.copy}</p></FadeUp>
             </li>
           ))}
         </ol>
@@ -326,7 +324,7 @@ const Index = () => (
               <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:justify-center">
                 <MagneticButton>
                   <Link to="/contact" className="btn-primary min-h-[48px] min-w-[200px] justify-center">
-                    Book a strategy call
+                    Get Free Quote
                   </Link>
                 </MagneticButton>
                 <MagneticButton>

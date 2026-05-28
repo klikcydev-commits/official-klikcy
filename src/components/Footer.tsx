@@ -27,7 +27,7 @@ const Footer = () => {
           </div>
           <div className="lg:col-span-4 lg:justify-self-end">
             <Link to="/contact" className="btn-primary">
-              Request a strategy call
+              Get Free Quote
             </Link>
           </div>
         </div>

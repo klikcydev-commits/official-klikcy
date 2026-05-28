@@ -78,7 +78,7 @@ export function HomePackagesSection() {
               <div className="mt-8 border-t border-white/10 pt-6">
                 <Link
                   to="/contact"
-                  className={plan.popular ? "btn-primary w-full justify-between rounded-full" : "btn-ghost-light w-full justify-between"}
+                  className={plan.popular ? "btn-primary w-full justify-between" : "btn-ghost-light w-full justify-between"}
                 >
                   <span>{plan.ctaLabel}</span>
                   <ArrowRight className="h-4 w-4" aria-hidden />

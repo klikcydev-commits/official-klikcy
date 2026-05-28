@@ -84,7 +84,7 @@ const ServiceStatePage = () => {
           <div className="container-x text-center">
             <h2 className="text-3xl font-bold">Ready to start {service.name.toLowerCase()} in {state.name}?</h2>
             <p className="mt-3 text-muted-foreground">Tell us about your business — we'll respond with a clear plan.</p>
-            <Link to="/contact" className="btn-primary mt-6">Request a Strategy Call <ArrowRight className="h-4 w-4" /></Link>
+            <Link to="/contact" className="btn-primary mt-6">Get Free Quote <ArrowRight className="h-4 w-4" /></Link>
           </div>
         </section>
       </main>

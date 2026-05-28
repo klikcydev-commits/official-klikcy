@@ -103,7 +103,7 @@ const Contact = () => {
             <span className="micro-label">Contact</span>
             <h1 className="mt-3 max-w-3xl text-4xl font-extrabold sm:text-5xl">Tell us about your project.</h1>
             <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-              We respond within one business day with a clear next step — discovery, scope or a strategy call.
+              We respond within one business day with a clear next step — discovery, scope or a get free quote.
             </p>
           </div>
         </section>

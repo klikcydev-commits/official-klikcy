@@ -270,9 +270,9 @@ const About = () => (
           <p className="mx-auto mt-3 max-w-xl text-white/85">{aboutCta.description}</p>
           <Link
             to="/contact"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 font-semibold text-primary"
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-semibold text-primary"
           >
-            Request a strategy call <ArrowRight className="h-4 w-4" aria-hidden />
+            Get Free Quote <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
         </div>
       </section>

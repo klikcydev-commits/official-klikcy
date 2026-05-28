@@ -35,7 +35,7 @@ const CategoryPage = () => {
             <span className="micro-label">{cat.short}</span>
             <h1 className="mt-3 max-w-3xl text-4xl font-extrabold sm:text-5xl">{cat.name}</h1>
             <p className="mt-5 max-w-2xl text-lg text-muted-foreground">{cat.description}</p>
-            <Link to="/contact" className="btn-primary mt-7">Request a Strategy Call <ArrowRight className="h-4 w-4" /></Link>
+            <Link to="/contact" className="btn-primary mt-7">Get Free Quote <ArrowRight className="h-4 w-4" /></Link>
           </div>
         </section>
 
