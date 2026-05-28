@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useLocation, useMatch } from "react-router-dom";
 import { ChevronDown, Menu, X } from "lucide-react";
@@ -27,20 +27,12 @@ const navCategoryTriggerClass =
 const navCategoryTriggerActive =
   "font-semibold text-[hsl(var(--primary))] underline decoration-[hsl(var(--primary))] decoration-2 underline-offset-[10px]";
 
-const navDropdownZ = "z-[1300]";
-
-const dropdownPanelVisibilityClass =
-  "opacity-0 invisible pointer-events-none transition-[opacity,visibility] duration-200 ease-out group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:visible group-focus-within:pointer-events-auto";
-
-/** Category menus — compact width aligned to the trigger. */
 const dropdownPanelClass =
-  `absolute left-0 top-full ${navDropdownZ} -mt-2 w-[min(20rem,calc(100vw-2rem))] pt-2 ${dropdownPanelVisibilityClass}`;
+  "absolute left-0 top-full z-[1050] -mt-2 min-w-[min(18rem,calc(100vw-2rem))] max-w-[min(22rem,calc(100vw-2rem))] pt-2 opacity-0 invisible pointer-events-none transition-[opacity,visibility] duration-200 ease-out group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:visible group-focus-within:pointer-events-auto";
 
-/** All Services mega menu — wider, right-aligned to the trigger. */
-const dropdownPanelMegaClass =
-  `absolute right-0 left-auto top-full ${navDropdownZ} -mt-2 w-[min(36rem,calc(100vw-2rem))] pt-2 ${dropdownPanelVisibilityClass}`;
-
-const navDropdownTriggerClass = "group relative z-10 shrink-0 hover:z-[1290] focus-within:z-[1290]";
+/** Same panel as category dropdowns; aligned to the right edge of the trigger (nav bar end). */
+const dropdownPanelEndClass =
+  "absolute right-0 left-auto top-full z-[1050] -mt-2 min-w-[min(18rem,calc(100vw-2rem))] max-w-[min(22rem,calc(100vw-2rem))] pt-2 opacity-0 invisible pointer-events-none transition-[opacity,visibility] duration-200 ease-out group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:visible group-focus-within:pointer-events-auto";
 
 const themeToggleOnLightBar =
   "border-slate-200 bg-white text-slate-700 shadow-sm hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900";
@@ -51,42 +43,11 @@ const navDropdownServiceLinkClass =
 
 /** Single scroll surface per dropdown — wheel scrolls panel, not the page (Lenis: `data-lenis-prevent`). */
 const navDropdownPanelClass =
-  "nav-dropdown-panel w-full max-h-[min(70vh,28rem)] overflow-y-auto overscroll-contain rounded-[var(--radius-lg)] border border-white/12 bg-[hsl(222_44%_8%/0.98)] py-3 pl-3 pr-[calc(0.75rem+var(--scrollbar-size)+0.35rem)] shadow-[var(--shadow-elevated)] backdrop-blur-2xl";
-
-const navDropdownListClass = "mt-2 space-y-0.5";
-
-/** All Services catalog — up to 4 columns so the panel stays proportional. */
-const navDropdownMegaGridClass = "mt-2 grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-4";
-
-const desktopNavGridClass =
-  "hidden min-w-0 flex-1 lg:grid lg:grid-cols-6 lg:items-center lg:justify-items-center lg:gap-x-1 lg:gap-y-0.5 xl:gap-x-2";
+  "nav-dropdown-panel max-h-[min(70vh,28rem)] overflow-y-auto overscroll-contain rounded-[var(--radius-lg)] border border-white/12 bg-[hsl(222_44%_8%/0.98)] py-3 pl-3 pr-[calc(0.75rem+var(--scrollbar-size)+0.35rem)] shadow-[var(--shadow-elevated)] backdrop-blur-2xl";
 
 const PRIMARY_NAV_CATEGORIES = getPrimaryNavCategories();
 const ALL_SERVICES_NAV_CATEGORIES = getAllServicesNavCategories();
 const ALL_SERVICES_NAV_TREE = getAllServicesNavTree();
-
-/** Stacked mark + wordmark in the nav bar. */
-function HeaderBrandMark() {
-  return (
-    <Link
-      to="/"
-      className="flex shrink-0 flex-col items-center gap-0.5 rounded-[var(--radius-md)] outline-none transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--primary))]"
-      aria-label="Klikcy home"
-    >
-      <img
-        src="/brand/klikcy-logo.png"
-        alt=""
-        width={92}
-        height={76}
-        decoding="async"
-        className="h-8 w-auto max-h-9 max-w-[3.75rem] object-contain object-center sm:h-9 sm:max-w-[4.25rem]"
-      />
-      <span className="font-display text-[0.58rem] font-extrabold uppercase leading-none tracking-[0.24em] text-slate-800 sm:text-[0.62rem]">
-        KLIKCY
-      </span>
-    </Link>
-  );
-}
 
 function useActiveCategorySlug(): string | null {
   const { pathname } = useLocation();
@@ -152,7 +113,7 @@ function DesktopAllServicesNavItem({ isActive }: { isActive: boolean }) {
 
   return (
     <div
-      className={navDropdownTriggerClass}
+      className="group relative z-10 shrink-0 hover:z-[120] focus-within:z-[120]"
       onMouseLeave={() => setExpandedCategorySlug(null)}
     >
       <div className={cn(navCategoryTriggerClass, isActive && navCategoryTriggerActive)}>
@@ -170,7 +131,7 @@ function DesktopAllServicesNavItem({ isActive }: { isActive: boolean }) {
         />
       </div>
 
-      <div className={dropdownPanelMegaClass} role="region" aria-label="All services">
+      <div className={dropdownPanelEndClass} role="region" aria-label="All services">
         <div className={navDropdownPanelClass} data-lenis-prevent>
           <div className="border-b border-white/10 pb-2">
             <Link
@@ -184,7 +145,7 @@ function DesktopAllServicesNavItem({ isActive }: { isActive: boolean }) {
               Every practice and deliverable — Websites, Apps, SEO, and more.
             </p>
           </div>
-          <ul className={navDropdownMegaGridClass} role="list">
+          <ul className="mt-2 space-y-0.5" role="list">
             {ALL_SERVICES_NAV_CATEGORIES.map((cat) => {
                 const subs = getServicesByCategory(cat.slug);
                 const isExpanded = expandedCategorySlug === cat.slug;
@@ -193,12 +154,12 @@ function DesktopAllServicesNavItem({ isActive }: { isActive: boolean }) {
 
                 return (
                   <Fragment key={cat.slug}>
-                    <li className="min-w-0">
+                    <li>
                       <div className="flex min-w-0 items-stretch">
                         <Link
                           to={`/categories/${cat.slug}`}
                           title={cat.tagline}
-                          className={cn(navDropdownServiceLinkClass, "min-w-0 flex-1 font-display text-[length:var(--type-label)]")}
+                          className={cn(navDropdownServiceLinkClass, "min-w-0 flex-1 font-display")}
                         >
                           <span className="line-clamp-2">{cat.name}</span>
                         </Link>
@@ -206,7 +167,7 @@ function DesktopAllServicesNavItem({ isActive }: { isActive: boolean }) {
                           <button
                             type="button"
                             onClick={() => toggleCategory(cat.slug)}
-                            className="flex w-7 shrink-0 items-center justify-center text-primary-light/70 transition hover:text-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-light"
+                            className="flex w-8 shrink-0 items-center justify-center text-primary-light/70 transition hover:text-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-light"
                             aria-expanded={isExpanded}
                             aria-controls={subsListId}
                             aria-label={`${isExpanded ? "Hide" : "Show"} ${cat.name} deliverables`}
@@ -221,16 +182,12 @@ function DesktopAllServicesNavItem({ isActive }: { isActive: boolean }) {
                       </div>
                     </li>
                     {hasSubs && isExpanded && (
-                      <li id={subsListId} className="col-span-full space-y-0.5" role="group" aria-label={`${cat.name} deliverables`}>
-                        <ul className={navDropdownMegaGridClass} role="list">
-                          {subs.map((s) => (
-                            <li key={s.slug} className="min-w-0">
-                              <Link to={`/services/${s.slug}`} className={cn(navDropdownServiceLinkClass, "text-[length:var(--type-label)]")}>
-                                <span className="line-clamp-2">{s.name}</span>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
+                      <li id={subsListId} className="space-y-0.5" role="group" aria-label={`${cat.name} deliverables`}>
+                        {subs.map((s) => (
+                          <Link key={s.slug} to={`/services/${s.slug}`} className={navDropdownServiceLinkClass}>
+                            <span className="line-clamp-2">{s.name}</span>
+                          </Link>
+                        ))}
                       </li>
                     )}
                   </Fragment>
@@ -247,7 +204,7 @@ function DesktopCategoryNavItem({ cat, isActive }: { cat: Category; isActive: bo
   const subs = getServicesByCategory(cat.slug);
 
   return (
-    <div className={navDropdownTriggerClass}>
+    <div className="group relative z-10 shrink-0 hover:z-[120] focus-within:z-[120]">
       <div className={cn(navCategoryTriggerClass, isActive && navCategoryTriggerActive)}>
         <Link
           to={`/categories/${cat.slug}`}
@@ -275,12 +232,12 @@ function DesktopCategoryNavItem({ cat, isActive }: { cat: Category; isActive: bo
             </Link>
             <p className="mt-1 text-[length:var(--type-label)] leading-snug text-white/50">{cat.tagline}</p>
           </div>
-          <ul className={navDropdownListClass} role="list">
+          <ul className="mt-2 space-y-0.5" role="list">
             {subs.map((s) => (
               <li key={s.slug}>
                 <Link
                   to={`/services/${s.slug}`}
-                  className={navDropdownServiceLinkClass}
+                  className="flex min-h-[2.5rem] items-center rounded-[var(--radius-sm)] px-2 py-1.5 text-[length:var(--type-body)] leading-snug text-white/75 transition hover:bg-white/5 hover:text-white"
                 >
                   <span className="line-clamp-2">{s.name}</span>
                 </Link>
@@ -293,8 +250,23 @@ function DesktopCategoryNavItem({ cat, isActive }: { cat: Category; isActive: bo
   );
 }
 
+/** Always show logo strip when scroll is at or above this Y. */
+const LOGO_STRIP_SHOW_Y = 48;
+/** Hide only after scrolling past this Y (hysteresis vs SHOW). */
+const LOGO_STRIP_HIDE_Y = 72;
+/** Minimum scroll delta per frame to count as intentional direction. */
+const LOGO_STRIP_SCROLL_DELTA = 12;
+/** Ignore scroll-driven toggles while the strip animates (avoids layout feedback). */
+const LOGO_STRIP_TOGGLE_COOLDOWN_MS = 320;
+
 const Header = () => {
   const [open, setOpen] = useState(false);
+  const [logoStripHidden, setLogoStripHidden] = useState(false);
+  const logoStripHiddenRef = useRef(false);
+  const lastScrollY = useRef(0);
+  const scrollTicking = useRef(false);
+  const scrollToggleLockedUntil = useRef(0);
+  const { pathname } = useLocation();
   const activeCategorySlug = useActiveCategorySlug();
   const mAllServices = useMatch({ path: "/all-services", end: true });
   const allServicesNavActive = !!(mAllServices || isAllServicesSectionSlug(activeCategorySlug));
@@ -327,13 +299,100 @@ const Header = () => {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
+  const setLogoStripHiddenSafe = (hidden: boolean) => {
+    if (logoStripHiddenRef.current === hidden) return;
+    logoStripHiddenRef.current = hidden;
+    setLogoStripHidden(hidden);
+    scrollToggleLockedUntil.current = performance.now() + LOGO_STRIP_TOGGLE_COOLDOWN_MS;
+    requestAnimationFrame(() => {
+      lastScrollY.current = window.scrollY || document.documentElement.scrollTop;
+    });
+  };
+
+  useEffect(() => {
+    setLogoStripHiddenSafe(false);
+    lastScrollY.current = window.scrollY || document.documentElement.scrollTop;
+  }, [pathname]);
+
+  useEffect(() => {
+    const getScrollY = () => window.scrollY || document.documentElement.scrollTop;
+
+    const onScroll = () => {
+      if (scrollTicking.current) return;
+      scrollTicking.current = true;
+      requestAnimationFrame(() => {
+        if (performance.now() < scrollToggleLockedUntil.current) {
+          lastScrollY.current = getScrollY();
+          scrollTicking.current = false;
+          return;
+        }
+
+        const y = getScrollY();
+        const delta = y - lastScrollY.current;
+        const hidden = logoStripHiddenRef.current;
+
+        if (y <= LOGO_STRIP_SHOW_Y) {
+          setLogoStripHiddenSafe(false);
+        } else if (!hidden && y > LOGO_STRIP_HIDE_Y && delta > LOGO_STRIP_SCROLL_DELTA) {
+          setLogoStripHiddenSafe(true);
+        } else if (hidden && delta < -LOGO_STRIP_SCROLL_DELTA) {
+          setLogoStripHiddenSafe(false);
+        }
+
+        lastScrollY.current = y;
+        scrollTicking.current = false;
+      });
+    };
+
+    lastScrollY.current = getScrollY();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const closeMobile = () => {
     setOpen(false);
   };
 
   return (
     <div className="sticky top-0 z-[1000]">
-      <header className="relative isolate overflow-visible rounded-b-[var(--radius-lg)] border-b border-slate-200/90 bg-white shadow-[0_1px_0_rgba(15,23,42,0.06)]">
+      {/* Logo strip — collapses on scroll down; asset: `public/brand/klikcy-logo.png` */}
+      <div
+        className={cn(
+          "relative overflow-hidden border-b border-white/10 bg-[hsl(var(--ink)/0.98)] shadow-[0_1px_0_hsl(184_100%_37%/0.08)] backdrop-blur-xl supports-[backdrop-filter]:bg-[hsl(var(--ink)/0.9)]",
+          logoStripHidden
+            ? "max-h-0 border-b-transparent shadow-none pointer-events-none"
+            : "max-h-[7.5rem] sm:max-h-[8.5rem]",
+        )}
+        aria-hidden={logoStripHidden}
+      >
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" aria-hidden />
+        <div
+          className={cn(
+            "k-container flex justify-center py-2.5 transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none sm:py-3",
+            logoStripHidden && "pointer-events-none -translate-y-3 opacity-0 motion-reduce:translate-y-0",
+          )}
+        >
+          <Link
+            to="/"
+            className="flex flex-col items-center gap-1 rounded-[var(--radius-md)] outline-none transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-light"
+            aria-label="Klikcy home"
+          >
+            <img
+              src="/brand/klikcy-logo.png"
+              alt=""
+              width={280}
+              height={100}
+              decoding="async"
+              className="h-11 w-auto max-h-12 max-w-[min(20rem,calc(100vw-2rem))] object-contain object-center sm:h-14 sm:max-h-16"
+            />
+            <span className="font-display text-[0.68rem] font-extrabold uppercase tracking-[0.28em] text-white/80 sm:text-xs">
+              KLIKCY
+            </span>
+          </Link>
+        </div>
+      </div>
+
+      <header className="relative border-b border-slate-200/90 bg-white shadow-[0_1px_0_rgba(15,23,42,0.06)]">
         <div
           className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--primary)/0.2)] to-transparent"
           aria-hidden
@@ -341,11 +400,11 @@ const Header = () => {
         <a href="#main-content" className="skip-link">
           Skip to main content
         </a>
-        <div className="k-container relative flex min-h-[3.5rem] flex-wrap items-center gap-2 overflow-visible py-2 sm:gap-3 lg:min-h-[4.25rem] lg:gap-2 lg:py-2.5 xl:min-h-[4.5rem]">
-        <div className="order-first hidden w-[4.25rem] shrink-0 sm:w-[4.75rem] lg:block">
-          <HeaderBrandMark />
-        </div>
-        <nav className={desktopNavGridClass} aria-label="Main navigation">
+        <div className="k-container relative flex min-h-[3.5rem] items-center gap-3 py-2 sm:min-h-[3.75rem] sm:gap-4 sm:py-0">
+        <nav
+          className="hidden flex-1 flex-wrap items-center justify-center gap-x-5 gap-y-2 px-1 py-1 md:gap-x-7 lg:flex lg:gap-x-8 xl:gap-x-10"
+          aria-label="Main navigation"
+        >
           <DesktopBarLink to="/" label="Home" />
           <DesktopBarLink to="/about" label="About" />
           {PRIMARY_NAV_CATEGORIES.map((cat) => (
@@ -356,7 +415,7 @@ const Header = () => {
           <DesktopBarLink to="/contact" label="Contact" />
         </nav>
 
-        <div className="ml-auto flex shrink-0 items-center gap-2 self-center sm:gap-3">
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
           <ThemeToggle className={cn("hidden sm:inline-flex", themeToggleOnLightBar)} />
           <MagneticButton className="hidden sm:inline-flex">
             <Link to="/contact" className="btn-primary !px-5 !py-2.5 text-[length:var(--type-body)] font-semibold xl:!px-6">
@@ -387,6 +446,10 @@ const Header = () => {
             aria-modal="true"
             aria-label="Mobile navigation"
           >
+            <div
+              className="pointer-events-none absolute inset-x-0 top-[7.5rem] h-px bg-gradient-to-r from-transparent via-primary/35 to-transparent sm:top-[8rem]"
+              aria-hidden
+            />
             <div className="flex min-h-[4.25rem] shrink-0 items-center justify-between border-b border-white/10 px-[var(--space-gutter)] sm:min-h-[4.5rem]">
               <Link to="/" onClick={closeMobile} className="rounded-[var(--radius-md)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-light" aria-label="Klikcy home">
                 <img
