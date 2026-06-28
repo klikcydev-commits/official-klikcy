@@ -1,5 +1,7 @@
+"use client";
+
 import { useLayoutEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ensureGsapPlugins, gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -64,8 +66,6 @@ export function HomeHero({ className }: HomeHeroProps) {
     };
   }, [isMobile, reduced]);
 
-  const hi = homeHero.heroImage;
-
   return (
     <section
       ref={root}
@@ -87,8 +87,8 @@ export function HomeHero({ className }: HomeHeroProps) {
       </div>
 
       <div className="relative k-container pb-[var(--space-section-y)] pt-10 sm:pt-14 lg:pt-16">
-        <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-6 xl:gap-10">
-          <div className="min-w-0 w-full lg:pr-[var(--container-bleed)]">
+        <div className="grid items-start gap-10">
+          <div className="min-w-0 w-full">
             <p
               ref={eyebrow}
               className="font-display font-bold uppercase tracking-[0.22em] text-[length:var(--type-eyebrow)] text-[hsl(var(--primary-light))] sm:tracking-[0.28em]"
@@ -114,14 +114,14 @@ export function HomeHero({ className }: HomeHeroProps) {
             <div ref={cta} className="mt-10 flex w-full max-w-lg flex-col gap-3 sm:flex-row sm:items-center">
               <MagneticButton className="w-full sm:w-auto">
                 <Link
-                  to={homeHero.primaryCta.href}
+                  href={homeHero.primaryCta.href}
                   className="btn-primary inline-flex w-full min-h-[48px] justify-center sm:w-auto sm:min-w-[12.5rem]"
                 >
                   {homeHero.primaryCta.label} <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
                 </Link>
               </MagneticButton>
               <Link
-                to={homeHero.secondaryCta.href}
+                href={homeHero.secondaryCta.href}
                 className="btn-ghost-light inline-flex w-full min-h-[48px] justify-center sm:w-auto"
               >
                 {homeHero.secondaryCta.label}
@@ -137,23 +137,6 @@ export function HomeHero({ className }: HomeHeroProps) {
                 </div>
               ))}
             </dl>
-          </div>
-
-          <div className="relative hidden min-h-[20rem] min-w-0 w-full lg:block lg:-mr-[var(--container-bleed)]">
-            <div className="absolute -left-10 top-6 h-40 w-40 rounded-full border border-white/10 bg-white/5 blur-2xl" aria-hidden />
-            <figure className="relative ml-auto w-full max-w-full rotate-[2deg] overflow-hidden rounded-[var(--radius-xl)] border border-white/15 shadow-[var(--shadow-elevated)]">
-              <img
-                src={hi.src}
-                width={hi.width}
-                height={hi.height}
-                alt={hi.alt}
-                fetchPriority="high"
-                decoding="async"
-                className="h-auto w-full object-cover"
-                loading="eager"
-              />
-              <figcaption className="sr-only">Atmosphere frame for the Klikcy homepage hero.</figcaption>
-            </figure>
           </div>
         </div>
       </div>

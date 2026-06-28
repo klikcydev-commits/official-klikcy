@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef, type ReactNode } from "react";
 import { useLayoutEffect } from "react";
 import { ensureGsapPlugins, gsap } from "@/lib/gsap";

@@ -1,0 +1,10 @@
+klikcy-next
+src-vite-backup
+node_modules
+.next
+out
+dist
+.git
+playwright-report
+test-results
+.cursor

@@ -10,3 +10,8 @@ export const LEGACY_SERVICE_SLUG_REDIRECTS: Record<string, string> = {
   "e-commerce-development": "shopify-store-development",
   "ecommerce-development": "shopify-store-development",
 };
+
+export const legacyServiceSlugs = Object.entries(LEGACY_SERVICE_SLUG_REDIRECTS).map(([from, to]) => ({
+  from,
+  to,
+}));

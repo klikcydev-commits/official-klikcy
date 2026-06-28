@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 const STORAGE_KEY = "klikcy-theme";

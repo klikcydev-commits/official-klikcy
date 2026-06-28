@@ -33,6 +33,6 @@ export const buildServiceStateContent = (service: Service, state: State) => {
 };
 
 export const stateIntroContent = (state: State) => ({
-  hero: `Digital agency services across ${state.name}`,
-  intro: `Klikcy partners with ${state.name} businesses on websites, SEO, AEO, AI automation and e-commerce. ${state.name}'s economy is shaped by ${state.blurb}, and our work helps companies in those industries win online — across ${state.cities.slice(0, 5).join(", ")} and every city in the state.`,
+  hero: `Digital agency serving businesses in ${state.name}`,
+  intro: `Klikcy is a remote-first digital agency available for ${state.name} businesses — websites, SEO/AEO, AI automation, and e-commerce. ${state.name}'s economy is shaped by ${state.blurb}, and we help companies in those industries win online across ${state.cities.slice(0, 5).join(", ")} and every city in the state.`,
 });

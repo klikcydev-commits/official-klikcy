@@ -1,3 +1,5 @@
+"use client";
+
 import type { CSSProperties } from "react";
 import { memo, useEffect, useState } from "react";
 
@@ -79,6 +81,7 @@ function TechIconWrapper({
               title={tech.name}
               width={logoPx}
               height={logoPx}
+              loading="lazy"
               className="object-contain"
               decoding="async"
               referrerPolicy="no-referrer"

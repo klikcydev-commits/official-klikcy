@@ -1,10 +1,23 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { getAllServicesNavCategories, getPrimaryNavCategories } from "@/lib/nav-categories";
 import { priorityStates } from "@/lib/states";
+import { services } from "@/lib/services";
+
+const featuredServices = [
+  "custom-website-development",
+  "technical-seo",
+  "ai-automation-services",
+  "mobile-app-development",
+  "shopify-development",
+  "local-seo",
+] as const;
 
 const Footer = () => {
   const primaryCategories = getPrimaryNavCategories();
   const nestedCategories = getAllServicesNavCategories();
+  const footerServices = featuredServices
+    .map((slug) => services.find((s) => s.slug === slug))
+    .filter(Boolean);
 
   return (
     <footer className="surface-dark relative border-t border-white/10 bg-void text-white">
@@ -15,7 +28,7 @@ const Footer = () => {
         <div className="grid gap-10 border-b border-white/10 pb-10 lg:grid-cols-12 lg:items-end lg:gap-8">
           <div className="lg:col-span-8">
             <Link
-              to="/"
+              href="/"
               className="inline-block rounded-lg font-display text-3xl font-extrabold tracking-tight text-white transition hover:text-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-light"
             >
               Klikcy
@@ -26,28 +39,28 @@ const Footer = () => {
             </p>
           </div>
           <div className="lg:col-span-4 lg:justify-self-end">
-            <Link to="/contact" className="btn-primary">
+            <Link href="/contact" className="btn-primary">
               Get Free Quote
             </Link>
           </div>
         </div>
 
-        <div className="grid gap-9 pt-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-9 pt-10 sm:grid-cols-2 lg:grid-cols-5">
           <nav aria-label="Footer company">
             <div className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.22em] text-primary-light">Company</div>
             <ul className="mt-4 space-y-2 text-sm font-semibold">
               <li>
-                <Link to="/about" className="text-white/75 transition hover:text-white">
+                <Link href="/about" className="text-white/75 transition hover:text-white">
                   About
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-white/75 transition hover:text-white">
+                <Link href="/contact" className="text-white/75 transition hover:text-white">
                   Contact
                 </Link>
               </li>
               <li>
-                <Link to="/service-areas" className="text-white/75 transition hover:text-white">
+                <Link href="/service-areas" className="text-white/75 transition hover:text-white">
                   Service areas
                 </Link>
               </li>
@@ -59,7 +72,7 @@ const Footer = () => {
             <ul className="mt-4 space-y-2">
               {primaryCategories.map((cat) => (
                 <li key={cat.slug}>
-                  <Link to={`/categories/${cat.slug}`} className="text-sm font-semibold text-white/75 transition hover:text-white">
+                  <Link href={`/categories/${cat.slug}`} className="text-sm font-semibold text-white/75 transition hover:text-white">
                     {cat.short}
                   </Link>
                 </li>
@@ -71,14 +84,27 @@ const Footer = () => {
             <div className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.22em] text-primary-light">All Services</div>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link to="/all-services" className="text-sm font-semibold text-white transition hover:text-primary-light">
+                <Link href="/all-services" className="text-sm font-semibold text-white transition hover:text-primary-light">
                   Browse full catalog
                 </Link>
               </li>
               {nestedCategories.map((cat) => (
                 <li key={cat.slug}>
-                  <Link to={`/categories/${cat.slug}`} className="text-sm font-semibold text-white/75 transition hover:text-white">
+                  <Link href={`/categories/${cat.slug}`} className="text-sm font-semibold text-white/75 transition hover:text-white">
                     {cat.short}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav aria-label="Footer featured services">
+            <div className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.22em] text-primary-light">Featured</div>
+            <ul className="mt-4 space-y-2">
+              {footerServices.map((service) => (
+                <li key={service!.slug}>
+                  <Link href={`/services/${service!.slug}`} className="text-sm font-semibold text-white/75 transition hover:text-white">
+                    {service!.name}
                   </Link>
                 </li>
               ))}
@@ -91,14 +117,14 @@ const Footer = () => {
               {priorityStates.slice(0, 8).map((s) => (
                 <Link
                   key={s.slug}
-                  to={`/service-areas/${s.slug}`}
+                  href={`/service-areas/${s.slug}`}
                   className="rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-white/80 transition hover:border-primary/50 hover:bg-white/10 hover:text-white"
                 >
                   {s.name}
                 </Link>
               ))}
               <Link
-                to="/service-areas"
+                href="/service-areas"
                 className="rounded-full border border-primary/35 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary-light transition hover:border-primary/55 hover:bg-primary/15"
               >
                 View all

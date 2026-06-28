@@ -1,3 +1,5 @@
+"use client";
+
 import { Moon, Sun } from "lucide-react";
 import { useThemeMode } from "@/components/layout/ThemeRoot";
 import { cn } from "@/utils/cn";

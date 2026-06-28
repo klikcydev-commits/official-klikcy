@@ -1,12 +1,12 @@
 # NPM Packages, Tools, and Dependencies
 
-Audit of `package.json` for the **newklikcy** Vite + React + TypeScript SPA. **Source of truth** for dependency and dead-code cleanup (see `.cursor/rules/dependency-cleanup.mdc`).
+Audit of `package.json` for the **official-klikcy** Next.js 14 + React + TypeScript app. **Source of truth** for dependency and dead-code cleanup (see `.cursor/rules/dependency-cleanup.mdc`).
 
-Usage was verified by searching imports under `src/`, `server/`, `scripts/`, and config files. **Do not treat “unused” as safe to delete without `npm run build` and manual UI regression testing.**
+Usage was verified by searching imports under `src/`, `scripts/`, and config files. **Do not treat “unused” as safe to delete without `npm run build` and manual UI regression testing.**
 
-**Last cleanup pass:** Removed verified-unused direct deps; wired Sonner to `ThemeRoot`; removed unused React Query provider and Radix toast mount; deleted dead motion/scroll files. Radix/shadcn scaffold **kept**.
+**Stack:** Next.js App Router, TypeScript, Tailwind CSS, Route Handlers for contact API. **No Vite**, no `react-router-dom`, no `react-helmet-async`.
 
-**Lock file:** `package-lock.json` (npm). No `yarn.lock` or `pnpm-lock.yaml`.
+**Lock file:** `package-lock.json` (npm).
 
 ---
 
@@ -14,18 +14,16 @@ Usage was verified by searching imports under `src/`, `server/`, `scripts/`, and
 
 | Tool | Config / entry | Role |
 |------|----------------|------|
-| **Vite** | `vite.config.ts`, `package.json` scripts | Dev server (port 8080), production bundle to `dist/`, `/api` proxy to contact server |
-| **React 18** | `src/main.tsx`, `src/App.tsx` | UI runtime |
-| **TypeScript** | `tsconfig.json`, `tsconfig.app.json`, `tsconfig.node.json` | Type-checking; app code in `src/`, Node tooling in `vite.config.ts` |
-| **Tailwind CSS** | `tailwind.config.ts`, `src/index.css` | Utility-first styling, design tokens, animations |
-| **PostCSS** | `postcss.config.js` | Runs Tailwind + Autoprefixer at build time |
-| **ESLint 9 (flat)** | `eslint.config.js` | Lint for `**/*.{ts,tsx}` |
-| **Vitest** | `vitest.config.ts`, `src/test/` | Unit tests (jsdom) |
-| **React Router v6** | `src/App.tsx` | Client-side routes |
-| **React Helmet Async** | `src/components/SEO.tsx`, `HelmetProvider` in `App.tsx` | Document `<head>` (title, meta, JSON-LD) |
+| **Next.js 14** | `next.config.mjs`, `package.json` scripts | App Router, SSG (~21k pages), Route Handlers |
+| **React 18** | `src/app/`, `src/views/` | UI runtime |
+| **TypeScript** | `tsconfig.json` | Type-checking |
+| **Tailwind CSS** | `tailwind.config.ts`, `src/app/globals.css` | Utility-first styling, design tokens |
+| **PostCSS** | `postcss.config.mjs` | Tailwind + Autoprefixer |
+| **ESLint** | `.eslintrc.json` | `next lint` |
+| **Metadata API** | `src/lib/seo/next-metadata.ts`, route `generateMetadata` | Document `<head>` (title, meta) |
 | **shadcn-style UI** | `src/components/ui/*` | Radix primitives + Tailwind + CVA |
-| **GSAP + Lenis + SplitType** | `src/lib/gsap.ts`, motion/layout components | Scroll, hero, and section animations |
-| **Contact API (Node)** | `server/index.mjs` | Express + nodemailer (not bundled by Vite) |
+| **GSAP + Lenis + SplitType** | `src/lib/gsap.ts`, lazy-loaded in `ClientProviders` | Scroll and section animations |
+| **Contact API** | `src/app/api/contact/route.ts`, `src/lib/contact.ts` | Nodemailer + Zod (server-only) |
 
 ---
 
@@ -33,18 +31,22 @@ Usage was verified by searching imports under `src/`, `server/`, `scripts/`, and
 
 | Script | Command | Purpose |
 |--------|---------|---------|
-| `dev` | `vite` | Frontend dev server |
-| `build` | `vite build` | Production static build |
-| `build:dev` | `vite build --mode development` | Development-mode build |
-| `preview` | `vite preview` | Serve `dist/` locally |
-| `lint` | `eslint .` | ESLint across project |
-| `test` | `vitest run` | Run tests once |
-| `test:watch` | `vitest` | Watch mode |
-| `server` | `node server/index.mjs` | Contact form API |
-| `dev:all` | `concurrently` … | API + Vite together |
-| `sitemap:generate` | `node scripts/generate-sitemaps.mjs` | Build sitemap from states/services |
-| `sitemap:split` | `node scripts/split-sitemaps.mjs` | Split sitemap into child XML files |
-| `seo:validate` | `node scripts/validate-seo.mjs` | Check `robots.txt` + `sitemap.xml` exist |
+| `dev` | `next dev` | Development server |
+| `build` | `next build` | Production build (SSG + API routes) |
+| `start` | `next start` | Serve production build |
+| `lint` | `next lint` | ESLint (Next.js config) |
+| `typecheck` | `tsc --noEmit` | TypeScript check |
+| `sitemap:generate` | `node scripts/generate-sitemaps.mjs` | Build sitemap URL list (legacy XML in `public/`) |
+| `sitemap:split` | `node scripts/split-sitemaps.mjs` | Split into child XML files |
+| `seo:validate` | `node scripts/validate-seo.mjs` | Check `robots.txt` + `sitemap.xml` in `public/` |
+
+**Note:** Primary sitemap/robots for Next.js are `src/app/sitemap.ts` and `src/app/robots.ts`. Scripts use `SITE_URL` or `NEXT_PUBLIC_SITE_URL` (not `VITE_*`).
+
+---
+
+## Legacy package table (pre–Next.js migration)
+
+> **Out of date.** The table below describes the removed Vite SPA (`vite`, `react-router-dom`, `react-helmet-async`, `express`, `server/index.mjs`). Use root `package.json` and the toolchain section above as the current source of truth.
 
 ---
 

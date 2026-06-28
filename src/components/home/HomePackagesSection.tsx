@@ -1,5 +1,7 @@
+"use client";
+
 import { ArrowRight, Check } from "lucide-react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { packagePlans } from "@/content/home";
 import { PageSection, SectionIntro } from "@/components/layout/PageSection";
 
@@ -28,7 +30,7 @@ export function HomePackagesSection() {
               <li>Clear upgrade path as traffic and complexity grow</li>
             </ul>
             <Link
-              to="/contact"
+              href="/contact"
               className="mt-6 inline-flex items-center gap-2 text-[length:var(--type-body)] font-bold text-primary-light transition hover:text-white"
             >
               Need custom scope? Talk to Klikcy <ArrowRight className="h-4 w-4" aria-hidden />
@@ -77,7 +79,7 @@ export function HomePackagesSection() {
 
               <div className="mt-8 border-t border-white/10 pt-6">
                 <Link
-                  to="/contact"
+                  href="/contact"
                   className={plan.popular ? "btn-primary w-full justify-between" : "btn-ghost-light w-full justify-between"}
                 >
                   <span>{plan.ctaLabel}</span>

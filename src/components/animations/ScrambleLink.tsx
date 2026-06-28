@@ -1,5 +1,7 @@
+"use client";
+
 import { useRef, useCallback, type ReactNode } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/utils/cn";
 
@@ -58,7 +60,7 @@ export function ScrambleLink({ to, children, className, onClick, title }: Scramb
   return (
     <Link
       ref={ref}
-      to={to}
+      href={to}
       title={title}
       className={cn(className)}
       onMouseEnter={scramble}

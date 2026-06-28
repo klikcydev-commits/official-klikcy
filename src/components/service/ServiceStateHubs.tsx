@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import type { State } from "@/lib/states";
 import { PageSection } from "@/components/layout/PageSection";
@@ -44,7 +44,7 @@ export function ServiceStateHubs({ serviceSlug, serviceName, states }: ServiceSt
             <div key={s.slug} data-reveal-item className="h-full min-h-[9.5rem]">
               <TiltCard className="h-full" maxTilt={8}>
                 <Link
-                  to={`/${serviceSlug}/${s.slug}`}
+                  href={`/${serviceSlug}/${s.slug}`}
                   aria-label={`${serviceName} in ${s.name} — state landing hub`}
                   className="group flex h-full min-h-[9.5rem] flex-col rounded-[var(--radius-lg)] border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-card transition duration-300 hover:border-primary/35 hover:shadow-[var(--shadow-glow-brand)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 >

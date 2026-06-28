@@ -20,7 +20,7 @@ export interface SeoPayload {
   jsonLd?: object[];
 }
 
-export const DEFAULT_OG_IMAGE = `${SITE.url}/klikcy-logo.png`;
+export const DEFAULT_OG_IMAGE = `${SITE.url}/icon-512.png`;
 
 export const DEFAULT_ROBOTS: SeoRobots = { index: true, follow: true };
 
@@ -28,5 +28,6 @@ export const NOINDEX_ROBOTS: SeoRobots = { index: false, follow: true };
 
 export function canonicalPath(path: string): string {
   const p = path.startsWith("/") ? path : `/${path}`;
-  return `${SITE.url}${p}`;
+  if (p === "/") return `${SITE.url}/`;
+  return `${SITE.url}${p.endsWith("/") ? p : `${p}/`}`;
 }

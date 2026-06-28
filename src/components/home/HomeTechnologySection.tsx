@@ -1,3 +1,5 @@
+"use client";
+
 import { CheckCircle2 } from "lucide-react";
 import { technologyCapabilities } from "@/content/home";
 import { PageSection, SectionIntro } from "@/components/layout/PageSection";

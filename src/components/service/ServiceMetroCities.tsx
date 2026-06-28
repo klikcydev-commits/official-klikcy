@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import type { State } from "@/lib/states";
 import { getCitiesForState } from "@/lib/cities";
 import { PageSection } from "@/components/layout/PageSection";
@@ -46,7 +46,7 @@ export function ServiceMetroCities({ serviceSlug, serviceName, states }: Service
                 <div className="flex flex-wrap items-end justify-between gap-4 border-b border-[hsl(var(--border))] pb-4 dark:border-white/10">
                   <h3 className="font-display text-[length:var(--type-h3)] font-bold text-[hsl(var(--navy-deep))] dark:text-[hsl(var(--foreground))]">
                     <Link
-                      to={`/${serviceSlug}/${st.slug}`}
+                      href={`/${serviceSlug}/${st.slug}`}
                       className="transition hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
                       {st.name}
@@ -60,7 +60,7 @@ export function ServiceMetroCities({ serviceSlug, serviceName, states }: Service
                   {cities.map((c) => (
                     <li key={`${st.slug}-${c.slug}`}>
                       <Link
-                        to={`/${serviceSlug}/${st.slug}/${c.slug}`}
+                        href={`/${serviceSlug}/${st.slug}/${c.slug}`}
                         className={chipClass}
                         aria-label={`${serviceName} in ${c.name}, ${st.name}`}
                       >

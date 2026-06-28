@@ -17,7 +17,7 @@ Important:
 
 - Do NOT remove anything blindly.
 - Do NOT remove Radix/shadcn packages unless the related unused UI component files are also removed.
-- Do NOT remove config/build packages like PostCSS, Autoprefixer, Tailwind, Vite, TypeScript, ESLint, Vitest, or React types.
+- Do NOT remove config/build packages like PostCSS, Autoprefixer, Tailwind, Next.js, TypeScript, ESLint, or React types.
 - Do NOT remove packages used indirectly by config files or scripts.
 - Do NOT remove anything that breaks build, lint, tests, routes, SEO, sitemap generation, contact API, or UI.
 
@@ -26,7 +26,7 @@ Start by running or checking:
 ```bash
 npm run lint
 npm run build
-npm run test
+npm run typecheck
 npm ls
 npx depcheck
 ```
@@ -35,7 +35,13 @@ If `depcheck` reports false positives, document them instead of removing them.
 
 ## Core packages that must stay
 
-react, react-dom, react-router-dom, react-helmet-async, vite, typescript, tailwindcss, zod, express, nodemailer, dotenv, cors, gsap, @gsap/react, lenis, split-type, lucide-react, sonner, clsx, tailwind-merge, class-variance-authority
+next, react, react-dom, typescript, tailwindcss, zod, nodemailer, gsap, @gsap/react, lenis, split-type, lucide-react, sonner, clsx, tailwind-merge, class-variance-authority
+
+## Environment variables (Next.js)
+
+- Public (browser): `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_CONTACT_EMAIL`, `NEXT_PUBLIC_GTM_ID`
+- Server-only: `SITE_URL`, `SMTP_*`, `CONTACT_EMAIL`
+- Do **not** use `VITE_*` or `import.meta.env` (Vite removed)
 
 ## Potentially removable after verification
 
@@ -58,7 +64,7 @@ SEO metadata generators, schema helpers, sitemap scripts, robots.txt, priority m
 ## After every removal
 
 1. Confirm no direct imports and no config usage.
-2. Run: `npm install`, `npm run lint`, `npm run build`, `npm run test`
+2. Run: `npm install`, `npm run lint`, `npm run build`, `npm run typecheck`
 3. Update `docs/npm-packages-and-tools.md` and README dependency summary.
 
 ## Final validation
@@ -67,7 +73,7 @@ SEO metadata generators, schema helpers, sitemap scripts, robots.txt, priority m
 npm install
 npm run lint
 npm run build
-npm run test
+npm run typecheck
 npm run sitemap:generate
 npm run sitemap:split
 npm run seo:validate

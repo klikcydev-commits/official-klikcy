@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -9,9 +11,7 @@ export interface BreadcrumbItem {
 
 interface BreadcrumbsProps {
   items: BreadcrumbItem[];
-  /** Use `ink` on dark hero backgrounds for readable contrast. */
   tone?: "default" | "ink";
-  /** Horizontal shell — default `container-x`; use `k-container` to align with marketing pages. */
   shellClassName?: string;
 }
 
@@ -29,7 +29,7 @@ const Breadcrumbs = ({ items, tone = "default", shellClassName = "container-x" }
           {i > 0 && <ChevronRight className="h-3.5 w-3.5 opacity-70" aria-hidden />}
           {it.href ? (
             <Link
-              to={it.href}
+              href={it.href}
               className={cn(
                 "transition",
                 tone === "default" && "hover:text-primary",

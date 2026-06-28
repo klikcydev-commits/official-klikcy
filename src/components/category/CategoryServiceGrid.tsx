@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Service } from "@/lib/services";
 
@@ -7,7 +7,7 @@ function CategoryServiceCard({ service: s, index }: { service: Service; index: n
 
   return (
     <Link
-      to={`/services/${s.slug}`}
+      href={`/services/${s.slug}`}
       className="category-service-card group h-full"
     >
       <div className="relative z-[1] flex flex-1 flex-col">

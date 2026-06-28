@@ -1,5 +1,7 @@
+"use client";
+
 import type { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 
@@ -44,11 +46,11 @@ export function ServiceHero({
           <p className="mt-6 max-w-2xl text-[length:var(--type-body-lg)] leading-[var(--leading-body)] text-white/75">{intro}</p>
           <div className="mt-10 flex flex-wrap gap-3">
             <MagneticButton>
-              <Link to="/contact" className="btn-primary inline-flex min-h-[48px] items-center gap-2 px-6">
+              <Link href="/contact" className="btn-primary inline-flex min-h-[48px] items-center gap-2 px-6">
                 Get Free Quote <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
               </Link>
             </MagneticButton>
-            <Link to={`/categories/${categorySlug}`} className="btn-ghost-light inline-flex min-h-[48px] items-center px-6">
+            <Link href={`/categories/${categorySlug}`} className="btn-ghost-light inline-flex min-h-[48px] items-center px-6">
               All {categoryShort}
             </Link>
           </div>

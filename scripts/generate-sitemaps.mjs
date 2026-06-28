@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import "dotenv/config";
 
-const SITE_URL = (process.env.SITE_URL || process.env.VITE_SITE_URL || "https://www.klikcy.com").replace(
+const SITE_URL = (process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://www.klikcy.com").replace(
   /\/$/,
   "",
 );

@@ -1,6 +1,10 @@
+"use client";
+
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Link, useLocation, useMatch } from "react-router-dom";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { type Category } from "@/lib/categories";
 import {
@@ -49,8 +53,20 @@ const PRIMARY_NAV_CATEGORIES = getPrimaryNavCategories();
 const ALL_SERVICES_NAV_CATEGORIES = getAllServicesNavCategories();
 const ALL_SERVICES_NAV_TREE = getAllServicesNavTree();
 
+function normalizePath(path: string): string {
+  if (path.length > 1 && path.endsWith("/")) return path.slice(0, -1);
+  return path;
+}
+
+function pathMatches(pathname: string, target: string, end = false): boolean {
+  const current = normalizePath(pathname);
+  const path = normalizePath(target);
+  if (end) return current === path;
+  return current === path || current.startsWith(`${path}/`);
+}
+
 function useActiveCategorySlug(): string | null {
-  const { pathname } = useLocation();
+  const pathname = usePathname() ?? "/";
   return useMemo(() => {
     const catPath = pathname.match(/^\/categories\/([^/]+)/);
     if (catPath?.[1]) return catPath[1];
@@ -64,33 +80,29 @@ function useActiveCategorySlug(): string | null {
 }
 
 function DesktopBarLink({
-  to,
+  href,
   label,
   compactLabel,
   title,
 }: {
-  to: string;
+  href: string;
   label: string;
   compactLabel?: string;
   title?: string;
 }) {
-  const mHome = useMatch({ path: "/", end: true });
-  const mAbout = useMatch({ path: "/about", end: true });
-  const mContact = useMatch({ path: "/contact", end: true });
-  const mAreasRoot = useMatch({ path: "/service-areas", end: true });
-  const mAreasChild = useMatch("/service-areas/*");
+  const pathname = usePathname() ?? "/";
 
   let active = false;
-  if (to === "/") active = !!mHome;
-  else if (to === "/about") active = !!mAbout;
-  else if (to === "/contact") active = !!mContact;
-  else if (to === "/service-areas") active = !!(mAreasRoot || mAreasChild);
+  if (href === "/") active = pathMatches(pathname, "/", true);
+  else if (href === "/about") active = pathMatches(pathname, "/about", true);
+  else if (href === "/contact") active = pathMatches(pathname, "/contact", true);
+  else if (href === "/service-areas") active = pathMatches(pathname, "/service-areas");
 
   const activeClass = active ? navBarLinkActive : undefined;
 
   if (compactLabel) {
     return (
-      <Link to={to} title={title ?? label} className={cn(navBarLinkClass, activeClass)}>
+      <Link href={href} title={title ?? label} className={cn(navBarLinkClass, activeClass)}>
         <span className="lg:hidden"><ScrambleText>{compactLabel}</ScrambleText></span>
         <span className="hidden lg:inline"><ScrambleText>{label}</ScrambleText></span>
       </Link>
@@ -98,7 +110,7 @@ function DesktopBarLink({
   }
 
   return (
-    <Link to={to} title={title} className={cn(navBarLinkClass, activeClass)}>
+    <Link href={href} title={title} className={cn(navBarLinkClass, activeClass)}>
       <ScrambleText>{label}</ScrambleText>
     </Link>
   );
@@ -118,7 +130,7 @@ function DesktopAllServicesNavItem({ isActive }: { isActive: boolean }) {
     >
       <div className={cn(navCategoryTriggerClass, isActive && navCategoryTriggerActive)}>
         <Link
-          to="/all-services"
+          href="/all-services"
           className="min-w-0 text-inherit hover:text-[hsl(var(--primary))] focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--primary))]"
           title="Browse every practice and deliverable"
         >
@@ -135,7 +147,7 @@ function DesktopAllServicesNavItem({ isActive }: { isActive: boolean }) {
         <div className={navDropdownPanelClass} data-lenis-prevent>
           <div className="border-b border-white/10 pb-2">
             <Link
-              to="/all-services"
+              href="/all-services"
               className="font-display text-[length:var(--type-body)] font-bold text-white transition hover:text-primary-light"
             >
               All services
@@ -157,7 +169,7 @@ function DesktopAllServicesNavItem({ isActive }: { isActive: boolean }) {
                     <li>
                       <div className="flex min-w-0 items-stretch">
                         <Link
-                          to={`/categories/${cat.slug}`}
+                          href={`/categories/${cat.slug}`}
                           title={cat.tagline}
                           className={cn(navDropdownServiceLinkClass, "min-w-0 flex-1 font-display")}
                         >
@@ -184,7 +196,7 @@ function DesktopAllServicesNavItem({ isActive }: { isActive: boolean }) {
                     {hasSubs && isExpanded && (
                       <li id={subsListId} className="space-y-0.5" role="group" aria-label={`${cat.name} deliverables`}>
                         {subs.map((s) => (
-                          <Link key={s.slug} to={`/services/${s.slug}`} className={navDropdownServiceLinkClass}>
+                          <Link key={s.slug} href={`/services/${s.slug}`} className={navDropdownServiceLinkClass}>
                             <span className="line-clamp-2">{s.name}</span>
                           </Link>
                         ))}
@@ -207,7 +219,7 @@ function DesktopCategoryNavItem({ cat, isActive }: { cat: Category; isActive: bo
     <div className="group relative z-10 shrink-0 hover:z-[120] focus-within:z-[120]">
       <div className={cn(navCategoryTriggerClass, isActive && navCategoryTriggerActive)}>
         <Link
-          to={`/categories/${cat.slug}`}
+          href={`/categories/${cat.slug}`}
           className="min-w-0 max-w-[min(100%,11rem)] text-inherit hover:text-[hsl(var(--primary))] focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--primary))] sm:max-w-[min(100%,13rem)]"
           title={cat.name}
         >
@@ -224,7 +236,7 @@ function DesktopCategoryNavItem({ cat, isActive }: { cat: Category; isActive: bo
         <div className={navDropdownPanelClass} data-lenis-prevent>
           <div className="border-b border-white/10 pb-2">
             <Link
-              to={`/categories/${cat.slug}`}
+              href={`/categories/${cat.slug}`}
               className="font-display text-[length:var(--type-body)] font-bold text-white transition hover:text-primary-light"
             >
               {cat.name}
@@ -236,7 +248,7 @@ function DesktopCategoryNavItem({ cat, isActive }: { cat: Category; isActive: bo
             {subs.map((s) => (
               <li key={s.slug}>
                 <Link
-                  to={`/services/${s.slug}`}
+                  href={`/services/${s.slug}`}
                   className="flex min-h-[2.5rem] items-center rounded-[var(--radius-sm)] px-2 py-1.5 text-[length:var(--type-body)] leading-snug text-white/75 transition hover:bg-white/5 hover:text-white"
                 >
                   <span className="line-clamp-2">{s.name}</span>
@@ -266,10 +278,9 @@ const Header = () => {
   const lastScrollY = useRef(0);
   const scrollTicking = useRef(false);
   const scrollToggleLockedUntil = useRef(0);
-  const { pathname } = useLocation();
+  const pathname = usePathname() ?? "/";
   const activeCategorySlug = useActiveCategorySlug();
-  const mAllServices = useMatch({ path: "/all-services", end: true });
-  const allServicesNavActive = !!(mAllServices || isAllServicesSectionSlug(activeCategorySlug));
+  const allServicesNavActive = pathMatches(pathname, "/all-services", true) || isAllServicesSectionSlug(activeCategorySlug);
 
   useEffect(() => {
     if (!open) return;
@@ -355,7 +366,7 @@ const Header = () => {
 
   return (
     <div className="sticky top-0 z-[1000]">
-      {/* Logo strip — collapses on scroll down; asset: `public/brand/klikcy-logo.png` */}
+      {/* Logo strip — collapses on scroll down; asset: `public/brand/klikcy-logo.webp` */}
       <div
         className={cn(
           "relative overflow-hidden border-b border-white/10 bg-[hsl(var(--ink)/0.98)] shadow-[0_1px_0_hsl(184_100%_37%/0.08)] backdrop-blur-xl supports-[backdrop-filter]:bg-[hsl(var(--ink)/0.9)]",
@@ -373,16 +384,17 @@ const Header = () => {
           )}
         >
           <Link
-            to="/"
+            href="/"
             className="flex flex-col items-center gap-1 rounded-[var(--radius-md)] outline-none transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-light"
             aria-label="Klikcy home"
           >
-            <img
-              src="/brand/klikcy-logo.png"
-              alt=""
-              width={280}
-              height={100}
-              decoding="async"
+            <Image
+              src="/brand/klikcy-logo.webp"
+              alt="Klikcy"
+              width={585}
+              height={426}
+              priority
+              sizes="(max-width: 640px) 200px, 280px"
               className="h-11 w-auto max-h-12 max-w-[min(20rem,calc(100vw-2rem))] object-contain object-center sm:h-14 sm:max-h-16"
             />
             <span className="font-display text-[0.68rem] font-extrabold uppercase tracking-[0.28em] text-white/80 sm:text-xs">
@@ -405,20 +417,20 @@ const Header = () => {
           className="hidden flex-1 flex-wrap items-center justify-center gap-x-5 gap-y-2 px-1 py-1 md:gap-x-7 lg:flex lg:gap-x-8 xl:gap-x-10"
           aria-label="Main navigation"
         >
-          <DesktopBarLink to="/" label="Home" />
-          <DesktopBarLink to="/about" label="About" />
+          <DesktopBarLink href="/" label="Home" />
+          <DesktopBarLink href="/about" label="About" />
           {PRIMARY_NAV_CATEGORIES.map((cat) => (
             <DesktopCategoryNavItem key={cat.slug} cat={cat} isActive={activeCategorySlug === cat.slug} />
           ))}
           <DesktopAllServicesNavItem isActive={allServicesNavActive} />
-          <DesktopBarLink to="/service-areas" label="Service Areas" compactLabel="Areas" title="Service Areas — where we work" />
-          <DesktopBarLink to="/contact" label="Contact" />
+          <DesktopBarLink href="/service-areas" label="Service Areas" compactLabel="Areas" title="Service Areas — where we work" />
+          <DesktopBarLink href="/contact" label="Contact" />
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
           <ThemeToggle className={cn("hidden sm:inline-flex", themeToggleOnLightBar)} />
           <MagneticButton className="hidden sm:inline-flex">
-            <Link to="/contact" className="btn-primary !px-5 !py-2.5 text-[length:var(--type-body)] font-semibold xl:!px-6">
+            <Link href="/contact" className="btn-primary !px-5 !py-2.5 text-[length:var(--type-body)] font-semibold xl:!px-6">
               Get Free Quote
             </Link>
           </MagneticButton>
@@ -451,13 +463,13 @@ const Header = () => {
               aria-hidden
             />
             <div className="flex min-h-[4.25rem] shrink-0 items-center justify-between border-b border-white/10 px-[var(--space-gutter)] sm:min-h-[4.5rem]">
-              <Link to="/" onClick={closeMobile} className="rounded-[var(--radius-md)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-light" aria-label="Klikcy home">
-                <img
-                  src="/brand/klikcy-logo.png"
-                  alt=""
-                  width={200}
-                  height={72}
-                  decoding="async"
+              <Link href="/" onClick={closeMobile} className="rounded-[var(--radius-md)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-light" aria-label="Klikcy home">
+                <Image
+                  src="/brand/klikcy-logo.webp"
+                  alt="Klikcy"
+                  width={585}
+                  height={426}
+                  sizes="200px"
                   className="h-8 w-auto max-w-[10rem] object-contain"
                 />
               </Link>
@@ -478,28 +490,28 @@ const Header = () => {
               data-lenis-prevent
             >
               <Link
-                to="/"
+                href="/"
                 onClick={closeMobile}
                 className="flex min-h-[3rem] items-center border-b border-white/10 py-3 font-display text-[length:var(--type-body-lg)] font-bold text-white transition hover:text-primary-light"
               >
                 Home
               </Link>
               <Link
-                to="/about"
+                href="/about"
                 onClick={closeMobile}
                 className="flex min-h-[3rem] items-center border-b border-white/10 py-3 font-display text-[length:var(--type-body-lg)] font-bold text-white transition hover:text-primary-light"
               >
                 About
               </Link>
               <Link
-                to="/service-areas"
+                href="/service-areas"
                 onClick={closeMobile}
                 className="flex min-h-[3rem] items-center border-b border-white/10 py-3 font-display text-[length:var(--type-body-lg)] font-bold text-white transition hover:text-primary-light"
               >
                 Service Areas
               </Link>
               <Link
-                to="/contact"
+                href="/contact"
                 onClick={closeMobile}
                 className="flex min-h-[3rem] items-center border-b border-white/10 py-3 font-display text-[length:var(--type-body-lg)] font-bold text-white transition hover:text-primary-light"
               >
@@ -518,7 +530,7 @@ const Header = () => {
                 return (
                   <div key={cat.slug} className="mt-6 border-b border-white/10 pb-6">
                     <Link
-                      to={`/categories/${cat.slug}`}
+                      href={`/categories/${cat.slug}`}
                       onClick={closeMobile}
                       className="font-display text-[length:var(--type-body-lg)] font-bold text-white underline-offset-4 transition hover:text-primary-light hover:underline"
                     >
@@ -529,7 +541,7 @@ const Header = () => {
                       {services.map((s) => (
                         <li key={s.slug}>
                           <Link
-                            to={`/services/${s.slug}`}
+                            href={`/services/${s.slug}`}
                             onClick={closeMobile}
                             className="flex min-h-[2.75rem] items-center py-1.5 text-[length:var(--type-body)] leading-snug text-white/75 transition hover:text-white"
                           >
@@ -544,7 +556,7 @@ const Header = () => {
 
               <div className="mt-6 border-t border-white/10 pt-6">
                 <Link
-                  to="/all-services"
+                  href="/all-services"
                   onClick={closeMobile}
                   className="font-display text-[length:var(--type-body-lg)] font-bold text-white underline-offset-4 transition hover:text-primary-light hover:underline"
                 >
@@ -561,7 +573,7 @@ const Header = () => {
                     {group.categories.map(({ category: cat, services }) => (
                       <div key={cat.slug} className="mt-4 border-l border-primary/35 pl-3">
                         <Link
-                          to={`/categories/${cat.slug}`}
+                          href={`/categories/${cat.slug}`}
                           onClick={closeMobile}
                           className="font-display text-[length:var(--type-body)] font-bold text-white transition hover:text-primary-light"
                         >
@@ -572,7 +584,7 @@ const Header = () => {
                           {services.map((s) => (
                             <li key={s.slug}>
                               <Link
-                                to={`/services/${s.slug}`}
+                                href={`/services/${s.slug}`}
                                 onClick={closeMobile}
                                 className="flex min-h-[2.5rem] items-center py-1 text-[length:var(--type-body)] leading-snug text-white/75 transition hover:text-white"
                               >
@@ -588,7 +600,7 @@ const Header = () => {
               </div>
 
               <MagneticButton className="mt-4 block w-full">
-                <Link to="/contact" onClick={closeMobile} className="btn-primary flex w-full min-h-[48px] justify-center py-3.5 text-[length:var(--type-body)] font-semibold">
+                <Link href="/contact" onClick={closeMobile} className="btn-primary flex w-full min-h-[48px] justify-center py-3.5 text-[length:var(--type-body)] font-semibold">
                   Get Free Quote
                 </Link>
               </MagneticButton>

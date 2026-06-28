@@ -7,13 +7,19 @@ import {
   buildAllServicesMetadata,
   buildCategoryPageMetadata,
   buildContactMetadata,
-  buildGeoAeoFaqs,
   buildHomeMetadata,
   buildServiceCityMetadata,
   buildServicePageMetadata,
   buildServiceStateMetadata,
-  mergeFaqs,
 } from "../metadata/page-metadata";
+import {
+  buildCityAreaFaqs,
+  buildStateAreaFaqs,
+  buildGeoAeoFaqs,
+  mergeFaqs,
+  visibleServiceCityFaqs,
+  visibleServiceStateFaqs,
+} from "../geo-aeo-content";
 import {
   aboutPageSchema,
   breadcrumbSchema,
@@ -194,8 +200,8 @@ export function getStateAreaSeo(state: State): SeoPayload {
   const nearby = state.cities.slice(0, 5).join(", ");
   const priority = ["new-york", "new-jersey", "connecticut", "pennsylvania"].includes(state.slug);
   const title = priority
-    ? `Digital Agency in ${state.name} — Web, Apps & AI | Klikcy`
-    : `Digital Agency in ${state.name} | Klikcy`;
+    ? `Digital Agency Serving ${state.name} Businesses | Klikcy`
+    : `Digital Agency Serving ${state.name} | Klikcy`;
   const description = priority
     ? `Klikcy is a ${profile.partnerLabel} serving ${state.name} with custom websites, web apps, SaaS, AI automation, e-commerce, and search-ready architecture — including ${nearby} and every major metro. Built to compete in Google and AI search.`
     : `Klikcy serves ${state.name} businesses with websites, apps, custom software, AI automation, e-commerce, and branding — remote-first delivery across ${nearby} and statewide.`;
@@ -224,7 +230,9 @@ export function getStateAreaSeo(state: State): SeoPayload {
     url,
     {
       geoTerms: buildGeoTerms({ state }),
+      aeoQuestions: buildStateAreaFaqs(state).map((f) => f.q),
       jsonLd: [
+        faqSchema(buildStateAreaFaqs(state)),
         breadcrumbSchema([
           { name: "Home", url: canonicalPath("/") },
           { name: "Service Areas", url: canonicalPath("/service-areas") },
@@ -239,7 +247,7 @@ export function getStateAreaSeo(state: State): SeoPayload {
 
 export function getCityAreaSeo(city: CityRef): SeoPayload {
   const profile = getVerticalProfile("web-development");
-  const title = `Digital Agency in ${city.name}, ${city.state.abbr} | Klikcy`;
+  const title = `Digital Agency Serving ${city.name}, ${city.state.abbr} Businesses | Klikcy`;
   const description = `Klikcy partners with ${city.name}, ${city.state.name} businesses on websites, apps, custom software, AI automation, e-commerce, and search visibility. ${profile.outcomePhrase} — structured for local and AI discoverability.`;
   const url = canonicalPath(`/service-areas/${city.state.slug}/${city.slug}`);
   const keywords = buildPageKeywords20(
@@ -262,18 +270,24 @@ export function getCityAreaSeo(city: CityRef): SeoPayload {
     { state: city.state, city },
   );
 
+  const faqs = buildCityAreaFaqs(city);
+
   return toPayload(
     { title, description, keywords, primaryKeyword: `digital agency ${city.name}` },
     url,
     {
       geoTerms: buildGeoTerms({ state: city.state, city }),
+      aeoQuestions: faqs.map((f) => f.q),
       jsonLd: [
         breadcrumbSchema([
           { name: "Home", url: canonicalPath("/") },
+          { name: "Service Areas", url: canonicalPath("/service-areas") },
           { name: city.state.name, url: canonicalPath(`/service-areas/${city.state.slug}`) },
           { name: city.name, url },
         ]),
+        faqSchema(faqs),
         webPageSchema({ name: title, description, url }),
+        orgSchema(),
       ],
     },
   );
@@ -283,12 +297,11 @@ export function getServiceStateSeo(service: Service, state: State): SeoPayload {
   const meta = buildServiceStateMetadata(service, state);
   const url = canonicalPath(`/${service.slug}/${state.slug}`);
   const keywords = buildPageKeywords20(service, { state });
-  const geoFaqs = buildGeoAeoFaqs(service, { state });
-  const faqs = mergeFaqs(service.faqs, geoFaqs, 8);
+  const faqs = visibleServiceStateFaqs(service, state);
 
   return toPayload({ ...meta, keywords }, url, {
     keywords,
-    aeoQuestions: geoFaqs.map((f) => f.q),
+    aeoQuestions: faqs.map((f) => f.q),
     geoTerms: buildGeoTerms({ state }),
     jsonLd: [
       serviceSchemaWithArea(service, { stateName: state.name, stateSlug: state.slug }),
@@ -307,12 +320,11 @@ export function getServiceCitySeo(service: Service, city: CityRef): SeoPayload {
   const meta = buildServiceCityMetadata(service, city);
   const url = canonicalPath(`/${service.slug}/${city.state.slug}/${city.slug}`);
   const keywords = buildPageKeywords20(service, { state: city.state, city });
-  const geoFaqs = buildGeoAeoFaqs(service, { state: city.state, city });
-  const faqs = mergeFaqs(service.faqs, geoFaqs, 8);
+  const faqs = visibleServiceCityFaqs(service, city);
 
   return toPayload({ ...meta, keywords }, url, {
     keywords,
-    aeoQuestions: geoFaqs.map((f) => f.q),
+    aeoQuestions: faqs.map((f) => f.q),
     geoTerms: buildGeoTerms({ state: city.state, city }),
     jsonLd: [
       serviceSchemaWithArea(service, {

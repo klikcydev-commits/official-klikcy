@@ -1,3 +1,5 @@
+"use client";
+
 import { useLayoutEffect } from "react";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
@@ -34,6 +36,7 @@ export function LenisGsapProvider({ children }: LenisGsapProviderProps) {
     };
     gsap.ticker.add(ticker);
     gsap.ticker.lagSmoothing(0);
+    ScrollTrigger.refresh();
 
     return () => {
       gsap.ticker.remove(ticker);
