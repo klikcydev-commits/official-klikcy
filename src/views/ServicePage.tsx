@@ -8,8 +8,8 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { ServiceHero } from "@/components/service/ServiceHero";
 import { ServiceStateHubs } from "@/components/service/ServiceStateHubs";
 import { ServiceMetroCities } from "@/components/service/ServiceMetroCities";
+import { FaqAccordion } from "@/components/FaqAccordion";
 import { PageSection, SectionIntro } from "@/components/layout/PageSection";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { getService, getRelatedServices } from "@/lib/services";
 import { getCategory } from "@/lib/categories";
@@ -111,29 +111,7 @@ const ServicePage = ({ slug }: ServicePageProps) => {
                     ))}
                   </ul>
                 </section>
-                <section
-                  aria-labelledby="faq-heading"
-                  className="rounded-[var(--radius-xl)] border border-[hsl(var(--border))] bg-[hsl(var(--soft-bg))] p-6 sm:p-8 dark:bg-[hsl(var(--muted))]"
-                >
-                  <h2
-                    id="faq-heading"
-                    className="font-display text-[length:var(--type-h3)] font-bold tracking-tight text-[hsl(var(--navy-deep))] dark:text-[hsl(var(--foreground))]"
-                  >
-                    Frequently asked questions
-                  </h2>
-                  <Accordion type="single" collapsible className="mt-6 w-full">
-                    {service.faqs.map((f, i) => (
-                      <AccordionItem key={f.q} value={`sf-${i}`} className="border-border">
-                        <AccordionTrigger className="text-left text-[length:var(--type-body)] font-semibold text-[hsl(var(--navy-deep))] hover:no-underline dark:text-[hsl(var(--foreground))] sm:text-[1.02rem]">
-                          {f.q}
-                        </AccordionTrigger>
-                        <AccordionContent className="text-[length:var(--type-body)] leading-[var(--leading-body)] text-muted-foreground">
-                          {f.a}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </section>
+                <FaqAccordion faqs={service.faqs} idPrefix={`service-${service.slug}`} itemIdKind="faq" embedded />
               </div>
             </div>
             <aside className="lg:col-span-4">

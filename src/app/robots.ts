@@ -5,10 +5,9 @@ const AI_AGENTS = [
   "OAI-SearchBot",
   "GPTBot",
   "ChatGPT-User",
-  "ClaudeBot",
-  "Claude-SearchBot",
-  "Claude-User",
   "PerplexityBot",
+  "ClaudeBot",
+  "CCBot",
 ];
 
 export default function robots(): MetadataRoute.Robots {
@@ -16,7 +15,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
+        allow: ["/", "/_next/static/", "/brand/", "/favicon.ico"],
         disallow: ["/api/"],
       },
       {
@@ -36,6 +35,5 @@ export default function robots(): MetadataRoute.Robots {
       })),
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
-    host: SITE_URL,
   };
 }

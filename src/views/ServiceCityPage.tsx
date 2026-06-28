@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Header from "@/components/Header";
@@ -7,7 +5,8 @@ import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getService, getRelatedServices } from "@/lib/services";
 import { getCity, getCitiesForState } from "@/lib/cities";
-import { buildServiceCityAeoSections, visibleServiceCityFaqs } from "@/lib/geo-aeo-content";
+import { FaqAccordion } from "@/components/FaqAccordion";
+import { aeoSectionsToFaqs, buildServiceCityAeoSections, visibleServiceCityFaqs } from "@/lib/geo-aeo-content";
 
 interface ServiceCityPageProps {
   serviceSlug: string;
@@ -49,21 +48,28 @@ const ServiceCityPage = ({ serviceSlug, stateSlug, citySlug: citySlugStr }: Serv
           </div>
         </section>
 
-        <section className="section">
-          <div className="container-x prose-klikcy max-w-3xl">
-            {aeoSections.map((sec) => (
-              <div key={sec.h}>
-                <h2>{sec.h}</h2>
-                <p>{sec.p}</p>
-                {sec.list && <ul>{sec.list.map((l) => <li key={l}>{l}</li>)}</ul>}
-              </div>
-            ))}
-            <h2>Common questions about {service.name} in {city.name}, {city.state.abbr}</h2>
-            {faqs.map((f) => (
-              <div key={f.q} className="mb-5"><h3>{f.q}</h3><p>{f.a}</p></div>
-            ))}
-          </div>
-        </section>
+        <FaqAccordion
+          faqs={aeoSectionsToFaqs(aeoSections)}
+          heading={`About ${service.name} in ${city.name}, ${city.state.abbr}`}
+          idPrefix={`aeo-svc-city-${service.slug}-${city.state.slug}-${city.slug}`}
+          itemIdKind="aeo"
+          linkContext={{
+            state: { name: city.state.name, slug: city.state.slug },
+            city: { name: city.name, slug: city.slug, stateSlug: city.state.slug },
+            service: { name: service.name, slug: service.slug },
+          }}
+        />
+
+        <FaqAccordion
+          faqs={faqs}
+          idPrefix={`svc-city-${service.slug}-${city.state.slug}-${city.slug}`}
+          itemIdKind="faq"
+          linkContext={{
+            state: { name: city.state.name, slug: city.state.slug },
+            city: { name: city.name, slug: city.slug, stateSlug: city.state.slug },
+            service: { name: service.name, slug: service.slug },
+          }}
+        />
 
         {related.length > 0 && (
           <section className="section bg-[hsl(var(--soft-bg))]">

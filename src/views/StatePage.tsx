@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Header from "@/components/Header";
@@ -10,7 +8,8 @@ import { categories } from "@/lib/categories";
 import { services as allServices } from "@/lib/services";
 import { getCitiesForState } from "@/lib/cities";
 import { stateIntroContent } from "@/lib/content";
-import { buildStateAreaAeoSections, buildStateAreaFaqs } from "@/lib/geo-aeo-content";
+import { FaqAccordion } from "@/components/FaqAccordion";
+import { aeoSectionsToFaqs, buildStateAreaAeoSections, buildStateAreaFaqs } from "@/lib/geo-aeo-content";
 
 const featured = ["custom-website-development", "technical-seo", "ai-automation-services", "shopify-development", "local-seo", "ecommerce-development"];
 
@@ -39,16 +38,13 @@ const StatePage = ({ slug }: StatePageProps) => {
           </div>
         </section>
 
-        <section className="section">
-          <div className="container-x prose-klikcy max-w-3xl">
-            {aeoSections.map((sec) => (
-              <div key={sec.h}>
-                <h2>{sec.h}</h2>
-                <p>{sec.p}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        <FaqAccordion
+          faqs={aeoSectionsToFaqs(aeoSections)}
+          heading={`About Klikcy in ${state.name}`}
+          idPrefix={`aeo-state-${state.slug}`}
+          itemIdKind="aeo"
+          linkContext={{ state: { name: state.name, slug: state.slug } }}
+        />
 
         <section className="section">
           <div className="container-x">
@@ -79,17 +75,12 @@ const StatePage = ({ slug }: StatePageProps) => {
           </div>
         </section>
 
-        <section className="section">
-          <div className="container-x prose-klikcy max-w-3xl">
-            <h2>Common questions about Klikcy in {state.name}</h2>
-            {faqs.map((f) => (
-              <div key={f.q} className="mb-5">
-                <h3>{f.q}</h3>
-                <p>{f.a}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        <FaqAccordion
+          faqs={faqs}
+          idPrefix={`state-${state.slug}`}
+          itemIdKind="faq"
+          linkContext={{ state: { name: state.name, slug: state.slug } }}
+        />
 
         <section className="section bg-[hsl(var(--soft-bg))]">
           <div className="container-x">

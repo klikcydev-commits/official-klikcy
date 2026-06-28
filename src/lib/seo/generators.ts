@@ -13,6 +13,7 @@ import {
   buildServiceStateMetadata,
 } from "../metadata/page-metadata";
 import {
+  buildCategoryFaqs,
   buildCityAreaFaqs,
   buildStateAreaFaqs,
   buildGeoAeoFaqs,
@@ -126,9 +127,12 @@ export function getAllServicesSeo(): SeoPayload {
 export function getCategorySeo(category: Category): SeoPayload {
   const meta = buildCategoryPageMetadata(category);
   const url = canonicalPath(`/categories/${category.slug}`);
+  const faqs = buildCategoryFaqs(category);
   return toPayload(meta, url, {
+    aeoQuestions: faqs.map((f) => f.q),
     jsonLd: [
       collectionPageSchema({ name: meta.title, description: meta.description, url }),
+      faqSchema(faqs),
       breadcrumbSchema([
         { name: "Home", url: canonicalPath("/") },
         { name: category.name, url },

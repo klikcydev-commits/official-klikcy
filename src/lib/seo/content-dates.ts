@@ -9,20 +9,25 @@ export const CONTENT_DATES = {
   about: "2026-03-01",
   /** Contact page + contact API route */
   contact: "2026-06-28",
-  /** All-services hub + full service catalog */
+  /** All-services hub listing */
   allServices: "2026-06-01",
+  /** Service definitions (`src/lib/services.ts`) */
   serviceCatalog: "2026-06-01",
+  /** Service hub page FAQs (`service.faqs` in catalog) */
+  serviceFaqTemplate: "2026-06-01",
   /** Category definitions (`src/lib/categories.ts`) */
   categoryCatalog: "2026-05-15",
+  /** Category hub FAQs (`buildCategoryFaqs`) */
+  categoryFaqTemplate: "2026-06-28",
   /** State/city geo catalog (`src/lib/states.ts`, `src/lib/cities.ts`) */
   geoCatalog: "2026-04-01",
   /** Service-areas hub page */
   serviceAreasHub: "2026-04-01",
-  /** GEO/AEO FAQ templates (`src/lib/geo-aeo-content.ts`) */
+  /** GEO FAQ templates (`src/lib/geo-aeo-content.ts` — build*Faqs) */
   geoFaqTemplate: "2026-06-28",
-  /** GEO/AEO answer blocks (`src/lib/geo-aeo-content.ts`) */
+  /** GEO AEO accordion blocks (`build*AeoSections`) */
   geoAeoTemplate: "2026-06-28",
-  /** Title/description templates (`src/lib/metadata/page-metadata.ts`) */
+  /** Title/description templates (`src/lib/metadata/page-metadata.ts`, generators) */
   metadataTemplate: "2026-06-28",
 } as const;
 
@@ -52,3 +57,13 @@ export const CITY_UPDATED_AT: Record<string, string> = {
 };
 
 export type ContentDateKey = keyof typeof CONTENT_DATES;
+
+/** Every ISO date that may legitimately appear in sitemap lastmod (for audit). */
+export function getAllKnownContentDates(): Set<string> {
+  const dates = new Set<string>(Object.values(CONTENT_DATES));
+  for (const iso of Object.values(SERVICE_UPDATED_AT)) dates.add(iso);
+  for (const iso of Object.values(CATEGORY_UPDATED_AT)) dates.add(iso);
+  for (const iso of Object.values(STATE_UPDATED_AT)) dates.add(iso);
+  for (const iso of Object.values(CITY_UPDATED_AT)) dates.add(iso);
+  return dates;
+}

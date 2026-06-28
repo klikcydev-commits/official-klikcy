@@ -66,9 +66,9 @@ export function applyLegacyEnrichment(service: Service): Service {
 
   return {
     ...service,
-    shortDescription: e.description || service.shortDescription,
-    metaTitle: e.metaTitle || service.metaTitle,
-    metaDescription: e.metaDescription || service.metaDescription,
+    shortDescription: service.shortDescription || e.description,
+    metaTitle: service.metaTitle,
+    metaDescription: service.metaDescription || (e.metaDescription ?? service.metaDescription),
     focusKeyword: e.focusKeyword || service.focusKeyword,
     keywords: keywords.length ? keywords : service.keywords,
     intro: e.whyMatters || service.intro,

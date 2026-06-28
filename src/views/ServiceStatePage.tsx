@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Header from "@/components/Header";
@@ -8,7 +6,8 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { getService } from "@/lib/services";
 import { getState } from "@/lib/states";
 import { buildServiceStateContent } from "@/lib/content";
-import { buildServiceStateAeoSections, visibleServiceStateFaqs } from "@/lib/geo-aeo-content";
+import { FaqAccordion } from "@/components/FaqAccordion";
+import { aeoSectionsToFaqs, buildServiceStateAeoSections, visibleServiceStateFaqs } from "@/lib/geo-aeo-content";
 import { getCitiesForState } from "@/lib/cities";
 
 interface ServiceStatePageProps {
@@ -43,30 +42,40 @@ const ServiceStatePage = ({ serviceSlug, stateSlug }: ServiceStatePageProps) => 
           </div>
         </section>
 
-        <section className="section">
-          <div className="container-x prose-klikcy max-w-3xl">
-            {aeoSections.map((sec) => (
-              <div key={sec.h}>
-                <h2>{sec.h}</h2>
-                <p>{sec.p}</p>
-              </div>
-            ))}
-            {sections.map((sec, i) => (
-              <div key={i}>
-                <h2>{sec.h}</h2>
-                {sec.p && <p>{sec.p}</p>}
-                {sec.list && <ul>{sec.list.map((l) => <li key={l}>{l}</li>)}</ul>}
-              </div>
-            ))}
-            <h2>Common questions about {service.name} in {state.name}</h2>
-            {faqs.map((f) => (
-              <div key={f.q} className="mb-5">
-                <h3>{f.q}</h3>
-                <p>{f.a}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        <FaqAccordion
+          faqs={aeoSectionsToFaqs(aeoSections)}
+          heading={`About ${service.name} in ${state.name}`}
+          idPrefix={`aeo-svc-state-${service.slug}-${state.slug}`}
+          itemIdKind="aeo"
+          linkContext={{
+            state: { name: state.name, slug: state.slug },
+            service: { name: service.name, slug: service.slug },
+          }}
+        />
+
+        {sections.length > 0 && (
+          <section className="section">
+            <div className="container-x prose-klikcy max-w-3xl">
+              {sections.map((sec, i) => (
+                <div key={i}>
+                  <h2>{sec.h}</h2>
+                  {sec.p && <p>{sec.p}</p>}
+                  {sec.list && <ul>{sec.list.map((l) => <li key={l}>{l}</li>)}</ul>}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <FaqAccordion
+          faqs={faqs}
+          idPrefix={`svc-state-${service.slug}-${state.slug}`}
+          itemIdKind="faq"
+          linkContext={{
+            state: { name: state.name, slug: state.slug },
+            service: { name: service.name, slug: service.slug },
+          }}
+        />
 
         <section className="section">
           <div className="container-x">

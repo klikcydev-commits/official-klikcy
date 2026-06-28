@@ -1,0 +1,39 @@
+# Klikcy
+
+> Remote-first U.S. digital agency — websites, SEO/AEO, AI automation, e-commerce, apps, and branding.
+
+## About
+
+Klikcy builds fast websites, search-ready content systems, AI automations, and e-commerce experiences for businesses across the United States. We serve all 50 states remotely with honest nationwide positioning — no fake local offices.
+
+## Main URLs
+
+- Homepage: https://www.klikcy.com/
+- All services: https://www.klikcy.com/all-services/
+- Service areas (50 states): https://www.klikcy.com/service-areas/
+- Contact: https://www.klikcy.com/contact/
+- About: https://www.klikcy.com/about/
+
+## Service categories
+
+- Web Development: https://www.klikcy.com/categories/web-development/
+- SEO & AEO: https://www.klikcy.com/categories/seo-aeo/
+- AI Automation: https://www.klikcy.com/categories/ai-automation/
+- App & Software: https://www.klikcy.com/categories/app-software/
+- E-Commerce: https://www.klikcy.com/categories/ecommerce/
+- Branding & Design: https://www.klikcy.com/categories/branding-design/
+- Marketing & Growth: https://www.klikcy.com/categories/marketing-growth/
+- Technical & Hosting: https://www.klikcy.com/categories/technical-hosting/
+
+## Discovery
+
+- Sitemap: https://www.klikcy.com/sitemap.xml
+- Robots: https://www.klikcy.com/robots.txt
+
+## Contact
+
+- https://www.klikcy.com/contact/
+
+## Optional
+
+Programmatic local SEO pages (state, city, service × location) include FAQ and AEO accordions on the canonical page HTML — not as separate sitemap URLs.

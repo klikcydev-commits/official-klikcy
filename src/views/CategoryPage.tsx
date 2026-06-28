@@ -6,7 +6,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { CategoryServiceGrid } from "@/components/category/CategoryServiceGrid";
+import { FaqAccordion } from "@/components/FaqAccordion";
 import { getCategory, categories } from "@/lib/categories";
+import { buildCategoryFaqs } from "@/lib/geo-aeo-content";
 import { getServicesByCategory } from "@/lib/services";
 
 interface CategoryPageProps {
@@ -16,6 +18,7 @@ interface CategoryPageProps {
 const CategoryPage = ({ slug }: CategoryPageProps) => {
   const cat = getCategory(slug)!;
   const services = getServicesByCategory(cat.slug);
+  const faqs = buildCategoryFaqs(cat);
 
   return (
     <>
@@ -51,6 +54,8 @@ const CategoryPage = ({ slug }: CategoryPageProps) => {
             <CategoryServiceGrid services={services} />
           </div>
         </section>
+
+        <FaqAccordion faqs={faqs} idPrefix={`category-${cat.slug}`} itemIdKind="faq" />
 
         <section className="section bg-[hsl(var(--soft-bg))]">
           <div className="container-x">

@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Header from "@/components/Header";
@@ -7,7 +5,8 @@ import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getCity, getCitiesForState } from "@/lib/cities";
 import { services as allServices } from "@/lib/services";
-import { buildCityAreaAeoSections, buildCityAreaFaqs } from "@/lib/geo-aeo-content";
+import { FaqAccordion } from "@/components/FaqAccordion";
+import { aeoSectionsToFaqs, buildCityAreaAeoSections, buildCityAreaFaqs } from "@/lib/geo-aeo-content";
 
 const featured = ["custom-website-development", "technical-seo", "ai-automation-services", "shopify-development", "local-seo", "ecommerce-development"];
 
@@ -44,16 +43,16 @@ const CityPage = ({ stateSlug, citySlug: citySlugStr }: CityPageProps) => {
           </div>
         </section>
 
-        <section className="section">
-          <div className="container-x prose-klikcy max-w-3xl">
-            {aeoSections.map((sec) => (
-              <div key={sec.h}>
-                <h2>{sec.h}</h2>
-                <p>{sec.p}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        <FaqAccordion
+          faqs={aeoSectionsToFaqs(aeoSections)}
+          heading={`About Klikcy in ${city.name}, ${city.state.abbr}`}
+          idPrefix={`aeo-city-${city.state.slug}-${city.slug}`}
+          itemIdKind="aeo"
+          linkContext={{
+            state: { name: city.state.name, slug: city.state.slug },
+            city: { name: city.name, slug: city.slug, stateSlug: city.state.slug },
+          }}
+        />
 
         <section className="section">
           <div className="container-x">
@@ -71,17 +70,15 @@ const CityPage = ({ stateSlug, citySlug: citySlugStr }: CityPageProps) => {
           </div>
         </section>
 
-        <section className="section bg-[hsl(var(--soft-bg))]">
-          <div className="container-x prose-klikcy max-w-3xl">
-            <h2>Common questions about Klikcy in {city.name}, {city.state.abbr}</h2>
-            {faqs.map((f) => (
-              <div key={f.q} className="mb-5">
-                <h3>{f.q}</h3>
-                <p>{f.a}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        <FaqAccordion
+          faqs={faqs}
+          idPrefix={`city-${city.state.slug}-${city.slug}`}
+          itemIdKind="faq"
+          linkContext={{
+            state: { name: city.state.name, slug: city.state.slug },
+            city: { name: city.name, slug: city.slug, stateSlug: city.state.slug },
+          }}
+        />
 
         {otherCities.length > 0 && (
           <section className="section">
