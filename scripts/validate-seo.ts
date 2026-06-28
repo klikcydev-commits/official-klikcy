@@ -27,6 +27,13 @@ import {
   hasForbiddenLocalClaim,
   visibleServiceCityFaqs,
 } from "../src/lib/geo-aeo-content";
+import {
+  assertCatalogIntegrity,
+  buildLastmodReport,
+  dateModifiedForCanonical,
+  lastModifiedForPath,
+} from "../src/lib/seo/lastmod";
+import { buildSitemapEntries } from "../src/lib/sitemap-urls";
 import { getAllSitemapPaths, SITE_URL } from "../src/lib/sitemap-urls";
 import { services } from "../src/lib/services";
 import { states } from "../src/lib/states";
@@ -211,6 +218,64 @@ function validateGeoAeoFaqs(pages: PageAudit[]) {
   console.log(`[seo:validate] Service-city pages: ${serviceCityCount.toLocaleString()}`);
 }
 
+function validateLastmod(pages: PageAudit[]) {
+  assertCatalogIntegrity();
+
+  const indexablePaths = pages.filter((p) => p.path !== "/404").map((p) => (p.path === "/" ? "/" : p.path.endsWith("/") ? p.path : `${p.path}/`));
+  const sitemapEntries = buildSitemapEntries();
+  const isoSet = new Set<string>();
+
+  if (sitemapEntries.length !== indexablePaths.length) {
+    err(`Sitemap entry count (${sitemapEntries.length}) != indexable pages (${indexablePaths.length})`);
+  }
+
+  for (const entry of sitemapEntries) {
+    if (!entry.lastModified) {
+      err(`Sitemap entry missing lastModified: ${entry.url}`);
+      continue;
+    }
+    const iso = entry.lastModified.toISOString().slice(0, 10);
+    isoSet.add(iso);
+
+    const pathKey = entry.url.replace(SITE_URL, "") || "/";
+    const expected = lastModifiedForPath(pathKey);
+    if (iso !== expected.iso) {
+      err(`Sitemap lastModified mismatch on ${pathKey}: sitemap=${iso}, expected=${expected.iso}`);
+    }
+  }
+
+  if (isoSet.size <= 1) {
+    err("All sitemap URLs share the same lastModified date");
+  }
+
+  const report = buildLastmodReport(indexablePaths);
+  const reportDir = path.join(process.cwd(), "reports");
+  fs.mkdirSync(reportDir, { recursive: true });
+  fs.writeFileSync(path.join(reportDir, "seo-lastmod-report.json"), JSON.stringify(report, null, 2));
+
+  console.log(`[seo:validate] Unique lastModified dates: ${report.uniqueLastModifiedDates}`);
+  console.log(`[seo:validate] Page-specific dates: ${report.pageSpecificCount.toLocaleString()}`);
+  console.log(`[seo:validate] Fallback catalog dates: ${report.fallbackCount.toLocaleString()}`);
+  console.log(`[seo:validate] Lastmod report → reports/seo-lastmod-report.json`);
+
+  for (const f of report.futureDates) err(`Future lastModified: ${f}`);
+  for (const inv of report.invalidDates) err(`Invalid lastModified: ${inv}`);
+
+  for (const { path: pathname, seo } of pages) {
+    if (pathname === "/404") continue;
+    const canonical = seo.canonical;
+    const expectedIso = dateModifiedForCanonical(canonical);
+    for (const block of seo.jsonLd ?? []) {
+      const typed = block as { "@type"?: string; dateModified?: string; url?: string };
+      if (typed["@type"] === "WebPage" && typed.dateModified && typed.dateModified !== expectedIso) {
+        err(`JSON-LD dateModified mismatch on ${pathname}: schema=${typed.dateModified}, expected=${expectedIso}`);
+      }
+    }
+  }
+
+  for (const w of report.warnings) warn(`Lastmod: ${w}`);
+}
+
 function validateSitemap(pages: PageAudit[]) {
   const indexablePages = pages.filter((p) => p.path !== "/404");
   const sitemapPaths = new Set(getAllSitemapPaths());
@@ -287,6 +352,7 @@ function main() {
 
   validateMetadata(pages);
   validateGeoAeoFaqs(pages);
+  validateLastmod(pages);
   validateSitemap(pages);
   validateSampleHtml();
 

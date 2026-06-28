@@ -1,3 +1,4 @@
+import { lastModifiedForPath } from "@/lib/seo/lastmod";
 import { categories } from "@/lib/categories";
 import { getCitiesForState } from "@/lib/cities";
 import { services } from "@/lib/services";
@@ -151,10 +152,10 @@ export function buildSitemapBucket(id: number): {
 }
 
 function entryForPath(path: string) {
-  const now = new Date();
+  const { date } = lastModifiedForPath(path);
   return {
     url: `${SITE_URL}${path}`,
-    lastModified: now,
+    lastModified: date,
     changeFrequency: path === "/" ? ("weekly" as const) : ("monthly" as const),
     priority: path === "/" ? 1 : path.split("/").filter(Boolean).length <= 2 ? 0.8 : 0.6,
   };

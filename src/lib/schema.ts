@@ -36,12 +36,18 @@ export const websiteSchema = () => ({
   },
 });
 
-export const webPageSchema = (page: { name: string; url: string; description?: string }) => ({
+export const webPageSchema = (page: {
+  name: string;
+  url: string;
+  description?: string;
+  dateModified?: string;
+}) => ({
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: page.name,
   url: page.url,
   description: page.description,
+  ...(page.dateModified ? { dateModified: page.dateModified } : {}),
   isPartOf: { "@type": "WebSite", name: SITE.name, url: SITE.url },
 });
 

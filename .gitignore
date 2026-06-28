@@ -13,6 +13,7 @@ dist-ssr
 .next
 tsconfig.tsbuildinfo
 build-log.txt
+reports/seo-lastmod-report.json
 *.local
 .env
 .env.*

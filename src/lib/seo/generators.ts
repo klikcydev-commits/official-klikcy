@@ -42,6 +42,11 @@ import {
   type SeoPayload,
 } from "./metadata";
 import { getVerticalProfile } from "../metadata/positioning";
+import { dateModifiedForCanonical } from "./lastmod";
+
+function webPageWithLastmod(page: { name: string; url: string; description?: string }) {
+  return webPageSchema({ ...page, dateModified: dateModifiedForCanonical(page.url) });
+}
 
 function toPayload(
   meta: { title: string; description: string; keywords: string[]; primaryKeyword: string },
@@ -67,7 +72,7 @@ function toPayload(
 export function getHomeSeo(homeFaqs: FaqItem[]): SeoPayload {
   const meta = buildHomeMetadata();
   return toPayload(meta, canonicalPath("/"), {
-    jsonLd: [orgSchema(), websiteSchema(), webPageSchema({ name: meta.title, url: canonicalPath("/") }), faqSchema(homeFaqs)],
+    jsonLd: [orgSchema(), websiteSchema(), webPageWithLastmod({ name: meta.title, url: canonicalPath("/") }), faqSchema(homeFaqs)],
   });
 }
 
@@ -82,7 +87,7 @@ export function getAboutSeo(): SeoPayload {
         { name: "Home", url: canonicalPath("/") },
         { name: "About", url },
       ]),
-      webPageSchema({ name: meta.title, url }),
+      webPageWithLastmod({ name: meta.title, url }),
     ],
   });
 }
@@ -98,7 +103,7 @@ export function getContactSeo(): SeoPayload {
         { name: "Home", url: canonicalPath("/") },
         { name: "Contact", url },
       ]),
-      webPageSchema({ name: meta.title, url }),
+      webPageWithLastmod({ name: meta.title, url }),
     ],
   });
 }
@@ -113,7 +118,7 @@ export function getAllServicesSeo(): SeoPayload {
         { name: "Home", url: canonicalPath("/") },
         { name: "All Services", url },
       ]),
-      webPageSchema({ name: meta.title, url }),
+      webPageWithLastmod({ name: meta.title, url }),
     ],
   });
 }
@@ -128,7 +133,7 @@ export function getCategorySeo(category: Category): SeoPayload {
         { name: "Home", url: canonicalPath("/") },
         { name: category.name, url },
       ]),
-      webPageSchema({ name: meta.title, url }),
+      webPageWithLastmod({ name: meta.title, url }),
     ],
   });
 }
@@ -147,7 +152,7 @@ export function getServiceSeo(service: Service): SeoPayload {
         { name: "Home", url: canonicalPath("/") },
         { name: service.name, url },
       ]),
-      webPageSchema({ name: meta.title, description: meta.description, url }),
+      webPageWithLastmod({ name: meta.title, description: meta.description, url }),
     ],
   });
 }
@@ -189,7 +194,7 @@ export function getServiceAreasSeo(): SeoPayload {
           { name: "Home", url: canonicalPath("/") },
           { name: "Service Areas", url },
         ]),
-        webPageSchema({ name: title, url }),
+        webPageWithLastmod({ name: title, url }),
       ],
     },
   );
@@ -238,7 +243,7 @@ export function getStateAreaSeo(state: State): SeoPayload {
           { name: "Service Areas", url: canonicalPath("/service-areas") },
           { name: state.name, url },
         ]),
-        webPageSchema({ name: title, description, url }),
+        webPageWithLastmod({ name: title, description, url }),
         orgSchema(),
       ],
     },
@@ -286,7 +291,7 @@ export function getCityAreaSeo(city: CityRef): SeoPayload {
           { name: city.name, url },
         ]),
         faqSchema(faqs),
-        webPageSchema({ name: title, description, url }),
+        webPageWithLastmod({ name: title, description, url }),
         orgSchema(),
       ],
     },
@@ -311,7 +316,7 @@ export function getServiceStateSeo(service: Service, state: State): SeoPayload {
         { name: state.name, url: canonicalPath(`/service-areas/${state.slug}`) },
         { name: `${service.name} in ${state.name}`, url },
       ]),
-      webPageSchema({ name: meta.title, description: meta.description, url }),
+      webPageWithLastmod({ name: meta.title, description: meta.description, url }),
     ],
   });
 }
@@ -340,7 +345,7 @@ export function getServiceCitySeo(service: Service, city: CityRef): SeoPayload {
         { name: city.name, url: canonicalPath(`/service-areas/${city.state.slug}/${city.slug}`) },
         { name: service.name, url },
       ]),
-      webPageSchema({ name: meta.title, description: meta.description, url }),
+      webPageWithLastmod({ name: meta.title, description: meta.description, url }),
     ],
   });
 }
