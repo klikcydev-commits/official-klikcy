@@ -38,7 +38,9 @@ if (!allUrls.length) {
 }
 
 allUrls = [...new Set(allUrls)];
-const canonicalAlwaysInclude = ["/", "/about", "/contact", "/service-areas", "/all-services"].map((p) => `${SITE_URL}${p}`);
+const canonicalAlwaysInclude = ["/", "/about/", "/contact/", "/service-areas/", "/all-services/"].map((p) =>
+  p === "/" ? `${SITE_URL}/` : `${SITE_URL}${p}`,
+);
 for (const url of canonicalAlwaysInclude) {
   if (!allUrls.includes(url)) allUrls.unshift(url);
 }
@@ -48,7 +50,7 @@ if (!allUrls.length) {
 }
 
 const classify = (url) => {
-  const pathname = url.replace(SITE_URL, "");
+  const pathname = url.replace(SITE_URL, "").replace(/\/$/, "") || "/";
   if (pathname === "/" || pathname === "/about" || pathname === "/contact" || pathname === "/service-areas") return "static";
   if (pathname === "/all-services") return "services";
   if (/^\/services\/[^/]+$/.test(pathname) || /^\/categories\/[^/]+$/.test(pathname)) return "services";

@@ -12,6 +12,12 @@ const PORT = Number(process.env.CONTACT_API_PORT) || 8787;
 const SITE_URL = (process.env.SITE_URL || "https://www.klikcy.com").replace(/\/$/, "");
 const API_VERSION = 2;
 
+const ALLOWED_ORIGINS = [
+  SITE_URL,
+  SITE_URL.replace("://www.", "://"),
+  SITE_URL.includes("://www.") ? SITE_URL : SITE_URL.replace("://", "://www."),
+].filter((v, i, a) => a.indexOf(v) === i);
+
 const contactSchema = z.object({
   name: z.string().trim().min(2).max(120),
   email: z.string().trim().email().max(254),
@@ -24,6 +30,8 @@ const contactSchema = z.object({
   company: z.string().trim().max(120).optional().or(z.literal("")),
   service: z.string().trim().min(1).max(80),
   message: z.string().trim().min(10).max(8000),
+  /** Honeypot — must stay empty (bots often fill hidden fields). */
+  website: z.literal("").optional(),
 });
 
 function requireEnv(name) {
@@ -86,8 +94,28 @@ function createTransport() {
 }
 
 const app = express();
-app.use(cors({ origin: true }));
+app.disable("x-powered-by");
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST"],
+  }),
+);
 app.use(express.json({ limit: "32kb" }));
+
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  next();
+});
 
 const rateMap = new Map();
 const RATE_WINDOW_MS = 60_000;
@@ -117,6 +145,10 @@ app.post("/api/contact", async (req, res) => {
   const ip = req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || req.socket.remoteAddress || "unknown";
   if (!rateLimit(ip)) {
     return res.status(429).json({ error: "Too many requests. Please try again in a minute." });
+  }
+
+  if (typeof req.body?.website === "string" && req.body.website.trim()) {
+    return res.json({ ok: true });
   }
 
   const rawPhone = typeof req.body?.phone === "string" ? req.body.phone.trim() : "";
@@ -151,6 +183,6 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, "127.0.0.1", () => {
   console.log(`[contact-api] listening on http://127.0.0.1:${PORT}`);
 });

@@ -1,0 +1,76 @@
+name: Deploy to Hostinger VPS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_PUBLIC_SITE_URL: https://www.klikcy.com
+      NEXT_PUBLIC_CONTACT_EMAIL: build@klikcy.com
+      NEXT_PUBLIC_CONTACT_API_URL: ""
+      NEXT_PUBLIC_GTM_ID: GTM-PF4N2DXK
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+      VPS_USER: ${{ secrets.VPS_USER }}
+      VPS_PASSWORD: ${{ secrets.VPS_PASSWORD }}
+      WEB_ROOT: ${{ secrets.WEB_ROOT }}
+      SITE_URL: ${{ secrets.SITE_URL }}
+      CONTACT_API_PORT: ${{ secrets.CONTACT_API_PORT }}
+      SMTP_HOST: ${{ secrets.SMTP_HOST }}
+      SMTP_PORT: ${{ secrets.SMTP_PORT }}
+      SMTP_USER: ${{ secrets.SMTP_USER }}
+      SMTP_PASS: ${{ secrets.SMTP_PASS }}
+      CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
+
+    defaults:
+      run:
+        working-directory: klikcy-next
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: klikcy-next/package-lock.json
+
+      - name: Install app dependencies
+        run: npm ci
+
+      - name: Install deploy helper dependencies
+        run: npm ci
+        working-directory: klikcy-next/deploy
+
+      - name: Build release bundle
+        run: npm run release:prepare
+
+      - name: Validate required deploy secrets
+        shell: bash
+        run: |
+          missing=0
+          for key in VPS_HOST VPS_PASSWORD SITE_URL CONTACT_API_PORT SMTP_HOST SMTP_PORT SMTP_USER SMTP_PASS CONTACT_EMAIL; do
+            if [ -z "${!key}" ]; then
+              echo "::error::Missing required secret: $key"
+              missing=1
+            fi
+          done
+          if [ -z "${VPS_USER}" ]; then
+            echo "VPS_USER not set, upload script will default to root."
+          fi
+          if [ -z "${WEB_ROOT}" ]; then
+            echo "WEB_ROOT not set, upload script will default to /var/www/klikcy-website."
+          fi
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Deploy to VPS
+        run: npm run release:deploy

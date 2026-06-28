@@ -55,7 +55,12 @@ const categorySlugs = extractCategorySlugs(categoriesSrc);
 
 const urls = new Set();
 
-const add = (pathname) => urls.add(`${SITE_URL}${pathname.startsWith("/") ? pathname : `/${pathname}`}`);
+/** Match Next.js trailingSlash: true — canonical URLs end with / (except homepage). */
+const add = (pathname) => {
+  let p = pathname.startsWith("/") ? pathname : `/${pathname}`;
+  if (p !== "/" && !p.endsWith("/")) p = `${p}/`;
+  urls.add(`${SITE_URL}${p}`);
+};
 
 add("/");
 add("/about");
