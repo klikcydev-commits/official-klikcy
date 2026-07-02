@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/lib/sitemap-urls";
+import { getSiteUrl } from "@/lib/site-url";
 
 const AI_AGENTS = [
   "OAI-SearchBot",
@@ -34,6 +34,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/"],
       })),
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    sitemap: `${getSiteUrl()}/sitemap.xml`,
   };
 }

@@ -11,7 +11,14 @@ import { stateIntroContent } from "@/lib/content";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { aeoSectionsToFaqs, buildStateAreaAeoSections, buildStateAreaFaqs } from "@/lib/geo-aeo-content";
 
-const featured = ["custom-website-development", "technical-seo", "ai-automation-services", "shopify-development", "local-seo", "ecommerce-development"];
+const featured = [
+  "custom-website-development",
+  "technical-seo",
+  "ai-chatbot-development",
+  "shopify-development",
+  "local-seo",
+  "shopify-store-development",
+] as const;
 
 interface StatePageProps {
   slug: string;
@@ -20,7 +27,7 @@ interface StatePageProps {
 const StatePage = ({ slug }: StatePageProps) => {
   const state = getState(slug)!;
   const c = stateIntroContent(state);
-  const featuredSvcs = allServices.filter((s) => featured.includes(s.slug));
+  const featuredSvcs = allServices.filter((s) => (featured as readonly string[]).includes(s.slug));
   const aeoSections = buildStateAreaAeoSections(state);
   const faqs = buildStateAreaFaqs(state);
 

@@ -1,15 +1,16 @@
 import { z } from "zod";
 import nodemailer from "nodemailer";
+import { verifyContactFormToken } from "@/lib/contact-form-token";
+import { checkContactRateLimit } from "@/lib/rate-limit";
+import { getSiteUrl } from "@/lib/site-url";
 
-export const API_VERSION = 2;
+export const API_VERSION = 3;
+export const MAX_CONTACT_BODY_BYTES = 32 * 1024;
 
-const SITE_URL = (
-  process.env.SITE_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.klikcy.com")
-).replace(/\/$/, "");
+const SITE_URL = getSiteUrl();
 
 export const contactSchema = z.object({
-  name: z.string().trim().min(2).max(120),
+  name: z.string().trim().min(2).max(100),
   email: z.string().trim().email().max(254),
   phone: z
     .string()
@@ -17,10 +18,11 @@ export const contactSchema = z.object({
     .min(7)
     .max(30)
     .refine((v) => v.replace(/\D/g, "").length >= 7, "Invalid phone number"),
-  company: z.string().trim().max(120).optional().or(z.literal("")),
+  company: z.string().trim().max(100).optional().or(z.literal("")),
   service: z.string().trim().min(1).max(80),
-  message: z.string().trim().min(10).max(8000),
+  message: z.string().trim().min(10).max(5000),
   website: z.literal("").optional(),
+  formToken: z.string().min(3).max(128),
 });
 
 export type ContactPayload = z.infer<typeof contactSchema>;
@@ -39,7 +41,7 @@ function escapeHtml(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function buildContactEmail(data: ContactPayload) {
+function buildContactEmail(data: Omit<ContactPayload, "formToken" | "website">) {
   const { name, email, phone, company, service, message } = data;
   const fields: [string, string][] = [
     ["Name", name],
@@ -82,53 +84,67 @@ function createTransport() {
     port,
     secure: port === 465,
     auth: { user, pass },
-  });
+    pool: false,
+    connectionTimeout: 8000,
+    socketTimeout: 8000,
+  } as nodemailer.TransportOptions);
 }
 
-const rateMap = new Map<string, { count: number; reset: number }>();
-const RATE_WINDOW_MS = 60_000;
-const RATE_MAX = 8;
-
-function rateLimit(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateMap.get(ip) ?? { count: 0, reset: now + RATE_WINDOW_MS };
-  if (now > entry.reset) {
-    entry.count = 0;
-    entry.reset = now + RATE_WINDOW_MS;
-  }
-  entry.count += 1;
-  rateMap.set(ip, entry);
-  return entry.count <= RATE_MAX;
-}
+// Resend (HTTPS API) is more reliable in serverless than SMTP handshakes — optional alternative:
+// const { Resend } = await import("resend");
+// await new Resend(process.env.RESEND_API_KEY).emails.send({ ... });
 
 export function getClientIp(forwardedFor: string | null, fallback?: string): string {
   return forwardedFor?.split(",")[0]?.trim() || fallback || "unknown";
 }
 
-export async function sendContactEmail(data: ContactPayload): Promise<void> {
+async function sendWithRetry(data: Omit<ContactPayload, "formToken" | "website">): Promise<void> {
   const to = requireEnv("CONTACT_EMAIL");
   const fromUser = requireEnv("SMTP_USER");
   const { text, html } = buildContactEmail(data);
-  const transport = createTransport();
-
-  await transport.sendMail({
+  const mail = {
     from: `"Klikcy Contact" <${fromUser}>`,
     to,
     replyTo: `"${data.name.replace(/"/g, "")}" <${data.email}>`,
     subject: `[Klikcy] ${data.service} — ${data.name} | ${data.phone}`,
     text,
     html,
-  });
+  };
+
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const transport = createTransport();
+    try {
+      await transport.sendMail(mail);
+      transport.close();
+      return;
+    } catch (err) {
+      lastError = err;
+      transport.close();
+      if (attempt === 0) await new Promise((r) => setTimeout(r, 400));
+    }
+  }
+  throw lastError;
+}
+
+export async function sendContactEmail(data: Omit<ContactPayload, "formToken" | "website">): Promise<void> {
+  await sendWithRetry(data);
 }
 
 export type ContactValidationResult =
-  | { ok: false; status: number; error: string; details?: Record<string, string[] | undefined> }
+  | { ok: false; status: number; error: string; retryAfterSeconds?: number; details?: Record<string, string[] | undefined> }
   | { ok: true; status: 200; silent: true }
-  | { ok: true; status: 200; data: ContactPayload };
+  | { ok: true; status: 200; data: Omit<ContactPayload, "formToken" | "website"> };
 
 export function validateContactRequest(body: unknown, ip: string): ContactValidationResult {
-  if (!rateLimit(ip)) {
-    return { ok: false, status: 429, error: "Too many requests. Please try again in a minute." };
+  const rate = checkContactRateLimit(ip);
+  if (!rate.ok) {
+    return {
+      ok: false,
+      status: 429,
+      error: "Too many requests — please try again in a few minutes.",
+      retryAfterSeconds: rate.retryAfterSeconds ?? 60,
+    };
   }
 
   const raw = body as Record<string, unknown> | null;
@@ -151,13 +167,20 @@ export function validateContactRequest(body: unknown, ip: string): ContactValida
     };
   }
 
-  return { ok: true, status: 200, data: parsed.data };
+  if (!verifyContactFormToken(parsed.data.formToken)) {
+    return { ok: false, status: 400, error: "Invalid form data." };
+  }
+
+  const { formToken: _formToken, website: _website, ...data } = parsed.data;
+  void _formToken;
+  void _website;
+  return { ok: true, status: 200, data };
 }
 
 export function getHealthPayload() {
   return {
     ok: true,
     version: API_VERSION,
-    requiredFields: ["name", "email", "phone", "service", "message"],
+    requiredFields: ["name", "email", "phone", "service", "message", "formToken"],
   };
 }

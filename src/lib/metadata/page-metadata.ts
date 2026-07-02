@@ -53,7 +53,6 @@ export function buildKeywords20(service: Service, geo?: { state: State; city?: C
   const loc = geoLabel(geo);
   const locAbbr = geoLabelWithAbbr(geo);
   const stateName = geo?.state?.name ?? "United States";
-  const abbr = geo?.state?.abbr ?? "U.S.";
 
   const primary = geo
     ? `${service.focusKeyword} in ${loc}`

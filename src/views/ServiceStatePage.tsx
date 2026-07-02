@@ -26,7 +26,13 @@ const ServiceStatePage = ({ serviceSlug, stateSlug }: ServiceStatePageProps) => 
   return (
     <>
       <Header />
-      <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: state.name, href: `/service-areas/${state.slug}` }, { name: service.name }]} />
+      <Breadcrumbs
+        items={[
+          { name: "Home", href: "/" },
+          { name: service.name, href: `/services/${service.slug}` },
+          { name: state.name },
+        ]}
+      />
       <main>
         <section className="bg-gradient-hero">
           <div className="container-x py-14 sm:py-20">

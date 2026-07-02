@@ -8,10 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "sitemap:generate": "node scripts/generate-sitemaps.mjs",
-    "sitemap:split": "node scripts/split-sitemaps.mjs",
-    "sitemap:build": "npm run sitemap:generate && npm run sitemap:split",
-    "seo:validate": "tsx scripts/validate-seo.ts"
+    "seo:validate": "tsx scripts/validate-seo.ts",
+    "verify:redirects": "node scripts/verify-redirects.mjs",
+    "verify:sitemaps": "node scripts/verify-sitemaps.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

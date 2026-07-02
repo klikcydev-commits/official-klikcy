@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeRoot } from "@/components/layout/ThemeRoot";
-import { LegacyRedirect } from "@/components/layout/LegacyRedirect";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const LenisGsapProvider = dynamic(
@@ -43,7 +42,6 @@ export function ClientProviders({ children }: ClientProvidersProps) {
   return (
     <ThemeRoot>
       <DesktopMotionExtras />
-      <LegacyRedirect />
       <TooltipProvider>
         <Sonner />
         {children}

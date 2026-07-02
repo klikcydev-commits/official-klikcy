@@ -6,18 +6,19 @@ import { z } from "zod";
 import { toast } from "sonner";
 
 const schema = z.object({
-  name: z.string().trim().min(2, "Please enter your name"),
-  email: z.string().trim().email("Please enter a valid email"),
+  name: z.string().trim().min(2, "Please enter your name").max(100),
+  email: z.string().trim().email("Please enter a valid email").max(254),
   phone: z
     .string()
     .trim()
     .min(7, "Please enter your phone number")
     .max(30, "Phone number is too long")
     .refine((v) => v.replace(/\D/g, "").length >= 7, "Please enter a valid phone number"),
-  company: z.string().optional(),
-  service: z.string().min(1, "Please select a service"),
-  message: z.string().trim().min(10, "Please share a few sentences about your project"),
+  company: z.string().max(100).optional(),
+  service: z.string().min(1, "Please select a service").max(80),
+  message: z.string().trim().min(10, "Please share a few sentences about your project").max(5000),
   website: z.literal("").optional(),
+  formToken: z.string().min(3),
 });
 
 const serviceOptions = [
@@ -31,7 +32,11 @@ const serviceOptions = [
   "Other",
 ];
 
-export function ContactForm() {
+interface ContactFormProps {
+  formToken: string;
+}
+
+export function ContactForm({ formToken }: ContactFormProps) {
   const [sent, setSent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -39,7 +44,7 @@ export function ContactForm() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget).entries());
-    const res = schema.safeParse(data);
+    const res = schema.safeParse({ ...data, formToken });
     if (!res.success) {
       const errs: Record<string, string> = {};
       res.error.issues.forEach((i) => {
@@ -62,9 +67,13 @@ export function ContactForm() {
           service: res.data.service,
           message: res.data.message,
           website: res.data.website ?? "",
+          formToken: res.data.formToken,
         }),
       });
       const body = (await response.json().catch(() => ({}))) as { error?: string };
+      if (response.status === 429) {
+        throw new Error(body.error || "Too many requests — please try again in a few minutes.");
+      }
       if (!response.ok) throw new Error(body.error || "Unable to send message.");
       setSent(true);
       toast.success("Thanks! We'll be in touch within one business day.");
@@ -87,6 +96,7 @@ export function ContactForm() {
 
   return (
     <form onSubmit={onSubmit} className="card-soft space-y-5 p-6 sm:p-8" noValidate>
+      <input type="hidden" name="formToken" value={formToken} />
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="block space-y-1.5">

@@ -2,29 +2,19 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/JsonLd";
 import ServiceCityPage from "@/views/ServiceCityPage";
-import { getCity, getCitiesForState } from "@/lib/cities";
+import { getCity } from "@/lib/cities";
 import { getServiceCitySeo } from "@/lib/seo";
+import { getPrerenderServiceCityParams } from "@/lib/seo/prerender";
 import { seoToMetadata } from "@/lib/seo/next-metadata";
-import { getService, services } from "@/lib/services";
-import { states } from "@/lib/states";
+import { getService } from "@/lib/services";
+import { getState } from "@/lib/states";
 
 export async function generateStaticParams() {
-  const params: { service: string; state: string; city: string }[] = [];
-  for (const service of services) {
-    for (const state of states) {
-      for (const city of getCitiesForState(state)) {
-        params.push({
-          service: service.slug,
-          state: state.slug,
-          city: city.slug,
-        });
-      }
-    }
-  }
-  return params;
+  return getPrerenderServiceCityParams();
 }
 
-export const dynamicParams = false;
+export const dynamicParams = true;
+export const revalidate = 2_592_000; // 30 days
 
 export async function generateMetadata({
   params,
@@ -32,8 +22,9 @@ export async function generateMetadata({
   params: { service: string; state: string; city: string };
 }): Promise<Metadata> {
   const service = getService(params.service);
+  const state = getState(params.state);
   const city = getCity(params.state, params.city);
-  if (!service || !city) return { title: "Not Found" };
+  if (!service || !state || !city) return { title: "Not Found" };
   return seoToMetadata(getServiceCitySeo(service, city));
 }
 
@@ -43,8 +34,9 @@ export default function ServiceCityRoutePage({
   params: { service: string; state: string; city: string };
 }) {
   const service = getService(params.service);
+  const state = getState(params.state);
   const city = getCity(params.state, params.city);
-  if (!service || !city) notFound();
+  if (!service || !state || !city) notFound();
   const seo = getServiceCitySeo(service, city);
 
   return (

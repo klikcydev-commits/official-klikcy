@@ -1,10 +1,10 @@
 import type { MetadataRoute } from "next";
-import { buildSitemapBucket, getSitemapBucketDefs } from "@/lib/sitemap-urls";
+import { buildSitemapShard, getSitemapShardDefs } from "@/lib/sitemap-urls";
 
 export async function generateSitemaps() {
-  return getSitemapBucketDefs().map(({ id }) => ({ id }));
+  return getSitemapShardDefs().map(({ id }) => ({ id }));
 }
 
-export default function sitemap({ id }: { id: number }): MetadataRoute.Sitemap {
-  return buildSitemapBucket(id);
+export default function sitemap({ id }: { id: string }): MetadataRoute.Sitemap {
+  return buildSitemapShard(id);
 }

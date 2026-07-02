@@ -18,9 +18,11 @@ import {
   buildStateAreaFaqs,
   buildGeoAeoFaqs,
   mergeFaqs,
-  visibleServiceCityFaqs,
   visibleServiceStateFaqs,
 } from "../geo-aeo-content";
+import { pickServiceCityPageFaqs } from "../service-city-content";
+import { getCityTier } from "../city-tiers";
+import { isIndexable } from "./indexable";
 import {
   aboutPageSchema,
   breadcrumbSchema,
@@ -317,7 +319,7 @@ export function getServiceStateSeo(service: Service, state: State): SeoPayload {
       faqSchema(faqs),
       breadcrumbSchema([
         { name: "Home", url: canonicalPath("/") },
-        { name: state.name, url: canonicalPath(`/service-areas/${state.slug}`) },
+        { name: service.name, url: canonicalPath(`/services/${service.slug}`) },
         { name: `${service.name} in ${state.name}`, url },
       ]),
       webPageWithLastmod({ name: meta.title, description: meta.description, url }),
@@ -329,10 +331,16 @@ export function getServiceCitySeo(service: Service, city: CityRef): SeoPayload {
   const meta = buildServiceCityMetadata(service, city);
   const url = canonicalPath(`/${service.slug}/${city.state.slug}/${city.slug}`);
   const keywords = buildPageKeywords20(service, { state: city.state, city });
-  const faqs = visibleServiceCityFaqs(service, city);
+  const faqs = pickServiceCityPageFaqs({
+    service,
+    city,
+    tier: getCityTier(city.state.slug, city.slug),
+  });
+  const indexable = isIndexable(service.slug, city.state.slug, city.slug);
 
   return toPayload({ ...meta, keywords }, url, {
     keywords,
+    robots: indexable ? DEFAULT_ROBOTS : NOINDEX_ROBOTS,
     aeoQuestions: faqs.map((f) => f.q),
     geoTerms: buildGeoTerms({ state: city.state, city }),
     jsonLd: [
@@ -345,9 +353,9 @@ export function getServiceCitySeo(service: Service, city: CityRef): SeoPayload {
       faqSchema(faqs),
       breadcrumbSchema([
         { name: "Home", url: canonicalPath("/") },
-        { name: city.state.name, url: canonicalPath(`/service-areas/${city.state.slug}`) },
-        { name: city.name, url: canonicalPath(`/service-areas/${city.state.slug}/${city.slug}`) },
-        { name: service.name, url },
+        { name: service.name, url: canonicalPath(`/services/${service.slug}`) },
+        { name: city.state.name, url: canonicalPath(`/${service.slug}/${city.state.slug}`) },
+        { name: city.name, url },
       ]),
       webPageWithLastmod({ name: meta.title, description: meta.description, url }),
     ],

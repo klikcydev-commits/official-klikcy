@@ -1,60 +1,38 @@
 import { lastModifiedForPath } from "@/lib/seo/lastmod";
 import { categories } from "@/lib/categories";
 import { getCitiesForState } from "@/lib/cities";
-import { services } from "@/lib/services";
+import { getService, services } from "@/lib/services";
 import { states } from "@/lib/states";
+import { isIndexable } from "@/lib/seo/indexable";
 
-export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  process.env.SITE_URL ||
-  "https://www.klikcy.com"
-).replace(/\/$/, "");
+import { getSiteUrl } from "@/lib/site-url";
 
-/** Match trailingSlash: true — canonical paths end with / except homepage. */
+/** @deprecated Use getSiteUrl() */
+export const SITE_URL = getSiteUrl();
+
+/** Match trailingSlash: true — canonical paths end with / except homepage uses `/` only. */
 export function canonicalPath(pathname: string): string {
   let p = pathname.startsWith("/") ? pathname : `/${pathname}`;
   if (p !== "/" && !p.endsWith("/")) p = `${p}/`;
   return p;
 }
 
-export type SitemapBucketKind =
-  | "static"
-  | "services"
-  | "areas"
-  | "service-state"
-  | "service-state-city";
+export type SitemapShardKind = "static" | "areas" | "service";
 
-const SERVICE_STATE_CITY_CHUNK = 5000;
-
-function classifyPath(pathname: string): SitemapBucketKind {
-  const bare = pathname.replace(/\/$/, "") || "/";
-  if (
-    bare === "/" ||
-    bare === "/about" ||
-    bare === "/contact" ||
-    bare === "/service-areas"
-  ) {
-    return "static";
-  }
-  if (bare === "/all-services" || /^\/services\/[^/]+$/.test(bare) || /^\/categories\/[^/]+$/.test(bare)) {
-    return "services";
-  }
-  if (/^\/service-areas\/[^/]+$/.test(bare) || /^\/service-areas\/[^/]+\/[^/]+$/.test(bare)) {
-    return "areas";
-  }
-  if (/^\/[^/]+\/[^/]+$/.test(bare)) return "service-state";
-  return "service-state-city";
+export interface SitemapShardDef {
+  id: string;
+  kind: SitemapShardKind;
+  serviceSlug?: string;
 }
+
+const STATIC_PATHS = ["/", "/about/", "/contact/", "/all-services/"];
 
 /** Every indexable pathname (trailing slash, deduped). */
 export function getAllSitemapPaths(): string[] {
   const paths = new Set<string>();
   const add = (pathname: string) => paths.add(canonicalPath(pathname));
 
-  add("/");
-  add("/about");
-  add("/contact");
-  add("/all-services");
+  for (const path of STATIC_PATHS) add(path);
   add("/service-areas");
 
   for (const category of categories) add(`/categories/${category.slug}`);
@@ -68,7 +46,9 @@ export function getAllSitemapPaths(): string[] {
     for (const service of services) {
       add(`/${service.slug}/${state.slug}`);
       for (const city of getCitiesForState(state)) {
-        add(`/${service.slug}/${state.slug}/${city.slug}`);
+        const path = `/${service.slug}/${state.slug}/${city.slug}`;
+        if (!isIndexable(service.slug, state.slug, city.slug)) continue;
+        add(path);
       }
     }
   }
@@ -76,59 +56,49 @@ export function getAllSitemapPaths(): string[] {
   return Array.from(paths).sort();
 }
 
-export interface SitemapBucketDef {
-  id: number;
-  kind: SitemapBucketKind;
-  chunk?: number;
-}
-
-export function getSitemapBucketDefs(): SitemapBucketDef[] {
-  const grouped: Record<SitemapBucketKind, string[]> = {
-    static: [],
-    services: [],
-    areas: [],
-    "service-state": [],
-    "service-state-city": [],
-  };
-
-  for (const path of getAllSitemapPaths()) {
-    grouped[classifyPath(path)].push(path);
-  }
-
-  const defs: SitemapBucketDef[] = [];
-  let id = 0;
-  for (const kind of ["static", "services", "areas", "service-state"] as const) {
-    if (grouped[kind].length) defs.push({ id: id++, kind });
-  }
-
-  const cityPaths = grouped["service-state-city"];
-  const chunks = Math.max(1, Math.ceil(cityPaths.length / SERVICE_STATE_CITY_CHUNK));
-  for (let chunk = 0; chunk < chunks; chunk += 1) {
-    defs.push({ id: id++, kind: "service-state-city", chunk });
-  }
-
+export function getSitemapShardDefs(): SitemapShardDef[] {
+  const defs: SitemapShardDef[] = [
+    { id: "static", kind: "static" },
+    { id: "areas", kind: "areas" },
+    ...services.map((service) => ({
+      id: service.slug,
+      kind: "service" as const,
+      serviceSlug: service.slug,
+    })),
+  ];
   return defs;
 }
 
-function pathsForBucket(def: SitemapBucketDef): string[] {
-  const grouped: Record<SitemapBucketKind, string[]> = {
-    static: [],
-    services: [],
-    areas: [],
-    "service-state": [],
-    "service-state-city": [],
-  };
-
-  for (const path of getAllSitemapPaths()) {
-    grouped[classifyPath(path)].push(path);
+function pathsForShard(def: SitemapShardDef): string[] {
+  if (def.kind === "static") {
+    const paths: string[] = [...STATIC_PATHS];
+    for (const category of categories) paths.push(canonicalPath(`/categories/${category.slug}`));
+    for (const service of services) paths.push(canonicalPath(`/services/${service.slug}`));
+    return paths.sort();
   }
 
-  if (def.kind !== "service-state-city") return grouped[def.kind];
+  if (def.kind === "areas") {
+    const paths: string[] = [canonicalPath("/service-areas")];
+    for (const state of states) {
+      paths.push(canonicalPath(`/service-areas/${state.slug}`));
+      for (const city of getCitiesForState(state)) {
+        paths.push(canonicalPath(`/service-areas/${state.slug}/${city.slug}`));
+      }
+    }
+    return paths.sort();
+  }
 
-  const cityPaths = grouped["service-state-city"];
-  const chunk = def.chunk ?? 0;
-  const start = chunk * SERVICE_STATE_CITY_CHUNK;
-  return cityPaths.slice(start, start + SERVICE_STATE_CITY_CHUNK);
+  const serviceSlug = def.serviceSlug ?? def.id;
+  if (!getService(serviceSlug)) return [];
+
+  const paths: string[] = [];
+  for (const state of states) {
+    paths.push(canonicalPath(`/${serviceSlug}/${state.slug}`));
+    for (const city of getCitiesForState(state)) {
+      paths.push(canonicalPath(`/${serviceSlug}/${state.slug}/${city.slug}`));
+    }
+  }
+  return paths.sort();
 }
 
 export function buildSitemapEntries(): {
@@ -140,23 +110,52 @@ export function buildSitemapEntries(): {
   return getAllSitemapPaths().map((path) => entryForPath(path));
 }
 
-export function buildSitemapBucket(id: number): {
+export function buildSitemapShard(id: string): {
   url: string;
   lastModified?: Date;
   changeFrequency?: "weekly" | "monthly";
   priority?: number;
 }[] {
-  const def = getSitemapBucketDefs().find((b) => b.id === id);
+  const def = getSitemapShardDefs().find((shard) => shard.id === id);
   if (!def) return [];
-  return pathsForBucket(def).map((path) => entryForPath(path));
+  return pathsForShard(def).map((path) => entryForPath(path));
+}
+
+/** @deprecated Use getSitemapShardDefs — legacy numeric bucket API removed. */
+export function getSitemapBucketDefs(): SitemapShardDef[] {
+  return getSitemapShardDefs();
+}
+
+/** @deprecated Use buildSitemapShard. */
+export function buildSitemapBucket(id: number | string): ReturnType<typeof buildSitemapShard> {
+  return buildSitemapShard(String(id));
+}
+
+function priorityForPath(path: string): number {
+  if (path === "/") return 1;
+  const segments = path.split("/").filter(Boolean);
+  if (segments.length === 1) return 0.8;
+  if (segments.length === 2) return 0.7;
+  return 0.5;
 }
 
 function entryForPath(path: string) {
   const { date } = lastModifiedForPath(path);
   return {
-    url: `${SITE_URL}${path}`,
+    url: `${getSiteUrl()}${path}`,
     lastModified: date,
     changeFrequency: path === "/" ? ("weekly" as const) : ("monthly" as const),
-    priority: path === "/" ? 1 : path.split("/").filter(Boolean).length <= 2 ? 0.8 : 0.6,
+    priority: priorityForPath(path),
   };
+}
+
+/** Assert shard sizes stay within sitemap protocol limits. */
+export function assertShardLimits(): void {
+  const maxUrls = 50_000;
+  for (const def of getSitemapShardDefs()) {
+    const count = pathsForShard(def).length;
+    if (count > maxUrls) {
+      throw new Error(`Sitemap shard "${def.id}" exceeds ${maxUrls} URLs (${count})`);
+    }
+  }
 }

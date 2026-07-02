@@ -3,12 +3,20 @@ import { ArrowRight } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { getCity, getCitiesForState } from "@/lib/cities";
-import { services as allServices } from "@/lib/services";
+import { getCity } from "@/lib/cities";
+import { getService, services as allServices } from "@/lib/services";
+import { pickNearbyCities, pickSiblingServices } from "@/lib/service-city-content";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { aeoSectionsToFaqs, buildCityAreaAeoSections, buildCityAreaFaqs } from "@/lib/geo-aeo-content";
 
-const featured = ["custom-website-development", "technical-seo", "ai-automation-services", "shopify-development", "local-seo", "ecommerce-development"];
+const featured = [
+  "custom-website-development",
+  "technical-seo",
+  "ai-chatbot-development",
+  "shopify-development",
+  "local-seo",
+  "shopify-store-development",
+] as const;
 
 interface CityPageProps {
   stateSlug: string;
@@ -17,8 +25,10 @@ interface CityPageProps {
 
 const CityPage = ({ stateSlug, citySlug: citySlugStr }: CityPageProps) => {
   const city = getCity(stateSlug, citySlugStr)!;
-  const featuredSvcs = allServices.filter((s) => featured.includes(s.slug));
-  const otherCities = getCitiesForState(city.state).filter((c) => c.slug !== city.slug);
+  const anchorService = getService("custom-website-development") ?? allServices[0]!;
+  const featuredSvcs = allServices.filter((s) => (featured as readonly string[]).includes(s.slug));
+  const areaServices = pickSiblingServices(anchorService, city, 6);
+  const nearbyCities = pickNearbyCities(anchorService, city, 8);
   const aeoSections = buildCityAreaAeoSections(city);
   const faqs = buildCityAreaFaqs(city);
 
@@ -67,6 +77,19 @@ const CityPage = ({ stateSlug, citySlug: citySlugStr }: CityPageProps) => {
                 </Link>
               ))}
             </div>
+            {areaServices.length > 0 && (
+              <div className="mt-8 flex flex-wrap gap-2">
+                {areaServices.map((s) => (
+                  <Link
+                    key={s.slug}
+                    href={`/${s.slug}/${city.state.slug}/${city.slug}`}
+                    className="rounded-full border border-border bg-white px-4 py-2 text-sm hover:border-primary hover:text-primary"
+                  >
+                    {s.name} in {city.name}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
@@ -80,13 +103,13 @@ const CityPage = ({ stateSlug, citySlug: citySlugStr }: CityPageProps) => {
           }}
         />
 
-        {otherCities.length > 0 && (
+        {nearbyCities.length > 0 && (
           <section className="section">
             <div className="container-x">
               <span className="micro-label">Also in {city.state.name}</span>
-              <h2 className="mt-3 text-3xl font-bold">Other {city.state.name} cities we serve</h2>
+              <h2 className="mt-3 text-3xl font-bold">Nearby areas we serve in {city.state.name}</h2>
               <div className="mt-6 flex flex-wrap gap-2">
-                {otherCities.map((c) => (
+                {nearbyCities.map((c) => (
                   <Link key={c.slug} href={`/service-areas/${city.state.slug}/${c.slug}`} className="rounded-full border border-border bg-white px-4 py-2 text-sm hover:border-primary hover:text-primary">{c.name}</Link>
                 ))}
               </div>

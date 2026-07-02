@@ -5,6 +5,8 @@ export interface Service {
   slug: string;
   name: string;
   category: CategorySlug;
+  /** When false, tier-3 city pages are noindexed. Defaults to true. */
+  priority?: boolean;
   shortDescription: string;
   metaTitle: string;
   metaDescription: string;
@@ -892,6 +894,7 @@ export const services: Service[] = [
     slug: "shipping-integration",
     name: "Shipping Integration",
     category: "ecommerce",
+    priority: false,
     shortDescription: "Real-time rates, labels and tracking — integrated cleanly.",
     metaTitle: "Shipping Integration Services | Klikcy",
     metaDescription: "Shipping integrations with ShipStation, Easypost, ShipBob and carriers. Klikcy implements shipping flows for stores.",
@@ -1182,6 +1185,7 @@ export const services: Service[] = [
     slug: "google-search-console-setup",
     name: "Google Search Console Setup",
     category: "marketing-growth",
+    priority: false,
     shortDescription: "Set up GSC properly — verify, sitemap, monitor.",
     metaTitle: "Google Search Console Setup | Klikcy",
     metaDescription: "Google Search Console setup — verification, sitemap, indexing and reporting. Klikcy sets up GSC for U.S. businesses.",
@@ -1272,6 +1276,7 @@ export const services: Service[] = [
     slug: "domain-setup",
     name: "Domain Setup",
     category: "technical-hosting",
+    priority: false,
     shortDescription: "Domain registration, transfer and DNS — done right.",
     metaTitle: "Domain Setup Services | Klikcy",
     metaDescription: "Domain registration, transfer and DNS setup for businesses. Klikcy handles domains end-to-end.",
@@ -1294,6 +1299,7 @@ export const services: Service[] = [
     slug: "dns-configuration",
     name: "DNS Configuration",
     category: "technical-hosting",
+    priority: false,
     shortDescription: "Clean, fast DNS with proper email and security records.",
     metaTitle: "DNS Configuration Services | Klikcy",
     metaDescription: "DNS configuration — A, AAAA, CNAME, MX, SPF, DKIM, DMARC. Klikcy configures DNS for U.S. businesses.",
@@ -1316,6 +1322,7 @@ export const services: Service[] = [
     slug: "business-email-setup",
     name: "Business Email Setup",
     category: "technical-hosting",
+    priority: false,
     shortDescription: "Google Workspace or Microsoft 365 — set up cleanly.",
     metaTitle: "Business Email Setup | Klikcy",
     metaDescription: "Business email setup with Google Workspace or Microsoft 365 — including DKIM, SPF and DMARC. Klikcy for U.S. businesses.",
@@ -1338,6 +1345,7 @@ export const services: Service[] = [
     slug: "smtp-setup",
     name: "SMTP Setup",
     category: "technical-hosting",
+    priority: false,
     shortDescription: "Transactional email that lands in inboxes.",
     metaTitle: "SMTP Setup Services | Klikcy",
     metaDescription: "SMTP setup with Postmark, SendGrid, SES or Resend for transactional email. Klikcy ensures clean deliverability.",
@@ -1404,6 +1412,7 @@ export const services: Service[] = [
     slug: "website-backup-setup",
     name: "Website Backup Setup",
     category: "technical-hosting",
+    priority: false,
     shortDescription: "Reliable, off-site backups with tested restores.",
     metaTitle: "Website Backup Setup | Klikcy",
     metaDescription: "Website backup setup with off-site storage and tested restores. Klikcy protects sites for U.S. businesses.",
@@ -1448,6 +1457,7 @@ export const services: Service[] = [
     slug: "performance-monitoring",
     name: "Performance Monitoring",
     category: "technical-hosting",
+    priority: false,
     shortDescription: "Uptime, errors and Core Web Vitals — watched.",
     metaTitle: "Website Performance Monitoring | Klikcy",
     metaDescription: "Performance monitoring — uptime, errors and Core Web Vitals. Klikcy monitors sites and apps for U.S. businesses.",

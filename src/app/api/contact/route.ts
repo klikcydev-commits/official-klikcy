@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getClientIp, sendContactEmail, validateContactRequest } from "@/lib/contact";
+import { getClientIp, MAX_CONTACT_BODY_BYTES, sendContactEmail, validateContactRequest } from "@/lib/contact";
 
 export const dynamic = "force-dynamic";
 
@@ -11,9 +11,18 @@ const securityHeaders = {
 };
 
 export async function POST(request: NextRequest) {
+  const contentLength = Number(request.headers.get("content-length") || 0);
+  if (contentLength > MAX_CONTACT_BODY_BYTES) {
+    return NextResponse.json({ error: "Request body too large." }, { status: 400, headers: securityHeaders });
+  }
+
   let body: unknown;
   try {
-    body = await request.json();
+    const raw = await request.text();
+    if (raw.length > MAX_CONTACT_BODY_BYTES) {
+      return NextResponse.json({ error: "Request body too large." }, { status: 400, headers: securityHeaders });
+    }
+    body = raw ? JSON.parse(raw) : {};
   } catch {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400, headers: securityHeaders });
   }
@@ -22,9 +31,13 @@ export async function POST(request: NextRequest) {
   const result = validateContactRequest(body, ip);
 
   if (!result.ok) {
+    const headers: Record<string, string> = { ...securityHeaders };
+    if (result.status === 429 && result.retryAfterSeconds) {
+      headers["Retry-After"] = String(result.retryAfterSeconds);
+    }
     return NextResponse.json(
       { error: result.error, ...(result.details ? { details: result.details } : {}) },
-      { status: result.status, headers: securityHeaders },
+      { status: result.status, headers },
     );
   }
 
@@ -36,10 +49,10 @@ export async function POST(request: NextRequest) {
     await sendContactEmail(result.data);
     return NextResponse.json({ ok: true }, { headers: securityHeaders });
   } catch (err) {
-    console.error("[contact] SMTP error:", err);
+    console.error("[contact] transport error:", err);
     return NextResponse.json(
-      { error: "Unable to send message right now. Please email us directly." },
-      { status: 500, headers: securityHeaders },
+      { error: "Unable to send your message right now. Please try again shortly." },
+      { status: 502, headers: securityHeaders },
     );
   }
 }

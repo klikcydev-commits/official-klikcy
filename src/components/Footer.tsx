@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getAllServicesNavCategories, getPrimaryNavCategories } from "@/lib/nav-categories";
+import { categories } from "@/lib/categories";
 import { priorityStates } from "@/lib/states";
 import { services } from "@/lib/services";
 
@@ -13,8 +13,6 @@ const featuredServices = [
 ] as const;
 
 const Footer = () => {
-  const primaryCategories = getPrimaryNavCategories();
-  const nestedCategories = getAllServicesNavCategories();
   const footerServices = featuredServices
     .map((slug) => services.find((s) => s.slug === slug))
     .filter(Boolean);
@@ -67,10 +65,10 @@ const Footer = () => {
             </ul>
           </nav>
 
-          <nav aria-label="Footer main services">
-            <div className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.22em] text-primary-light">Main Services</div>
+          <nav aria-label="Footer category hubs">
+            <div className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.22em] text-primary-light">Category hubs</div>
             <ul className="mt-4 space-y-2">
-              {primaryCategories.map((cat) => (
+              {categories.map((cat) => (
                 <li key={cat.slug}>
                   <Link href={`/categories/${cat.slug}`} className="text-sm font-semibold text-white/75 transition hover:text-white">
                     {cat.short}
@@ -81,20 +79,18 @@ const Footer = () => {
           </nav>
 
           <nav aria-label="Footer all services">
-            <div className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.22em] text-primary-light">All Services</div>
+            <div className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.22em] text-primary-light">Catalog</div>
             <ul className="mt-4 space-y-2">
               <li>
                 <Link href="/all-services" className="text-sm font-semibold text-white transition hover:text-primary-light">
                   Browse full catalog
                 </Link>
               </li>
-              {nestedCategories.map((cat) => (
-                <li key={cat.slug}>
-                  <Link href={`/categories/${cat.slug}`} className="text-sm font-semibold text-white/75 transition hover:text-white">
-                    {cat.short}
-                  </Link>
-                </li>
-              ))}
+              <li>
+                <Link href="/service-areas" className="text-sm font-semibold text-white/75 transition hover:text-white">
+                  Service areas hub
+                </Link>
+              </li>
             </ul>
           </nav>
 

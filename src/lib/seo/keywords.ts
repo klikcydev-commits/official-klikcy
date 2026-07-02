@@ -3,7 +3,7 @@ import type { State } from "../states";
 import type { CityRef } from "../cities";
 import { buildKeywords20 } from "../metadata/page-metadata";
 import { getVerticalProfile, type ServiceVertical } from "../metadata/positioning";
-import { geoLabel, geoLabelWithAbbr } from "./geo";
+import { geoLabel } from "./geo";
 import { isPriorityCity, isPriorityState } from "./priorityMarkets";
 
 function dedupe(items: string[]): string[] {
@@ -18,57 +18,57 @@ function dedupe(items: string[]): string[] {
   return out;
 }
 
-const PRIORITY_VERTICAL_BOOSTS: Record<ServiceVertical, (loc: string, locAbbr: string) => string[]> = {
-  web: (loc, locAbbr) => [
+const PRIORITY_VERTICAL_BOOSTS: Record<ServiceVertical, (loc: string) => string[]> = {
+  web: (loc) => [
     `web development agency in ${loc}`,
     `custom website development ${loc}`,
     `business website design ${loc}`,
     `React website developers ${loc}`,
     `Shopify development ${loc}`,
   ],
-  app: (loc, locAbbr) => [
+  app: (loc) => [
     `app development company in ${loc}`,
     `custom software development ${loc}`,
     `web app development ${loc}`,
     `SaaS development company ${loc}`,
     `mobile app developers ${loc}`,
   ],
-  ai: (loc, locAbbr) => [
+  ai: (loc) => [
     `AI automation agency in ${loc}`,
     `AI chatbot development ${loc}`,
     `AI agents for ${loc} businesses`,
     `workflow automation ${loc}`,
     `business automation company ${loc}`,
   ],
-  ecommerce: (loc, locAbbr) => [
+  ecommerce: (loc) => [
     `e-commerce development ${loc}`,
     `Shopify development ${loc}`,
     `WooCommerce development ${loc}`,
     `online store development ${loc}`,
     `conversion-focused e-commerce ${loc}`,
   ],
-  seo: (loc, locAbbr) => [
+  seo: (loc) => [
     `SEO services ${loc}`,
     `technical SEO ${loc}`,
     `local SEO company ${loc}`,
     `answer engine optimization ${loc}`,
     `AI search visibility ${loc}`,
   ],
-  branding: (loc, locAbbr) => [
+  branding: (loc) => [
     `branding agency ${loc}`,
     `UI UX design ${loc}`,
     `digital brand design ${loc}`,
     `design studio ${loc}`,
     `brand identity ${loc}`,
   ],
-  marketing: (loc, locAbbr) => [
+  marketing: (loc) => [
     `digital growth agency ${loc}`,
     `conversion optimization ${loc}`,
     `marketing systems ${loc}`,
     `lead generation ${loc}`,
     `customer journey optimization ${loc}`,
   ],
-  hosting: (loc, locAbbr) => [
+  hosting: (loc) => [
     `website maintenance ${loc}`,
     `technical hosting ${loc}`,
     `DNS and email setup ${loc}`,
@@ -89,8 +89,7 @@ export function buildPageKeywords20(
 
   const profile = getVerticalProfile(service.category);
   const loc = geoLabel(geo);
-  const locAbbr = geoLabelWithAbbr(geo);
-  const priorityCommercial = PRIORITY_VERTICAL_BOOSTS[profile.vertical](loc, locAbbr);
+  const priorityCommercial = PRIORITY_VERTICAL_BOOSTS[profile.vertical](loc);
 
   const extra =
     geo.city && isPriorityCity(geo.state.slug, geo.city.slug)

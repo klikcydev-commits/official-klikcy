@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { notFound, permanentRedirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/JsonLd";
 import ServicePage from "@/views/ServicePage";
-import { LEGACY_SERVICE_SLUG_REDIRECTS } from "@/lib/legacy-service-slugs";
 import { getServiceSeo } from "@/lib/seo";
 import { seoToMetadata } from "@/lib/seo/next-metadata";
 import { getService, services } from "@/lib/services";
@@ -14,25 +13,20 @@ export async function generateStaticParams() {
 export const dynamicParams = false;
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const canonicalSlug = LEGACY_SERVICE_SLUG_REDIRECTS[params.slug] ?? params.slug;
-  const service = getService(canonicalSlug);
+  const service = getService(params.slug);
   if (!service) return { title: "Not Found" };
   return seoToMetadata(getServiceSeo(service));
 }
 
 export default function ServiceRoutePage({ params }: { params: { slug: string } }) {
-  const canonicalSlug = LEGACY_SERVICE_SLUG_REDIRECTS[params.slug] ?? params.slug;
-  if (canonicalSlug !== params.slug) {
-    permanentRedirect(`/services/${canonicalSlug}/`);
-  }
-  const service = getService(canonicalSlug);
+  const service = getService(params.slug);
   if (!service) notFound();
   const seo = getServiceSeo(service);
 
   return (
     <>
       <JsonLd data={seo.jsonLd} />
-      <ServicePage slug={canonicalSlug} />
+      <ServicePage slug={params.slug} />
     </>
   );
 }

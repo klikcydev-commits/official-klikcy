@@ -34,9 +34,13 @@ const services = [
   "Other",
 ];
 
-const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "build@klikcy.com";
+import { ObfuscatedContactEmail } from "@/components/ObfuscatedContactEmail";
 
-const Contact = () => {
+interface ContactProps {
+  formToken: string;
+}
+
+const Contact = ({ formToken }: ContactProps) => {
   const [sent, setSent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -64,6 +68,7 @@ const Contact = () => {
         service: res.data.service,
         message: res.data.message,
         website: res.data.website ?? "",
+        formToken,
       };
 
       const response = await fetch("/api/contact", {
@@ -72,6 +77,9 @@ const Contact = () => {
         body: JSON.stringify(payload),
       });
       const body = (await response.json().catch(() => ({}))) as { error?: string };
+      if (response.status === 429) {
+        throw new Error(body.error || "Too many requests — please try again in a few minutes.");
+      }
       if (!response.ok) {
         throw new Error(body.error || "Unable to send message.");
       }
@@ -106,9 +114,7 @@ const Contact = () => {
               <div className="card-soft">
                 <Mail className="h-5 w-5 text-primary" />
                 <div className="mt-3 micro-label">Email</div>
-                <a href={`mailto:${contactEmail}`} className="mt-1 block text-lg font-semibold text-navy-deep hover:text-primary">
-                  {contactEmail}
-                </a>
+                <ObfuscatedContactEmail className="mt-1 block text-lg font-semibold text-navy-deep hover:text-primary" />
               </div>
               <div className="card-soft">
                 <MapPin className="h-5 w-5 text-primary" />
@@ -123,10 +129,11 @@ const Contact = () => {
                 <div className="card-soft text-center py-16">
                   <CheckCircle2 className="mx-auto h-12 w-12 text-primary" />
                   <h2 className="mt-4 text-2xl font-bold">Message received</h2>
-                  <p className="mt-2 text-muted-foreground">We'll reach out within one business day.</p>
+                  <p className="mt-2 text-muted-foreground">We&apos;ll reach out within one business day.</p>
                 </div>
               ) : (
                 <form onSubmit={onSubmit} className="card-soft space-y-5" noValidate>
+                  <input type="hidden" name="formToken" value={formToken} />
                   <input
                     type="text"
                     name="website"
