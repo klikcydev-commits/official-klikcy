@@ -88,7 +88,8 @@ export default function HeaderClient({
     );
 
   return (
-    <header className="sticky top-0 z-[1000] border-b border-line bg-paper/95 backdrop-blur supports-[backdrop-filter]:bg-paper/90">
+    <header className="sticky top-0 z-[1000] border-b border-line bg-paper">
+      {/* No backdrop-filter on this header: it would become the containing block for the fixed mobile menu and collapse it to 0px. */}
       <a href="#main-content" className="skip-link">
         Skip to content
       </a>
@@ -173,7 +174,7 @@ export default function HeaderClient({
 
         <button
           type="button"
-          className="ml-auto inline-flex h-11 w-11 items-center justify-center rounded-md text-ink hover:bg-mist lg:hidden"
+          className="ml-auto inline-flex h-11 w-11 items-center justify-center rounded-full text-ink hover:bg-mist lg:hidden"
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileOpen}
           aria-controls="mobile-menu"
@@ -191,7 +192,10 @@ export default function HeaderClient({
 
       <div
         id="mobile-menu"
-        className={cn("fixed inset-x-0 bottom-0 top-16 overflow-y-auto bg-paper lg:hidden", mobileOpen ? "block" : "hidden")}
+        className={cn(
+          "fixed inset-x-0 bottom-0 top-16 z-[999] overflow-y-auto overscroll-contain border-t border-line bg-paper lg:hidden",
+          mobileOpen ? "block" : "hidden",
+        )}
       >
         <nav className="wrap py-6" aria-label="Mobile">
           <p className="meta mb-2">Services</p>

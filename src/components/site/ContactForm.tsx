@@ -21,7 +21,7 @@ const schema = z.object({
 
 
 const inputClass =
-  "mt-1.5 block w-full rounded-md border border-line bg-paper px-3.5 py-3 text-base text-ink placeholder:text-slate/70 focus:border-teal focus:outline-none focus:ring-2 focus:ring-teal/20 disabled:opacity-60 aria-[invalid=true]:border-destructive";
+  "mt-1.5 block w-full rounded-xl border border-line bg-paper px-3.5 py-3 text-base text-ink placeholder:text-slate/70 focus:border-teal focus:outline-none focus:ring-2 focus:ring-teal/20 disabled:opacity-60 aria-[invalid=true]:border-destructive";
 
 export default function ContactForm({
   serviceOptions,

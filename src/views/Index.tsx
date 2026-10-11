@@ -235,7 +235,7 @@ export default function Index() {
                   <li key={s.slug}>
                     <Link
                       href={`/service-areas/${s.slug}`}
-                      className="inline-flex min-h-[2.5rem] items-center rounded-md border border-line px-3.5 text-[0.95rem] no-underline hover:border-ink"
+                      className="inline-flex min-h-[2.5rem] items-center rounded-full border border-line px-4 text-[0.95rem] no-underline hover:border-ink"
                     >
                       {s.name}
                     </Link>
