@@ -4,37 +4,22 @@ import { JsonLd } from "@/components/JsonLd";
 import ServiceStatePage from "@/views/ServiceStatePage";
 import { getServiceStateSeo } from "@/lib/seo";
 import { seoToMetadata } from "@/lib/seo/next-metadata";
-import { getService, services } from "@/lib/services";
-import { getState, states } from "@/lib/states";
+import { getService } from "@/lib/services";
+import { getState } from "@/lib/states";
 
+// Noindexed template pages (see lib/seo/indexing.ts): rendered on first request, then cached.
 export async function generateStaticParams() {
-  const params: { service: string; state: string }[] = [];
-  for (const service of services) {
-    for (const state of states) {
-      params.push({ service: service.slug, state: state.slug });
-    }
-  }
-  return params;
+  return [];
 }
 
-export const dynamicParams = false;
-
-export async function generateMetadata({
-  params,
-}: {
-  params: { service: string; state: string };
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { service: string; state: string } }): Promise<Metadata> {
   const service = getService(params.service);
   const state = getState(params.state);
   if (!service || !state) return { title: "Not Found" };
   return seoToMetadata(getServiceStateSeo(service, state));
 }
 
-export default function ServiceStateRoutePage({
-  params,
-}: {
-  params: { service: string; state: string };
-}) {
+export default function ServiceStateRoutePage({ params }: { params: { service: string; state: string } }) {
   const service = getService(params.service);
   const state = getState(params.state);
   if (!service || !state) notFound();
@@ -43,7 +28,7 @@ export default function ServiceStateRoutePage({
   return (
     <>
       <JsonLd data={seo.jsonLd} />
-      <ServiceStatePage serviceSlug={params.service} stateSlug={params.state} />
+      <ServiceStatePage serviceSlug={service.slug} stateSlug={state.slug} />
     </>
   );
 }

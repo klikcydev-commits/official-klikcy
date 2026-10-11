@@ -1,134 +1,217 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Breadcrumbs from "@/components/Breadcrumbs";
-import { getCity } from "@/lib/cities";
-import { getService, services as allServices } from "@/lib/services";
-import { pickNearbyCities, pickSiblingServices } from "@/lib/service-city-content";
-import { FaqAccordion } from "@/components/FaqAccordion";
-import { aeoSectionsToFaqs, buildCityAreaAeoSections, buildCityAreaFaqs } from "@/lib/geo-aeo-content";
+import { CtaBand, Faq, PageHero, SectionHead } from "@/components/site/blocks";
+import { getCity, getCitiesForState } from "@/lib/cities";
+import { getService } from "@/lib/services";
+import { getStateServices, shortTimeZone } from "@/lib/state-copy";
+import { getLocalMarket, getLocalMarketsForState, type LocalMarket } from "@/content/local-markets";
+import type { CityRef } from "@/lib/cities";
 
-const featured = [
-  "custom-website-development",
-  "technical-seo",
-  "ai-chatbot-development",
-  "shopify-development",
-  "local-seo",
-  "shopify-store-development",
-] as const;
-
-interface CityPageProps {
-  stateSlug: string;
-  citySlug: string;
+/**
+ * City hub. Hand-written priority markets (src/content/local-markets.ts) render a full,
+ * indexed local page; every other city renders a short noindexed page that points to
+ * the state hub.
+ */
+export default function CityPage({ stateSlug, citySlug }: { stateSlug: string; citySlug: string }) {
+  const city = getCity(stateSlug, citySlug)!;
+  const market = getLocalMarket(stateSlug, citySlug);
+  return market ? <MarketPage city={city} market={market} /> : <GenericCityPage city={city} />;
 }
 
-const CityPage = ({ stateSlug, citySlug: citySlugStr }: CityPageProps) => {
-  const city = getCity(stateSlug, citySlugStr)!;
-  const anchorService = getService("custom-website-development") ?? allServices[0]!;
-  const featuredSvcs = allServices.filter((s) => (featured as readonly string[]).includes(s.slug));
-  const areaServices = pickSiblingServices(anchorService, city, 6);
-  const nearbyCities = pickNearbyCities(anchorService, city, 8);
-  const aeoSections = buildCityAreaAeoSections(city);
-  const faqs = buildCityAreaFaqs(city);
+function MarketPage({ city, market }: { city: CityRef; market: LocalMarket }) {
+  const siblings = getLocalMarketsForState(city.state.slug).filter((m) => m.city !== city.slug);
+  const cityName = (slug: string) => getCitiesForState(city.state).find((c) => c.slug === slug)?.name ?? slug;
 
   return (
     <>
       <Header />
-      <Breadcrumbs items={[
-        { name: "Home", href: "/" },
-        { name: "Service Areas", href: "/service-areas" },
-        { name: city.state.name, href: `/service-areas/${city.state.slug}` },
-        { name: city.name },
-      ]} />
-      <main>
-        <section className="bg-gradient-hero">
-          <div className="container-x py-14 sm:py-20">
-            <span className="micro-label">{city.state.name} · {city.state.abbr}</span>
-            <h1 className="mt-3 max-w-3xl text-4xl font-extrabold sm:text-5xl">Digital agency serving businesses in {city.name}, {city.state.abbr}</h1>
-            <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-              Klikcy is a remote-first digital agency available for companies in {city.name}, {city.state.name}. We partner on websites, SEO/AEO, AI automation, and e-commerce — serving {city.name} businesses without a local office in the city.
-            </p>
-            <Link href="/contact" className="btn-primary mt-7">Request a quote for {city.name} <ArrowRight className="h-4 w-4" /></Link>
-          </div>
-        </section>
+      <main id="main-content">
+        <PageHero
+          title={market.h1}
+          lede={market.intro}
+          breadcrumbs={[
+            { name: "Home", href: "/" },
+            { name: city.state.name, href: `/service-areas/${city.state.slug}` },
+            { name: city.name },
+          ]}
+          aside={
+            <dl className="sheet text-[0.95rem]">
+              <div className="px-5 pb-4 pt-5">
+                <dt className="font-semibold">Working with {city.name} businesses</dt>
+                <dd className="meta">Remote team, {shortTimeZone(city.state)}</dd>
+              </div>
+              <div className="sheet-row">
+                <dt className="text-sm font-semibold">Areas</dt>
+                <dd className="muted leading-snug">{market.areas.join(", ")}</dd>
+              </div>
+              <div className="sheet-row">
+                <dt className="text-sm font-semibold">Office</dt>
+                <dd className="muted leading-snug">None locally. We work remotely and never charge for travel.</dd>
+              </div>
+              <div className="sheet-row">
+                <dt className="text-sm font-semibold">Price</dt>
+                <dd className="muted leading-snug">A fixed, written quote. Free to ask.</dd>
+              </div>
+            </dl>
+          }
+        >
+          <Link href="/contact" className="btn btn-primary">
+            Start a project
+          </Link>
+          <Link href={`/service-areas/${city.state.slug}`} className="btn btn-secondary">
+            About working in {city.state.name}
+          </Link>
+        </PageHero>
 
-        <FaqAccordion
-          faqs={aeoSectionsToFaqs(aeoSections)}
-          heading={`About Klikcy in ${city.name}, ${city.state.abbr}`}
-          idPrefix={`aeo-city-${city.state.slug}-${city.slug}`}
-          itemIdKind="aeo"
-          linkContext={{
-            state: { name: city.state.name, slug: city.state.slug },
-            city: { name: city.name, slug: city.slug, stateSlug: city.state.slug },
-          }}
-        />
-
-        <section className="section">
-          <div className="container-x">
-            <span className="micro-label">Services in {city.name}</span>
-            <h2 className="mt-3 text-3xl font-bold">What Klikcy delivers for {city.name} businesses</h2>
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {featuredSvcs.map((s) => (
-                <Link key={s.slug} href={`/${s.slug}/${city.state.slug}/${city.slug}`} className="card-soft group block">
-                  <h3 className="text-lg font-bold">{s.name} in {city.name}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">{s.shortDescription}</p>
-                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary">View <ArrowRight className="h-4 w-4" /></span>
-                </Link>
+        <section className="section" aria-labelledby="landscape-heading">
+          <div className="wrap ledger">
+            <SectionHead id="landscape-heading" title={`Doing business online in ${city.name}`} />
+            <div className="prose-k">
+              {market.landscape.map((p) => (
+                <p key={p.slice(0, 40)}>{p}</p>
               ))}
             </div>
-            {areaServices.length > 0 && (
-              <div className="mt-8 flex flex-wrap gap-2">
-                {areaServices.map((s) => (
-                  <Link
-                    key={s.slug}
-                    href={`/${s.slug}/${city.state.slug}/${city.slug}`}
-                    className="rounded-full border border-border bg-white px-4 py-2 text-sm hover:border-primary hover:text-primary"
-                  >
-                    {s.name} in {city.name}
-                  </Link>
-                ))}
-              </div>
-            )}
           </div>
         </section>
 
-        <FaqAccordion
-          faqs={faqs}
-          idPrefix={`city-${city.state.slug}-${city.slug}`}
-          itemIdKind="faq"
-          linkContext={{
-            state: { name: city.state.name, slug: city.state.slug },
-            city: { name: city.name, slug: city.slug, stateSlug: city.state.slug },
-          }}
-        />
+        <section className="section section-mist" aria-labelledby="needs-heading">
+          <div className="wrap">
+            <h2 id="needs-heading" className="h2 max-w-[24ch]">
+              What {city.name} businesses usually need from us
+            </h2>
+            <div className="mt-10 grid gap-x-12 gap-y-10 md:grid-cols-3">
+              {market.needs.map((need) => (
+                <div key={need.title} className="border-t-2 border-ink pt-5">
+                  <h3 className="text-lg">{need.title}</h3>
+                  <p className="muted mt-2">{need.body}</p>
+                  <ul className="mt-3 space-y-1 text-[0.95rem]">
+                    {need.services.map((slug) => {
+                      const s = getService(slug);
+                      return s ? (
+                        <li key={slug}>
+                          <Link href={`/services/${slug}`} className="link">
+                            {s.name}
+                          </Link>
+                        </li>
+                      ) : null;
+                    })}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-        {nearbyCities.length > 0 && (
-          <section className="section">
-            <div className="container-x">
-              <span className="micro-label">Also in {city.state.name}</span>
-              <h2 className="mt-3 text-3xl font-bold">Nearby areas we serve in {city.state.name}</h2>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {nearbyCities.map((c) => (
-                  <Link key={c.slug} href={`/service-areas/${city.state.slug}/${c.slug}`} className="rounded-full border border-border bg-white px-4 py-2 text-sm hover:border-primary hover:text-primary">{c.name}</Link>
+        <section className="section" aria-labelledby="search-heading">
+          <div className="wrap ledger">
+            <SectionHead id="search-heading" title={`How local search works in ${city.name}`} />
+            <div className="prose-k">
+              <p>{market.search}</p>
+              {market.rules ? (
+                <>
+                  <h3>Rules that affect your website</h3>
+                  <p>{market.rules}</p>
+                </>
+              ) : null}
+            </div>
+          </div>
+        </section>
+
+        <div className="border-t border-line">
+          <Faq items={market.faqs} title={`Working with Klikcy in ${city.name}`} />
+        </div>
+
+        {siblings.length > 0 ? (
+          <section className="section section-mist" aria-labelledby="nearby-heading">
+            <div className="wrap ledger">
+              <SectionHead id="nearby-heading" title={`More in ${city.state.name}`} />
+              <ul className="grid gap-x-10 gap-y-3 sm:grid-cols-2">
+                {siblings.map((m) => (
+                  <li key={m.city}>
+                    <Link href={`/service-areas/${m.state}/${m.city}`} className="link text-lg font-semibold">
+                      {cityName(m.city)}
+                    </Link>
+                  </li>
                 ))}
-              </div>
-              <Link href={`/service-areas/${city.state.slug}`} className="mt-6 inline-flex text-sm font-semibold text-primary">All of {city.state.name} →</Link>
+                <li>
+                  <Link href={`/service-areas/${city.state.slug}`} className="link text-lg font-semibold">
+                    All of {city.state.name}
+                  </Link>
+                </li>
+              </ul>
             </div>
           </section>
-        )}
+        ) : null}
 
-        <section className="section bg-[hsl(var(--soft-bg))]">
-          <div className="container-x text-center">
-            <h2 className="text-3xl font-bold">Ready to work with Klikcy in {city.name}?</h2>
-            <p className="mt-3 text-muted-foreground">Remote-first delivery for {city.name}, {city.state.abbr} — tell us about your project and we will respond with a clear plan.</p>
-            <Link href="/contact" className="btn-primary mt-6">Get Free Quote <ArrowRight className="h-4 w-4" /></Link>
-          </div>
-        </section>
+        <CtaBand />
       </main>
       <Footer />
     </>
   );
-};
+}
 
-export default CityPage;
+function GenericCityPage({ city }: { city: CityRef }) {
+  const featured = getStateServices(city.state);
+  const others = getCitiesForState(city.state).filter((c) => c.slug !== city.slug);
+
+  return (
+    <>
+      <Header />
+      <main id="main-content">
+        <PageHero
+          title={`Web development and SEO for ${city.name} businesses`}
+          lede={`Klikcy works remotely with businesses in ${city.name}, ${city.state.name}, on websites, search visibility, AI automation, apps, and online stores. Calls are scheduled in ${shortTimeZone(city.state)}.`}
+          breadcrumbs={[
+            { name: "Home", href: "/" },
+            { name: city.state.name, href: `/service-areas/${city.state.slug}` },
+            { name: city.name },
+          ]}
+        >
+          <Link href="/contact" className="btn btn-primary">
+            Start a project
+          </Link>
+          <Link href={`/service-areas/${city.state.slug}`} className="btn btn-secondary">
+            About working in {city.state.name}
+          </Link>
+        </PageHero>
+
+        <section className="section" aria-labelledby="services-heading">
+          <div className="wrap ledger">
+            <SectionHead id="services-heading" title="Where most clients start" />
+            <ul className="grid gap-x-10 gap-y-7 sm:grid-cols-2">
+              {featured.map((s) => (
+                <li key={s.slug}>
+                  <Link href={`/services/${s.slug}`} className="link text-lg font-semibold">
+                    {s.name}
+                  </Link>
+                  <p className="muted mt-1 text-[0.95rem]">{s.shortDescription}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {others.length > 0 ? (
+          <section className="section section-mist" aria-labelledby="nearby-heading">
+            <div className="wrap ledger">
+              <SectionHead id="nearby-heading" title={`Elsewhere in ${city.state.name}`} />
+              <ul className="flex flex-wrap gap-x-5 gap-y-2">
+                {others.map((c) => (
+                  <li key={c.slug}>
+                    <Link href={`/service-areas/${city.state.slug}/${c.slug}`} className="link">
+                      {c.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        ) : null}
+
+        <CtaBand />
+      </main>
+      <Footer />
+    </>
+  );
+}

@@ -1,191 +1,89 @@
-/** About page content migrated from klikcy.com legacy project (about.tsx). */
-
-export const aboutSeo = {
-  title: "About Us | Digital Solutions Agency",
-  description:
-    "About Klikcy: Digital solutions agency specializing in web development, mobile apps, UI/UX design, digital marketing, AI automation, and SaaS development. Fast, secure, scalable solutions nationwide.",
-  keywords: [
-    "about klikcy",
-    "digital agency",
-    "web development company",
-    "app development team",
-    "UI UX design agency",
-    "digital marketing experts",
-  ],
-};
+/** About page copy. No invented people, numbers, or clients: add real ones when you have them. */
 
 export const aboutHero = {
-  kicker: "About Klikcy",
-  title: "A digital agency built for modern growth.",
-  lead:
-    "A U.S. digital agency helping brands ship fast, accessible, and conversion-ready experiences. We design and build custom websites, e-commerce stores, mobile apps, SaaS products, and AI chatbots and automations—with clarity, measurable outcomes, and continuous improvement.",
+  title: "A remote team that builds the whole thing.",
+  lede:
+    "Klikcy is a web agency for U.S. businesses. We design and build websites, apps, and online stores, get them found in search, and automate the repetitive work behind them, as one team instead of four vendors.",
 };
 
-export const aboutWhoWeAre = {
-  title: "Who we are",
-  body: "We're a team of engineers, designers, and growth specialists who value outcomes over buzzwords. Expect clear roadmaps, reliable sprints, and production-grade deliverables that perform for real customers—not just in slide decks.",
-};
+export const aboutStory = [
+  "Klikcy started from a pattern we kept running into. A business pays one agency for a website, another for SEO, a freelancer for automations, and someone else to look after hosting. None of it quite fits together. When something breaks, everyone points at someone else, and the business owner ends up as the project manager they never wanted to be.",
+  "So we put the pieces under one roof. The people who design your site also build it, set up its search foundations, connect it to your other tools, and keep it running. Decisions get made with the whole picture in view, and there's one team responsible when something needs fixing.",
+  "We work remotely, with clients all over the country. It keeps our costs down, it means we hire for skill rather than location, and in practice our clients see more of us, not less: a weekly update, a staging link they can open anytime, and real answers within a business day.",
+];
 
-export const aboutDifferentiators = [
+export const aboutPrinciples = [
   {
-    title: "Technical depth",
-    description:
-      "React and Next.js, Node.js, Python/Django, WordPress, Shopify, WooCommerce, Wix, React Native, Flutter, GraphQL/REST.",
+    title: "Your accounts, your code",
+    body: "Domains, hosting, analytics, and source code live in your company's name from day one. We've inherited too many sites held hostage by a previous vendor to do it any other way.",
   },
   {
-    title: "SEO & CRO discipline",
-    description: "Information architecture, structured data, Core Web Vitals, analytics, and experiment design.",
+    title: "Fixed scope, fixed price",
+    body: "We write down what we'll deliver, by when, and for how much, before we start. If something changes, we agree the change before doing it.",
   },
   {
-    title: "Operational maturity",
-    description: "Sprint hygiene, QA, accessibility, incident-ready hosting, and tidy documentation.",
+    title: "Boring technology, done well",
+    body: "We use mainstream tools like WordPress, Shopify, Next.js, and PostgreSQL, so your next developer can pick up where we left off.",
   },
   {
-    title: "Local + national context",
-    description: "Content and architecture that work for state and county searches without over-claiming.",
+    title: "No tricks with search",
+    body: "No link schemes, no doorway pages, no keyword stuffing. Those tactics work briefly and cost a lot to undo.",
+  },
+  {
+    title: "Accessibility isn't optional",
+    body: "Keyboard navigation, readable contrast, proper headings, and alt text are part of every build, not an add-on.",
+  },
+  {
+    title: "We'll say when you don't need us",
+    body: "If a ready-made tool solves your problem, we'll recommend it. It's better for you, and it's how we earn trust for bigger work.",
   },
 ];
 
-export const aboutServiceCards = [
-  {
-    title: "Web Development",
-    description: "Custom websites in Next.js/React or WordPress/Wix with semantic HTML and accessibility.",
-    features: ["Headless CMS", "CDN-first performance", "Core Web Vitals", "Zero-downtime migrations"],
-    href: "/categories/web-development",
-  },
-  {
-    title: "E-commerce Development",
-    description: "Shopify, WooCommerce, and headless commerce solutions that scale.",
-    features: ["Shopify themes & apps", "WooCommerce flexibility", "Headless commerce", "Omnichannel integrations"],
-    href: "/categories/ecommerce",
-  },
-  {
-    title: "Mobile App Development",
-    description: "React Native/Flutter with secure auth, push, analytics, and in-app payments.",
-    features: ["iOS & Android", "App-store readiness", "Post-launch iteration", "Native modules"],
-    href: "/categories/app-software",
-  },
-  {
-    title: "SaaS Application Development",
-    description: "Multi-tenant architectures, role-based access, billing, and dashboards.",
-    features: ["Multi-tenant architecture", "RBAC & billing", "Product analytics", "Privacy-aware data flows"],
-    href: "/services/saas-development",
-  },
-  {
-    title: "AI Chatbots & Automations",
-    description: "Conversational AI with RAG for grounded answers, safe tool-calling, and guardrails.",
-    features: ["RAG knowledge", "Function/tool calls", "CRM integrations", "Workflow automation"],
-    href: "/categories/ai-automation",
-  },
-  {
-    title: "Design & Branding",
-    description: "Brand identity, graphic design, and UI/UX with research, wireframes, and prototypes.",
-    features: ["Brand identity", "UI/UX research", "Design systems", "Prototyping"],
-    href: "/categories/branding-design",
-  },
-];
-
-export const aboutProcessSteps = [
-  { step: "01", title: "Discovery & scope", description: "Audiences, KPIs, integrations, constraints" },
-  { step: "02", title: "IA/UX", description: "Architecture, wireframes, and prototypes aligned to user journeys" },
-  {
-    step: "03",
-    title: "Build",
-    description: "Front-end + APIs + CMS/tooling; staged previews with clear acceptance criteria",
-  },
-  { step: "04", title: "QA & accessibility", description: "Cross-browser/device tests, WCAG 2.2, performance budgets" },
-  { step: "05", title: "Launch", description: "Rollout plan, GA4 + GSC, error monitoring, rollback strategy" },
-  { step: "06", title: "Optimize", description: "CRO tests, content tuning, iterative improvements" },
+export const aboutNotDoing = [
+  "Paid ads management. We build the landing pages and tracking, and work alongside your ads specialist.",
+  "Social media posting and community management. We design the templates; your team or a social specialist runs the accounts.",
+  "Video production and photography. We'll tell you what to shoot and who to ask.",
 ];
 
 export const aboutTechStacks = [
-  { label: "Front end", items: ["React", "Next.js", "Vue"] },
-  { label: "CMS & commerce", items: ["WordPress", "Shopify", "WooCommerce", "Wix"] },
-  { label: "Mobile", items: ["React Native", "Flutter"] },
-  { label: "Back end", items: ["Node.js", "Python/Django", "Laravel"] },
-  { label: "Infrastructure", items: ["Vercel", "Netlify", "AWS", "GCP", "Azure"] },
-  { label: "Analytics & SEO", items: ["GA4", "Search Console", "Lighthouse"] },
-  { label: "Automation", items: ["RAG knowledge", "Function calls", "CRM integrations"] },
-  { label: "APIs", items: ["REST", "GraphQL"] },
-];
-
-export const aboutLocations = [
-  "New Jersey",
-  "New York",
-  "Manhattan",
-  "Brooklyn",
-  "Queens",
-  "The Bronx",
-  "Staten Island",
-  "California",
-  "Texas",
-  "Florida",
-  "Pennsylvania",
-  "Illinois",
-  "Georgia",
-  "North Carolina",
-  "Massachusetts",
-  "Virginia",
+  { label: "Websites", items: ["Next.js", "React", "Vue", "WordPress", "Wix"] },
+  { label: "Commerce", items: ["Shopify", "WooCommerce", "Stripe"] },
+  { label: "Apps and back end", items: ["Node.js", "Python and Django", "Laravel", "React Native", "Flutter", "REST and GraphQL"] },
+  { label: "Search and analytics", items: ["Google Search Console", "GA4", "Tag Manager", "Lighthouse"] },
+  { label: "Automation and AI", items: ["Retrieval-augmented chatbots", "Tool and function calling", "CRM integrations", "Workflow platforms"] },
+  { label: "Infrastructure", items: ["Vercel", "Netlify", "AWS", "Google Cloud", "Azure", "Cloudflare"] },
 ];
 
 export const aboutIndustries = [
-  "SaaS",
-  "E-commerce & retail",
-  "Healthcare & wellness",
-  "Education & nonprofit",
   "Professional services",
-  "Hospitality & tourism",
-  "Manufacturing & logistics",
-];
-
-export const aboutSeoPhilosophy = {
-  seo: [
-    "Helpful content and clean information architecture",
-    "Technical SEO: crawlable structure, schema, Core Web Vitals",
-    "Local + national pillars without over-claiming",
-  ],
-  cro: [
-    "Frictionless paths and social proof",
-    "Tracking and experiments with clear attribution",
-    "Continuous optimization from real performance data",
-  ],
-};
-
-export const aboutTrust = [
-  {
-    title: "Accessibility",
-    body: "Semantic HTML, keyboard navigation, contrast, and reduced-motion respect.",
-  },
-  {
-    title: "Security",
-    body: "HTTPS, roles and permissions, secret management, and least-privilege access.",
-  },
-  {
-    title: "Privacy",
-    body: "PII-aware analytics, retention hygiene, and incident-ready logging.",
-  },
+  "Healthcare and wellness",
+  "Home and local services",
+  "E-commerce and retail",
+  "SaaS and technology",
+  "Education and nonprofits",
+  "Manufacturing and logistics",
+  "Hospitality and tourism",
 ];
 
 export const aboutFaqs = [
   {
-    q: "Do you work with clients in New Jersey and New York City?",
-    a: "Yes—Klikcy supports clients nationwide, including New Jersey and NYC's five boroughs (Manhattan, Brooklyn, Queens, the Bronx, and Staten Island).",
+    q: "Where is Klikcy located?",
+    a: "We're a remote-first team serving businesses across the United States. Every project runs over video calls and shared links, scheduled in your business hours.",
   },
   {
-    q: "Which platform should we choose?",
-    a: "We recommend Next.js for performance and headless flexibility, WordPress or Wix for editorial speed, and Shopify or WooCommerce for commerce—based on your goals.",
+    q: "What size businesses do you work with?",
+    a: "Mostly small and mid-size businesses, plus startups building products and marketing teams at larger companies. What matters more than size is having a clear problem to solve.",
   },
   {
-    q: "How long do projects take?",
-    a: "Marketing sites can launch in weeks; commerce and apps take longer. We scope transparently and deliver in iterative sprints with clear milestones.",
+    q: "Which platform should we use for our website?",
+    a: "WordPress for content-heavy sites with non-technical editors, Shopify for stores, and Next.js for high-performance or custom builds. We recommend based on how your team works.",
   },
   {
-    q: "Do you implement SEO and analytics?",
-    a: "Yes—technical SEO, structured data, GA4/Search Console, and CRO experiments are part of our standard process.",
+    q: "Do you offer ongoing support after launch?",
+    a: "Yes. Most clients keep a monthly plan for updates, backups, small changes, and ongoing search or automation work. Plans run month to month.",
+  },
+  {
+    q: "Can you take over from our current agency or developer?",
+    a: "Yes. We start with an audit of the site, accounts, and access, make sure everything is in your name, and then pick up the work.",
   },
 ];
-
-export const aboutCta = {
-  title: "Ready to transform your business?",
-  description: "Get Free Quote — we'll map goals, timelines, and the right stack for your next chapter.",
-};

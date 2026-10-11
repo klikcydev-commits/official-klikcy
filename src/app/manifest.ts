@@ -5,11 +5,11 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Klikcy",
     short_name: "Klikcy",
     description:
-      "Nationwide web development, SEO, AI automation, and branding for U.S. businesses.",
+      "Websites, search visibility, AI automation, and software for U.S. businesses.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
-    theme_color: "#0B3D4C",
+    theme_color: "#0F232F",
     icons: [
       {
         src: "/favicon-48.png",

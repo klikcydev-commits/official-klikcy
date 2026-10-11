@@ -10,7 +10,6 @@ export async function generateStaticParams() {
   return categories.map((c) => ({ slug: c.slug }));
 }
 
-export const dynamicParams = false;
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const cat = getCategory(params.slug);

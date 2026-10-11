@@ -1,113 +1,89 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Breadcrumbs from "@/components/Breadcrumbs";
+import { CtaBand, Faq, PageHero, SectionHead } from "@/components/site/blocks";
 import { getService } from "@/lib/services";
 import { getState } from "@/lib/states";
-import { buildServiceStateContent } from "@/lib/content";
-import { FaqAccordion } from "@/components/FaqAccordion";
-import { aeoSectionsToFaqs, buildServiceStateAeoSections, visibleServiceStateFaqs } from "@/lib/geo-aeo-content";
 import { getCitiesForState } from "@/lib/cities";
+import { listCities, localCities, shortTimeZone } from "@/lib/state-copy";
 
-interface ServiceStatePageProps {
-  serviceSlug: string;
-  stateSlug: string;
-}
-
-const ServiceStatePage = ({ serviceSlug, stateSlug }: ServiceStatePageProps) => {
+/** Not indexed (see lib/seo/indexing.ts). Exists for visitors and old links; points to the full service page. */
+export default function ServiceStatePage({ serviceSlug, stateSlug }: { serviceSlug: string; stateSlug: string }) {
   const service = getService(serviceSlug)!;
   const state = getState(stateSlug)!;
-
-  const sections = buildServiceStateContent(service, state);
-  const aeoSections = buildServiceStateAeoSections(service, state);
-  const faqs = visibleServiceStateFaqs(service, state);
+  const cities = getCitiesForState(state);
 
   return (
     <>
       <Header />
-      <Breadcrumbs
-        items={[
-          { name: "Home", href: "/" },
-          { name: service.name, href: `/services/${service.slug}` },
-          { name: state.name },
-        ]}
-      />
-      <main>
-        <section className="bg-gradient-hero">
-          <div className="container-x py-14 sm:py-20">
-            <span className="micro-label">{state.name} · {state.abbr}</span>
-            <h1 className="mt-3 max-w-3xl text-4xl font-extrabold sm:text-5xl">{service.name} serving businesses in {state.name}</h1>
-            <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-              Klikcy delivers {service.focusKeyword} for companies across {state.name} — remote-first nationwide delivery available for every metro in the state.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link href="/contact" className="btn-primary">Get a {state.name} quote <ArrowRight className="h-4 w-4" /></Link>
-              <Link href={`/services/${service.slug}`} className="btn-secondary">About this service</Link>
+      <main id="main-content">
+        <PageHero
+          title={`${service.name} for ${state.name} businesses`}
+          lede={service.intro}
+          breadcrumbs={[
+            { name: "Home", href: "/" },
+            { name: state.name, href: `/service-areas/${state.slug}` },
+            { name: service.name },
+          ]}
+        >
+          <Link href="/contact" className="btn btn-primary">
+            Get a quote
+          </Link>
+          <Link href={`/services/${service.slug}`} className="btn btn-secondary">
+            Full details on {service.name}
+          </Link>
+        </PageHero>
+
+        <section className="section" aria-labelledby="remote-heading">
+          <div className="wrap ledger">
+            <SectionHead id="remote-heading" title={`Working with ${state.name} clients`} />
+            <div className="prose-k">
+              <p>
+                We work remotely with businesses across {state.name}, including {listCities(localCities(state).slice(0, 4))}.
+                Calls are scheduled in {shortTimeZone(state)}, and the process, team, and pricing are the same as anywhere
+                else in the country.
+              </p>
+              <p>
+                For a full explanation of what {service.name} involves, how long it takes, and what affects the price, see
+                the <Link href={`/services/${service.slug}`} className="link">{service.name} page</Link>. For notes on time
+                zones and privacy rules in {state.name}, see our{" "}
+                <Link href={`/service-areas/${state.slug}`} className="link">{state.name} page</Link>.
+              </p>
             </div>
           </div>
         </section>
 
-        <FaqAccordion
-          faqs={aeoSectionsToFaqs(aeoSections)}
-          heading={`About ${service.name} in ${state.name}`}
-          idPrefix={`aeo-svc-state-${service.slug}-${state.slug}`}
-          itemIdKind="aeo"
-          linkContext={{
-            state: { name: state.name, slug: state.slug },
-            service: { name: service.name, slug: service.slug },
-          }}
-        />
-
-        {sections.length > 0 && (
-          <section className="section">
-            <div className="container-x prose-klikcy max-w-3xl">
-              {sections.map((sec, i) => (
-                <div key={i}>
-                  <h2>{sec.h}</h2>
-                  {sec.p && <p>{sec.p}</p>}
-                  {sec.list && <ul>{sec.list.map((l) => <li key={l}>{l}</li>)}</ul>}
-                </div>
+        <section className="section section-mist" aria-labelledby="included-heading">
+          <div className="wrap ledger">
+            <SectionHead id="included-heading" title="What's included" />
+            <ul className="ticks">
+              {service.included.map((i) => (
+                <li key={i}>{i}</li>
               ))}
-            </div>
-          </section>
-        )}
+            </ul>
+          </div>
+        </section>
 
-        <FaqAccordion
-          faqs={faqs}
-          idPrefix={`svc-state-${service.slug}-${state.slug}`}
-          itemIdKind="faq"
-          linkContext={{
-            state: { name: state.name, slug: state.slug },
-            service: { name: service.name, slug: service.slug },
-          }}
-        />
+        <Faq items={service.faqs.slice(0, 4)} title={`${service.name} questions`} />
 
-        <section className="section">
-          <div className="container-x">
-            <span className="micro-label">{state.name} cities</span>
-            <h2 className="mt-3 text-3xl font-bold">{service.name} in {state.name} cities</h2>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {getCitiesForState(state).map((c) => (
-                <Link key={c.slug} href={`/${service.slug}/${state.slug}/${c.slug}`} className="rounded-full border border-border bg-white px-4 py-2 text-sm hover:border-primary hover:text-primary">
-                  {service.name} in {c.name}
-                </Link>
+        <section className="section section-mist" aria-labelledby="cities-heading">
+          <div className="wrap ledger">
+            <SectionHead id="cities-heading" title={`Cities in ${state.name}`} />
+            <ul className="flex flex-wrap gap-x-5 gap-y-2">
+              {cities.map((c) => (
+                <li key={c.slug}>
+                  <Link href={`/${service.slug}/${state.slug}/${c.slug}`} className="link">
+                    {c.name}
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </section>
 
-        <section className="section bg-[hsl(var(--soft-bg))]">
-          <div className="container-x text-center">
-            <h2 className="text-3xl font-bold">Ready to start {service.name.toLowerCase()} in {state.name}?</h2>
-            <p className="mt-3 text-muted-foreground">Tell us about your business — we will respond with a clear plan.</p>
-            <Link href="/contact" className="btn-primary mt-6">Get Free Quote <ArrowRight className="h-4 w-4" /></Link>
-          </div>
-        </section>
+        <CtaBand />
       </main>
       <Footer />
     </>
   );
-};
-
-export default ServiceStatePage;
+}

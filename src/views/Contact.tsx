@@ -1,238 +1,86 @@
-"use client";
-
-import { useState } from "react";
-import { Mail, MapPin, CheckCircle2, Loader2 } from "lucide-react";
-import { z } from "zod";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { toast } from "sonner";
+import ContactForm from "@/components/site/ContactForm";
+import { categories } from "@/lib/categories";
+import { SITE } from "@/lib/site";
+import { commitments } from "@/content/commitments";
 
-const schema = z.object({
-  name: z.string().trim().min(2, "Please enter your name"),
-  email: z.string().trim().email("Please enter a valid email"),
-  phone: z
-    .string()
-    .trim()
-    .min(7, "Please enter your phone number")
-    .max(30, "Phone number is too long")
-    .refine((v) => v.replace(/\D/g, "").length >= 7, "Please enter a valid phone number"),
-  company: z.string().optional(),
-  service: z.string().min(1, "Please select a service"),
-  message: z.string().trim().min(10, "Please share a few sentences about your project"),
-  website: z.literal("").optional(),
-});
+const serviceOptions = [...categories.map((c) => c.name), "Not sure yet"];
 
-const services = [
-  "Website Development",
-  "App & Software",
-  "AI Automation",
-  "E-Commerce",
-  "Branding & Design",
-  "Marketing & Growth",
-  "SEO & AEO",
-  "Other",
+const nextSteps = [
+  { title: "We read it properly", body: "A person reads every message. If it's not something we do well, we'll say so and suggest who might." },
+  { title: "We reply within one business day", body: "Usually with a few questions, or a time for a short video call." },
+  { title: "You get a written scope and fixed quote", body: "What we'll deliver, how long it takes, and what it costs. No obligation." },
 ];
 
-import { ObfuscatedContactEmail } from "@/components/ObfuscatedContactEmail";
-
-interface ContactProps {
-  formToken: string;
-}
-
-const Contact = ({ formToken }: ContactProps) => {
-  const [sent, setSent] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget).entries());
-    const res = schema.safeParse(data);
-    if (!res.success) {
-      const errs: Record<string, string> = {};
-      res.error.issues.forEach((i) => {
-        errs[i.path[0] as string] = i.message;
-      });
-      setErrors(errs);
-      return;
-    }
-    setErrors({});
-    setSubmitting(true);
-    try {
-      const payload = {
-        name: res.data.name,
-        email: res.data.email,
-        phone: res.data.phone,
-        company: res.data.company?.trim() ?? "",
-        service: res.data.service,
-        message: res.data.message,
-        website: res.data.website ?? "",
-        formToken,
-      };
-
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const body = (await response.json().catch(() => ({}))) as { error?: string };
-      if (response.status === 429) {
-        throw new Error(body.error || "Too many requests — please try again in a few minutes.");
-      }
-      if (!response.ok) {
-        throw new Error(body.error || "Unable to send message.");
-      }
-      setSent(true);
-      toast.success("Thanks! We'll be in touch within one business day.");
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Unable to send message.";
-      toast.error(message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
+export default function Contact({ formToken }: { formToken: string }) {
   return (
     <>
       <Header />
-      <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Contact" }]} />
-      <main>
-        <section className="bg-gradient-hero">
-          <div className="container-x py-14">
-            <span className="micro-label">Contact</span>
-            <h1 className="mt-3 max-w-3xl text-4xl font-extrabold sm:text-5xl">Tell us about your project.</h1>
-            <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-              We respond within one business day with a clear next step — discovery, scope or a get free quote.
+      <main id="main-content">
+        <section className="border-b border-line">
+          <div className="wrap pb-12 pt-8 sm:pt-10">
+            <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Contact" }]} />
+            <h1 className="display mt-8 max-w-[16ch]">Tell us what you&apos;re working on.</h1>
+            <p className="lede mt-6">
+              A few sentences is plenty. We reply within one business day with questions or a suggested next step. If you
+              prefer email, write to{" "}
+              <a href={`mailto:${SITE.email}`} className="link">
+                {SITE.email}
+              </a>
+              .
             </p>
           </div>
         </section>
 
         <section className="section">
-          <div className="container-x grid gap-10 lg:grid-cols-3">
-            <aside className="space-y-6">
-              <div className="card-soft">
-                <Mail className="h-5 w-5 text-primary" />
-                <div className="mt-3 micro-label">Email</div>
-                <ObfuscatedContactEmail className="mt-1 block text-lg font-semibold text-navy-deep hover:text-primary" />
+          <div className="wrap grid gap-14 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-20">
+            <div>
+              <div className="sheet p-6 sm:p-8">
+                <h2 className="text-xl">New project inquiry</h2>
+                <div className="mt-6">
+                  <ContactForm serviceOptions={serviceOptions} email={SITE.email} formToken={formToken} />
+                </div>
               </div>
-              <div className="card-soft">
-                <MapPin className="h-5 w-5 text-primary" />
-                <div className="mt-3 micro-label">Service area</div>
-                <p className="mt-1 font-semibold text-navy-deep">All 50 U.S. states + Washington DC</p>
-                <p className="mt-1 text-sm text-muted-foreground">Remote-first delivery for every U.S. metro.</p>
+            </div>
+
+            <aside aria-labelledby="next-heading">
+              <h2 id="next-heading" className="text-xl">
+                What happens next
+              </h2>
+              <ol className="mt-6 space-y-6">
+                {nextSteps.map((s, i) => (
+                  <li key={s.title} className="grid grid-cols-[2rem_minmax(0,1fr)] gap-2">
+                    <span className="font-semibold tabular-nums text-teal" aria-hidden>
+                      {i + 1}
+                    </span>
+                    <div>
+                      <p className="font-semibold">{s.title}</p>
+                      <p className="muted mt-1 text-[0.95rem]">{s.body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <div className="mt-10 border-t border-line pt-6 text-[0.95rem]">
+                <p className="font-semibold">What you can count on</p>
+                <ul className="ticks mt-3 text-slate">
+                  {commitments.map((c) => (
+                    <li key={c}>{c}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mt-8 border-t border-line pt-6 text-[0.95rem]">
+                <p className="font-semibold">Where we work</p>
+                <p className="muted mt-1">
+                  Remotely, with businesses in all 50 states and Washington DC. Calls are scheduled in your time zone.
+                </p>
               </div>
             </aside>
-
-            <div className="lg:col-span-2">
-              {sent ? (
-                <div className="card-soft text-center py-16">
-                  <CheckCircle2 className="mx-auto h-12 w-12 text-primary" />
-                  <h2 className="mt-4 text-2xl font-bold">Message received</h2>
-                  <p className="mt-2 text-muted-foreground">We&apos;ll reach out within one business day.</p>
-                </div>
-              ) : (
-                <form onSubmit={onSubmit} className="card-soft space-y-5" noValidate>
-                  <input type="hidden" name="formToken" value={formToken} />
-                  <input
-                    type="text"
-                    name="website"
-                    tabIndex={-1}
-                    autoComplete="off"
-                    aria-hidden="true"
-                    className="absolute -left-[9999px] h-0 w-0 opacity-0"
-                  />
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <Field label="Name" name="name" required error={errors.name} disabled={submitting} />
-                    <Field label="Email" name="email" type="email" required error={errors.email} disabled={submitting} />
-                  </div>
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <Field label="Phone" name="phone" type="tel" required error={errors.phone} disabled={submitting} />
-                    <Field label="Company (optional)" name="company" disabled={submitting} />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-navy-deep">
-                      Service <span className="text-destructive">*</span>
-                    </label>
-                    <select
-                      name="service"
-                      required
-                      disabled={submitting}
-                      className="mt-1 w-full rounded-xl border border-input bg-white px-4 py-3 text-sm focus:border-primary focus:outline-none disabled:opacity-60"
-                    >
-                      <option value="">Select a service</option>
-                      {services.map((s) => (
-                        <option key={s} value={s}>
-                          {s}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.service && <p className="mt-1 text-xs text-destructive">{errors.service}</p>}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-navy-deep">
-                      Message <span className="text-destructive">*</span>
-                    </label>
-                    <textarea
-                      name="message"
-                      rows={5}
-                      required
-                      disabled={submitting}
-                      className="mt-1 w-full rounded-xl border border-input bg-white px-4 py-3 text-sm focus:border-primary focus:outline-none disabled:opacity-60"
-                    />
-                    {errors.message && <p className="mt-1 text-xs text-destructive">{errors.message}</p>}
-                  </div>
-                  <button type="submit" className="btn-primary w-full inline-flex items-center justify-center gap-2" disabled={submitting}>
-                    {submitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                        Sending…
-                      </>
-                    ) : (
-                      "Send message"
-                    )}
-                  </button>
-                </form>
-              )}
-            </div>
           </div>
         </section>
       </main>
       <Footer />
     </>
   );
-};
-
-const Field = ({
-  label,
-  name,
-  type = "text",
-  required: isRequired,
-  error,
-  disabled,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  required?: boolean;
-  error?: string;
-  disabled?: boolean;
-}) => (
-  <div>
-    <label className="block text-sm font-semibold text-navy-deep">
-      {label}
-      {isRequired && <span className="text-destructive"> *</span>}
-    </label>
-    <input
-      name={name}
-      type={type}
-      required={isRequired}
-      autoComplete={name === "phone" ? "tel" : name === "email" ? "email" : name === "name" ? "name" : undefined}
-      disabled={disabled}
-      className="mt-1 w-full rounded-xl border border-input bg-white px-4 py-3 text-sm focus:border-primary focus:outline-none disabled:opacity-60"
-    />
-    {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
-  </div>
-);
-
-export default Contact;
+}

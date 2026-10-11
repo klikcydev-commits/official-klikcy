@@ -1,0 +1,84 @@
+/*
+ * Klikcy design tokens.
+ * Palette is taken from the logo: deep navy-teal ink, one teal for actions,
+ * mint only on dark surfaces. Shadcn token names are kept so ui/ primitives work.
+ *
+ *   Paper  #FFFFFF   page background
+ *   Mist   #EEF3F3   alternate sections, quiet panels
+ *   Ink    #0F2430   text, dark surfaces
+ *   Slate  #4A5D68   secondary text
+ *   Line   #D5DEE0   borders
+ *   Teal   #00737C   links and buttons (5.6:1 on white)
+ *   Mint   #3CC8A8   accents on Ink only (7.6:1 on Ink)
+ */
+
+:root {
+  color-scheme: light;
+
+  --paper: 0 0% 100%;
+  --mist: 180 18% 94%;
+  --ink: 201 52% 12%;
+  --slate: 201 17% 35%;
+  --line: 190 13% 85%;
+  --teal: 184 100% 23%;
+  --teal-hover: 184 100% 18%;
+  --teal-wash: 176 40% 92%;
+  --mint: 167 56% 51%;
+
+  /* shadcn bridge */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--teal);
+  --primary-foreground: 0 0% 100%;
+  --secondary: var(--mist);
+  --secondary-foreground: var(--ink);
+  --muted: var(--mist);
+  --muted-foreground: var(--slate);
+  --accent: var(--teal-wash);
+  --accent-foreground: var(--ink);
+  --destructive: 0 72% 42%;
+  --destructive-foreground: 0 0% 100%;
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--teal);
+  --radius: 0.75rem;
+
+  --sidebar-background: var(--paper);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--teal);
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: var(--mist);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--line);
+  --sidebar-ring: var(--teal);
+
+  /* Type: one variable family (Archivo). Width carries the hierarchy. */
+  --font-sans: var(--font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --wdth-display: 116;
+  --wdth-body: 100;
+
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: clamp(1.75rem, 1.2rem + 1.6vw, 2.25rem);
+  --text-3xl: clamp(2rem, 1.3rem + 2.4vw, 3rem);
+  --text-display: clamp(2.5rem, 1.4rem + 4.2vw, 4.5rem);
+
+  --leading-body: 1.65;
+  --leading-snug: 1.3;
+  --leading-tight: 1.08;
+
+  --wrap: 74rem;
+  --gutter: clamp(1.25rem, 4vw, 2.5rem);
+  --section: clamp(4rem, 3rem + 4vw, 7rem);
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+}

@@ -1,32 +1,28 @@
-import type { Metadata } from "next";
-import { DM_Sans, Syne } from "next/font/google";
-import "./globals.css";
+import type { Metadata, Viewport } from "next";
+import { Archivo } from "next/font/google";
+import "@/styles/tokens.css";
+import "@/styles/globals.css";
 import { ClientProviders } from "@/components/layout/ClientProviders";
 import { GoogleTagManagerBody, GoogleTagManagerHead } from "@/components/analytics/GoogleTagManager";
+import { SITE } from "@/lib/site";
 
-const syne = Syne({
+const archivo = Archivo({
   subsets: ["latin"],
-  variable: "--font-syne",
-  display: "swap",
-});
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-dm-sans",
+  axes: ["wdth"],
+  variable: "--font-archivo",
   display: "swap",
 });
 
 const siteVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.klikcy.com"),
+  metadataBase: new URL(SITE.url),
   title: {
     template: "%s",
-    default: "Klikcy | Nationwide Web Development, SEO & AI Automation Agency",
+    default: "Klikcy | Web Development, SEO & AI Automation",
   },
-  description:
-    "Klikcy builds fast websites, SEO/AEO systems, AI automations, branding, and e-commerce solutions for businesses across the United States.",
+  description: SITE.description,
+  applicationName: "Klikcy",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -42,18 +38,20 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
+  formatDetection: { telephone: false },
   ...(siteVerification ? { verification: { google: siteVerification } } : {}),
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0F232F",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${syne.variable} ${dmSans.variable}`}
-      data-theme="light"
-      suppressHydrationWarning
-    >
-      <body className="min-h-screen bg-background font-sans text-foreground antialiased">
+    <html lang="en-US" className={archivo.variable}>
+      <body>
         <GoogleTagManagerHead />
         <GoogleTagManagerBody />
         <ClientProviders>{children}</ClientProviders>

@@ -2,383 +2,330 @@ import type { Service } from "../services";
 import type { State } from "../states";
 import type { CityRef } from "../cities";
 import type { Category } from "../categories";
+import { getServicesByCategory, services } from "../services";
+import { categories } from "../categories";
 import {
-  buildAboutMetadata,
-  buildAllServicesMetadata,
-  buildCategoryPageMetadata,
-  buildContactMetadata,
-  buildHomeMetadata,
-  buildServiceCityMetadata,
-  buildServicePageMetadata,
-  buildServiceStateMetadata,
-} from "../metadata/page-metadata";
-import {
-  buildCategoryFaqs,
-  buildCityAreaFaqs,
-  buildStateAreaFaqs,
-  buildGeoAeoFaqs,
-  mergeFaqs,
-  visibleServiceStateFaqs,
-} from "../geo-aeo-content";
-import { pickServiceCityPageFaqs } from "../service-city-content";
-import { getCityTier } from "../city-tiers";
-import { isIndexable } from "./indexable";
-import {
-  aboutPageSchema,
-  breadcrumbSchema,
-  collectionPageSchema,
-  contactPageSchema,
-  faqSchema,
-  orgSchema,
-  serviceSchemaWithArea,
-  webPageSchema,
-  websiteSchema,
+  breadcrumbNode,
+  faqNode,
+  graph,
+  itemListNode,
+  ORG_ID,
+  organizationNode,
+  serviceNode,
+  webPageNode,
+  websiteNode,
   type FaqItem,
 } from "../schema";
-import { buildGeoTerms, fillGeo } from "./geo";
-import { buildPageKeywords20 } from "./keywords";
-import {
-  canonicalPath,
-  DEFAULT_OG_IMAGE,
-  DEFAULT_ROBOTS,
-  NOINDEX_ROBOTS,
-  type SeoPayload,
-} from "./metadata";
-import { getVerticalProfile } from "../metadata/positioning";
-import { dateModifiedForCanonical } from "./lastmod";
+import { absoluteUrl } from "../site";
+import { DEFAULT_OG_IMAGE, INDEX_ROBOTS, NOINDEX_ROBOTS, type SeoPayload } from "./metadata";
+import { isIndexable, type PageKind } from "./indexing";
+import { getLocalMarket } from "@/content/local-markets";
 
-function webPageWithLastmod(page: { name: string; url: string; description?: string }) {
-  return webPageSchema({ ...page, dateModified: dateModifiedForCanonical(page.url) });
-}
-
-function toPayload(
-  meta: { title: string; description: string; keywords: string[]; primaryKeyword: string },
-  canonical: string,
-  extras: Partial<SeoPayload> = {},
-): SeoPayload {
-  const keywords = extras.keywords ?? meta.keywords;
+function payload(kind: PageKind, path: string, title: string, description: string, jsonLd?: object): SeoPayload {
   return {
-    title: meta.title,
-    description: meta.description,
-    canonical,
-    keywords,
-    primaryKeyword: meta.primaryKeyword,
-    secondaryKeywords: keywords.slice(1, 6),
-    ogImage: extras.ogImage ?? DEFAULT_OG_IMAGE,
-    robots: extras.robots ?? DEFAULT_ROBOTS,
-    aeoQuestions: extras.aeoQuestions,
-    geoTerms: extras.geoTerms,
-    jsonLd: extras.jsonLd,
+    title,
+    description,
+    canonical: absoluteUrl(path),
+    robots: isIndexable(kind) ? INDEX_ROBOTS : NOINDEX_ROBOTS,
+    ogImage: DEFAULT_OG_IMAGE,
+    jsonLd,
   };
 }
 
-export function getHomeSeo(homeFaqs: FaqItem[]): SeoPayload {
-  const meta = buildHomeMetadata();
-  return toPayload(meta, canonicalPath("/"), {
-    jsonLd: [orgSchema(), websiteSchema(), webPageWithLastmod({ name: meta.title, url: canonicalPath("/") }), faqSchema(homeFaqs)],
-  });
+const home = { name: "Home", path: "/" };
+
+export function getHomeSeo(faqs: FaqItem[]): SeoPayload {
+  const title = "Web Development, SEO & AI Automation Agency | Klikcy";
+  const description =
+    "Klikcy builds fast websites, search visibility, and AI automation for U.S. businesses. Remote-first team, fixed quotes, and code and accounts you own.";
+  return payload(
+    "home",
+    "/",
+    title,
+    description,
+    graph(organizationNode(), websiteNode(), webPageNode({ path: "/", name: title, description }), faqNode("/", faqs)),
+  );
 }
 
-export function getAboutSeo(): SeoPayload {
-  const meta = buildAboutMetadata();
-  const url = canonicalPath("/about");
-  return toPayload(meta, url, {
-    jsonLd: [
-      aboutPageSchema(),
-      orgSchema(),
-      breadcrumbSchema([
-        { name: "Home", url: canonicalPath("/") },
-        { name: "About", url },
-      ]),
-      webPageWithLastmod({ name: meta.title, url }),
-    ],
-  });
+export function getAboutSeo(faqs: FaqItem[]): SeoPayload {
+  const title = "About Klikcy | Remote-First Web & Software Agency";
+  const description =
+    "Who we are and how we work: a remote team of developers, designers, and search specialists building websites, apps, and automation for U.S. businesses.";
+  const path = "/about";
+  return payload(
+    "about",
+    path,
+    title,
+    description,
+    graph(
+      organizationNode(),
+      webPageNode({ path, name: title, description, type: "AboutPage", hasBreadcrumb: true, mainEntityId: ORG_ID }),
+      breadcrumbNode(path, [home, { name: "About", path }]),
+      faqNode(path, faqs),
+    ),
+  );
 }
 
 export function getContactSeo(): SeoPayload {
-  const meta = buildContactMetadata();
-  const url = canonicalPath("/contact");
-  return toPayload(meta, url, {
-    jsonLd: [
-      contactPageSchema(),
-      orgSchema(),
-      breadcrumbSchema([
-        { name: "Home", url: canonicalPath("/") },
-        { name: "Contact", url },
-      ]),
-      webPageWithLastmod({ name: meta.title, url }),
-    ],
-  });
+  const title = "Contact Klikcy | Get a Free Project Quote";
+  const description =
+    "Tell us about your website, app, SEO, or automation project. We reply within one business day with questions or a clear next step. No sales pressure.";
+  const path = "/contact";
+  return payload(
+    "contact",
+    path,
+    title,
+    description,
+    graph(
+      organizationNode(),
+      webPageNode({ path, name: title, description, type: "ContactPage", hasBreadcrumb: true }),
+      breadcrumbNode(path, [home, { name: "Contact", path }]),
+    ),
+  );
 }
 
 export function getAllServicesSeo(): SeoPayload {
-  const meta = buildAllServicesMetadata();
-  const url = canonicalPath("/all-services");
-  return toPayload(meta, url, {
-    jsonLd: [
-      collectionPageSchema({ name: meta.title, description: meta.description, url }),
-      breadcrumbSchema([
-        { name: "Home", url: canonicalPath("/") },
-        { name: "All Services", url },
-      ]),
-      webPageWithLastmod({ name: meta.title, url }),
-    ],
-  });
+  const title = "All Services | Web, SEO, AI, Apps & E-Commerce | Klikcy";
+  const description =
+    "Every Klikcy service in one place: websites, SEO and AEO, AI automation, apps and software, e-commerce, design, marketing, and hosting. 65 services, 8 practices.";
+  const path = "/all-services";
+  return payload(
+    "all-services",
+    path,
+    title,
+    description,
+    graph(
+      webPageNode({ path, name: title, description, type: "CollectionPage", hasBreadcrumb: true }),
+      breadcrumbNode(path, [home, { name: "All services", path }]),
+      itemListNode(
+        path,
+        services.map((s) => ({ name: s.name, path: `/services/${s.slug}` })),
+      ),
+    ),
+  );
 }
 
 export function getCategorySeo(category: Category): SeoPayload {
-  const meta = buildCategoryPageMetadata(category);
-  const url = canonicalPath(`/categories/${category.slug}`);
-  const faqs = buildCategoryFaqs(category);
-  return toPayload(meta, url, {
-    aeoQuestions: faqs.map((f) => f.q),
-    jsonLd: [
-      collectionPageSchema({ name: meta.title, description: meta.description, url }),
-      faqSchema(faqs),
-      breadcrumbSchema([
-        { name: "Home", url: canonicalPath("/") },
-        { name: category.name, url },
-      ]),
-      webPageWithLastmod({ name: meta.title, url }),
-    ],
-  });
+  const path = `/categories/${category.slug}`;
+  return payload(
+    "category",
+    path,
+    category.metaTitle,
+    category.metaDescription,
+    graph(
+      webPageNode({ path, name: category.metaTitle, description: category.metaDescription, type: "CollectionPage", hasBreadcrumb: true }),
+      breadcrumbNode(path, [home, { name: "All services", path: "/all-services" }, { name: category.name, path }]),
+      itemListNode(
+        path,
+        getServicesByCategory(category.slug).map((s) => ({ name: s.name, path: `/services/${s.slug}` })),
+      ),
+      faqNode(path, category.faqs),
+    ),
+  );
 }
 
 export function getServiceSeo(service: Service): SeoPayload {
-  const meta = buildServicePageMetadata(service);
-  const url = canonicalPath(`/services/${service.slug}`);
-  const keywords = buildPageKeywords20(service);
-  return toPayload({ ...meta, keywords }, url, {
-    keywords,
-    aeoQuestions: service.faqs.map((f) => f.q),
-    jsonLd: [
-      serviceSchemaWithArea(service),
-      faqSchema(service.faqs),
-      breadcrumbSchema([
-        { name: "Home", url: canonicalPath("/") },
-        { name: service.name, url },
+  const path = `/services/${service.slug}`;
+  const category = categories.find((c) => c.slug === service.category);
+  const service_ = serviceNode(service);
+  return payload(
+    "service",
+    path,
+    service.metaTitle,
+    service.metaDescription,
+    graph(
+      service_,
+      webPageNode({
+        path,
+        name: service.metaTitle,
+        description: service.metaDescription,
+        hasBreadcrumb: true,
+        mainEntityId: service_["@id"] as string,
+      }),
+      breadcrumbNode(path, [
+        home,
+        ...(category ? [{ name: category.name, path: `/categories/${category.slug}` }] : []),
+        { name: service.name, path },
       ]),
-      webPageWithLastmod({ name: meta.title, description: meta.description, url }),
-    ],
-  });
+      faqNode(path, service.faqs),
+    ),
+  );
 }
 
 export function getServiceAreasSeo(): SeoPayload {
-  const title = "Service Areas — Digital Agency Across the United States | Klikcy";
+  const title = "Where We Work | Serving All 50 States | Klikcy";
   const description =
-    "Klikcy serves businesses in all 50 U.S. states and Washington DC with web development, apps, custom software, AI automation, e-commerce, branding, and search visibility. Explore priority markets in New York, New Jersey, Connecticut, and Pennsylvania.";
-  const url = canonicalPath("/service-areas");
-  const keywords = [
-    "digital agency service areas",
-    "web development United States",
-    "app development nationwide",
-    "New York digital agency",
-    "New Jersey web development",
-    "Connecticut app development",
-    "Pennsylvania software development",
-    "remote digital agency USA",
-    "local SEO service areas",
-    "AI automation nationwide",
-    "e-commerce development USA",
-    "who serves businesses in every US state",
-    "digital agency by state",
-    "digital agency by city",
-    "Klikcy service areas",
-    "Manhattan web development",
-    "Jersey City app development",
-    "Philadelphia custom software",
-    "Stamford digital agency",
-    "nationwide technology partner",
-  ];
-  return toPayload(
-    { title, description, keywords, primaryKeyword: "digital agency service areas" },
-    url,
-    {
-      jsonLd: [
-        collectionPageSchema({ name: title, description, url }),
-        breadcrumbSchema([
-          { name: "Home", url: canonicalPath("/") },
-          { name: "Service Areas", url },
-        ]),
-        webPageWithLastmod({ name: title, url }),
-      ],
-    },
+    "Klikcy works remotely with businesses in all 50 states and Washington DC. See how remote projects run, which time zones we cover, and state-specific notes.";
+  const path = "/service-areas";
+  return payload(
+    "service-areas",
+    path,
+    title,
+    description,
+    graph(
+      webPageNode({ path, name: title, description, type: "CollectionPage", hasBreadcrumb: true }),
+      breadcrumbNode(path, [home, { name: "Where we work", path }]),
+    ),
   );
 }
 
 export function getStateAreaSeo(state: State): SeoPayload {
-  const profile = getVerticalProfile("web-development");
-  const nearby = state.cities.slice(0, 5).join(", ");
-  const priority = ["new-york", "new-jersey", "connecticut", "pennsylvania"].includes(state.slug);
-  const title = priority
-    ? `Digital Agency Serving ${state.name} Businesses | Klikcy`
-    : `Digital Agency Serving ${state.name} | Klikcy`;
-  const description = priority
-    ? `Klikcy is a ${profile.partnerLabel} serving ${state.name} with custom websites, web apps, SaaS, AI automation, e-commerce, and search-ready architecture — including ${nearby} and every major metro. Built to compete in Google and AI search.`
-    : `Klikcy serves ${state.name} businesses with websites, apps, custom software, AI automation, e-commerce, and branding — remote-first delivery across ${nearby} and statewide.`;
-  const url = canonicalPath(`/service-areas/${state.slug}`);
-  const keywords = [
-    `digital agency ${state.name}`,
-    `web development ${state.name}`,
-    `app development ${state.name}`,
-    `custom software ${state.name}`,
-    `AI automation ${state.name}`,
-    `${state.abbr} digital agency`,
-    `${state.name} web development company`,
-    `${state.name} app developers`,
-    `e-commerce development ${state.name}`,
-    `SEO and AEO ${state.name}`,
-    `who builds websites in ${state.name}`,
-    `best digital agency ${state.name}`,
-    `local SEO ${state.name}`,
-    `${state.name} technology partner`,
-    `Klikcy ${state.name}`,
-    ...state.cities.slice(0, 5).map((c) => `${c} digital agency`),
-  ].slice(0, 20);
-
-  return toPayload(
-    { title, description, keywords, primaryKeyword: `digital agency ${state.name}` },
-    url,
-    {
-      geoTerms: buildGeoTerms({ state }),
-      aeoQuestions: buildStateAreaFaqs(state).map((f) => f.q),
-      jsonLd: [
-        faqSchema(buildStateAreaFaqs(state)),
-        breadcrumbSchema([
-          { name: "Home", url: canonicalPath("/") },
-          { name: "Service Areas", url: canonicalPath("/service-areas") },
-          { name: state.name, url },
-        ]),
-        webPageWithLastmod({ name: title, description, url }),
-        orgSchema(),
-      ],
-    },
+  const path = `/service-areas/${state.slug}`;
+  const title = `Web Development & SEO for ${state.name} Businesses | Klikcy`;
+  const city = state.cities.find((c) => c.toLowerCase() !== state.name.toLowerCase());
+  const where = city ? ` in ${city} and beyond` : "";
+  const description = `Websites, SEO, and AI automation for ${state.name} businesses${where}. Remote team, fixed quotes, clear timelines, and code you own.`;
+  return payload(
+    "state",
+    path,
+    title,
+    description,
+    graph(
+      webPageNode({ path, name: title, description, hasBreadcrumb: true }),
+      breadcrumbNode(path, [home, { name: "Where we work", path: "/service-areas" }, { name: state.name, path }]),
+    ),
   );
 }
 
 export function getCityAreaSeo(city: CityRef): SeoPayload {
-  const profile = getVerticalProfile("web-development");
-  const title = `Digital Agency Serving ${city.name}, ${city.state.abbr} Businesses | Klikcy`;
-  const description = `Klikcy partners with ${city.name}, ${city.state.name} businesses on websites, apps, custom software, AI automation, e-commerce, and search visibility. ${profile.outcomePhrase} — structured for local and AI discoverability.`;
-  const url = canonicalPath(`/service-areas/${city.state.slug}/${city.slug}`);
-  const keywords = buildPageKeywords20(
-    {
-      slug: "custom-website-development",
-      name: "Custom Website Development",
-      category: "web-development",
-      focusKeyword: "digital agency",
-      keywords: [],
-      shortDescription: "",
-      metaTitle: "",
-      metaDescription: "",
-      whoFor: [],
-      included: [],
-      technical: [],
-      related: [],
-      faqs: [],
-      intro: "",
-    },
-    { state: city.state, city },
-  );
-
-  const faqs = buildCityAreaFaqs(city);
-
-  return toPayload(
-    { title, description, keywords, primaryKeyword: `digital agency ${city.name}` },
-    url,
-    {
-      geoTerms: buildGeoTerms({ state: city.state, city }),
-      aeoQuestions: faqs.map((f) => f.q),
-      jsonLd: [
-        breadcrumbSchema([
-          { name: "Home", url: canonicalPath("/") },
-          { name: "Service Areas", url: canonicalPath("/service-areas") },
-          { name: city.state.name, url: canonicalPath(`/service-areas/${city.state.slug}`) },
-          { name: city.name, url },
-        ]),
-        faqSchema(faqs),
-        webPageWithLastmod({ name: title, description, url }),
-        orgSchema(),
-      ],
-    },
+  const path = `/service-areas/${city.state.slug}/${city.slug}`;
+  const market = getLocalMarket(city.state.slug, city.slug);
+  if (market) {
+    // Hand-written priority market: indexed, with its own copy and FAQ markup.
+    return {
+      ...payload(
+        "city",
+        path,
+        market.metaTitle,
+        market.metaDescription,
+        graph(
+          webPageNode({ path, name: market.metaTitle, description: market.metaDescription, hasBreadcrumb: true }),
+          breadcrumbNode(path, [
+            home,
+            { name: city.state.name, path: `/service-areas/${city.state.slug}` },
+            { name: city.name, path },
+          ]),
+          faqNode(path, market.faqs),
+        ),
+      ),
+      robots: INDEX_ROBOTS,
+    };
+  }
+  const title = `Web Development & SEO in ${city.name}, ${city.state.abbr} | Klikcy`;
+  const description = `Klikcy works remotely with ${city.name}, ${city.state.name} businesses on websites, SEO, AI automation, apps, and online stores.`;
+  return payload(
+    "city",
+    path,
+    title,
+    description,
+    graph(
+      webPageNode({ path, name: title, description, hasBreadcrumb: true }),
+      breadcrumbNode(path, [
+        home,
+        { name: city.state.name, path: `/service-areas/${city.state.slug}` },
+        { name: city.name, path },
+      ]),
+    ),
   );
 }
 
 export function getServiceStateSeo(service: Service, state: State): SeoPayload {
-  const meta = buildServiceStateMetadata(service, state);
-  const url = canonicalPath(`/${service.slug}/${state.slug}`);
-  const keywords = buildPageKeywords20(service, { state });
-  const faqs = visibleServiceStateFaqs(service, state);
-
-  return toPayload({ ...meta, keywords }, url, {
-    keywords,
-    aeoQuestions: faqs.map((f) => f.q),
-    geoTerms: buildGeoTerms({ state }),
-    jsonLd: [
-      serviceSchemaWithArea(service, { stateName: state.name, stateSlug: state.slug }),
-      faqSchema(faqs),
-      breadcrumbSchema([
-        { name: "Home", url: canonicalPath("/") },
-        { name: service.name, url: canonicalPath(`/services/${service.slug}`) },
-        { name: `${service.name} in ${state.name}`, url },
+  const path = `/${service.slug}/${state.slug}`;
+  const title = `${service.name} in ${state.name} | Klikcy`;
+  const description = `${service.shortDescription} Klikcy works remotely with ${state.name} businesses.`;
+  return payload(
+    "service-state",
+    path,
+    title,
+    description,
+    graph(
+      webPageNode({ path, name: title, description, hasBreadcrumb: true }),
+      breadcrumbNode(path, [
+        home,
+        { name: state.name, path: `/service-areas/${state.slug}` },
+        { name: service.name, path },
       ]),
-      webPageWithLastmod({ name: meta.title, description: meta.description, url }),
-    ],
-  });
-}
-
-export function getServiceCitySeo(service: Service, city: CityRef): SeoPayload {
-  const meta = buildServiceCityMetadata(service, city);
-  const url = canonicalPath(`/${service.slug}/${city.state.slug}/${city.slug}`);
-  const keywords = buildPageKeywords20(service, { state: city.state, city });
-  const faqs = pickServiceCityPageFaqs({
-    service,
-    city,
-    tier: getCityTier(city.state.slug, city.slug),
-  });
-  const indexable = isIndexable(service.slug, city.state.slug, city.slug);
-
-  return toPayload({ ...meta, keywords }, url, {
-    keywords,
-    robots: indexable ? DEFAULT_ROBOTS : NOINDEX_ROBOTS,
-    aeoQuestions: faqs.map((f) => f.q),
-    geoTerms: buildGeoTerms({ state: city.state, city }),
-    jsonLd: [
-      serviceSchemaWithArea(service, {
-        stateName: city.state.name,
-        stateSlug: city.state.slug,
-        cityName: city.name,
-        citySlug: city.slug,
-      }),
-      faqSchema(faqs),
-      breadcrumbSchema([
-        { name: "Home", url: canonicalPath("/") },
-        { name: service.name, url: canonicalPath(`/services/${service.slug}`) },
-        { name: city.state.name, url: canonicalPath(`/${service.slug}/${city.state.slug}`) },
-        { name: city.name, url },
-      ]),
-      webPageWithLastmod({ name: meta.title, description: meta.description, url }),
-    ],
-  });
-}
-
-export function getNotFoundSeo(): SeoPayload {
-  const title = "Page Not Found | Klikcy";
-  const description = "The page you requested could not be found. Explore Klikcy services, service areas, or contact us to plan your next web, app, or AI project.";
-  return toPayload(
-    {
-      title,
-      description,
-      keywords: ["Klikcy", "page not found", "digital agency", "contact Klikcy"],
-      primaryKeyword: "page not found",
-    },
-    canonicalPath("/404"),
-    {
-      robots: NOINDEX_ROBOTS,
-      jsonLd: [webPageSchema({ name: title, url: canonicalPath("/404") })],
-    },
+    ),
   );
 }
 
-/** Re-export for FAQ merge in pages */
-export { buildGeoAeoFaqs, mergeFaqs, fillGeo };
+export function getServiceCitySeo(service: Service, city: CityRef): SeoPayload {
+  const path = `/${service.slug}/${city.state.slug}/${city.slug}`;
+  const title = `${service.name} in ${city.name}, ${city.state.abbr} | Klikcy`;
+  const description = `${service.shortDescription} Klikcy works remotely with businesses in ${city.name}, ${city.state.name}.`;
+  return payload(
+    "service-city",
+    path,
+    title,
+    description,
+    graph(
+      webPageNode({ path, name: title, description, hasBreadcrumb: true }),
+      breadcrumbNode(path, [
+        home,
+        { name: city.state.name, path: `/service-areas/${city.state.slug}` },
+        { name: city.name, path: `/service-areas/${city.state.slug}/${city.slug}` },
+        { name: service.name, path },
+      ]),
+    ),
+  );
+}
+
+export function getNotFoundSeo(): SeoPayload {
+  return payload(
+    "not-found",
+    "/404",
+    "Page not found | Klikcy",
+    "This page doesn't exist or has moved. Browse our services or get in touch and we'll point you in the right direction.",
+  );
+}
+
+export function getWorkSeo(): SeoPayload {
+  const title = "Our Work | Client Projects and Results | Klikcy";
+  const description =
+    "Real Klikcy projects: what each client needed, what we built, and the results we measured. Websites, search, automation, and software for U.S. businesses.";
+  const path = "/work";
+  return payload(
+    "work",
+    path,
+    title,
+    description,
+    graph(
+      webPageNode({ path, name: title, description, type: "CollectionPage", hasBreadcrumb: true }),
+      breadcrumbNode(path, [home, { name: "Our work", path }]),
+    ),
+  );
+}
+
+export function getPrivacySeo(): SeoPayload {
+  const title = "Privacy Policy | Klikcy";
+  const description =
+    "What information klikcy.com collects, why, who it's shared with, how long it's kept, and how to ask us to access or delete your data.";
+  const path = "/privacy";
+  return payload(
+    "privacy",
+    path,
+    title,
+    description,
+    graph(
+      webPageNode({ path, name: title, description, hasBreadcrumb: true }),
+      breadcrumbNode(path, [home, { name: "Privacy policy", path }]),
+    ),
+  );
+}
+
+export function getAccessibilitySeo(): SeoPayload {
+  const title = "Accessibility Statement | Klikcy";
+  const description =
+    "How we build klikcy.com to be usable by everyone, the standard we aim for (WCAG 2.2 AA), known limitations, and how to report a barrier.";
+  const path = "/accessibility";
+  return payload(
+    "accessibility",
+    path,
+    title,
+    description,
+    graph(
+      webPageNode({ path, name: title, description, hasBreadcrumb: true }),
+      breadcrumbNode(path, [home, { name: "Accessibility", path }]),
+    ),
+  );
+}

@@ -1,18 +1,26 @@
 # Klikcy
 
-> Remote-first U.S. digital agency — websites, SEO/AEO, AI automation, e-commerce, apps, and branding.
+> Remote-first U.S. web agency: websites, SEO and answer engine optimization, AI automation, apps and software, e-commerce, branding, and hosting.
 
 ## About
 
-Klikcy builds fast websites, search-ready content systems, AI automations, and e-commerce experiences for businesses across the United States. We serve all 50 states remotely with honest nationwide positioning — no fake local offices.
+Klikcy designs and builds fast websites and online stores, improves visibility on Google and in AI assistants, automates repetitive work with integrations and AI, and develops custom apps. The team works remotely with businesses in all 50 states and Washington DC and has no local offices.
 
-## Main URLs
+How Klikcy works (confirmed by the business):
+- A fixed, written quote before any work starts
+- Clients own their code, domain, hosting, and analytics
+- A progress update every week during projects
+- Monthly plans that run month to month
+- A reply within one business day
+
+## Main pages
 
 - Homepage: https://www.klikcy.com/
-- All services: https://www.klikcy.com/all-services/
-- Service areas (50 states): https://www.klikcy.com/service-areas/
-- Contact: https://www.klikcy.com/contact/
+- All services (65): https://www.klikcy.com/all-services/
+- Where we work: https://www.klikcy.com/service-areas/
 - About: https://www.klikcy.com/about/
+- Contact: https://www.klikcy.com/contact/
+- Privacy policy: https://www.klikcy.com/privacy/
 
 ## Service categories
 
@@ -25,15 +33,26 @@ Klikcy builds fast websites, search-ready content systems, AI automations, and e
 - Marketing & Growth: https://www.klikcy.com/categories/marketing-growth/
 - Technical & Hosting: https://www.klikcy.com/categories/technical-hosting/
 
+## Local pages
+
+- New York City: https://www.klikcy.com/service-areas/new-york/new-york-city/
+- Manhattan, NY: https://www.klikcy.com/service-areas/new-york/manhattan/
+- Brooklyn, NY: https://www.klikcy.com/service-areas/new-york/brooklyn/
+- Queens, NY: https://www.klikcy.com/service-areas/new-york/queens/
+- The Bronx, NY: https://www.klikcy.com/service-areas/new-york/the-bronx/
+- Staten Island, NY: https://www.klikcy.com/service-areas/new-york/staten-island/
+- Jersey City, NJ: https://www.klikcy.com/service-areas/new-jersey/jersey-city/
+- Newark, NJ: https://www.klikcy.com/service-areas/new-jersey/newark/
+- Hoboken, NJ: https://www.klikcy.com/service-areas/new-jersey/hoboken/
+- Miami, FL: https://www.klikcy.com/service-areas/florida/miami/
+- Orlando, FL: https://www.klikcy.com/service-areas/florida/orlando/
+- Tampa, FL: https://www.klikcy.com/service-areas/florida/tampa/
+- Boston, MA: https://www.klikcy.com/service-areas/massachusetts/boston/
+- Cambridge, MA: https://www.klikcy.com/service-areas/massachusetts/cambridge/
+
+State pages for all 50 states and DC are at https://www.klikcy.com/service-areas/<state>/ (for example /service-areas/new-jersey/).
+
 ## Discovery
 
 - Sitemap: https://www.klikcy.com/sitemap.xml
 - Robots: https://www.klikcy.com/robots.txt
-
-## Contact
-
-- https://www.klikcy.com/contact/
-
-## Optional
-
-Programmatic local SEO pages (state, city, service × location) include FAQ and AEO accordions on the canonical page HTML — not as separate sitemap URLs.

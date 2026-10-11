@@ -1,337 +1,271 @@
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import type { LucideIcon } from "lucide-react";
-import {
-  Activity,
-  ArrowRight,
-  BarChart3,
-  Bot,
-  CheckCircle2,
-  Code2,
-  Cpu,
-  Layers,
-  MapPin,
-  Palette,
-  Search,
-  Server,
-  ShoppingBag,
-  TrendingUp,
-  Workflow,
-  Zap,
-} from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { HomeFaqSection } from "@/components/home/HomeFaqSection";
-import { HomePackagesSection } from "@/components/home/HomePackagesSection";
-import { PageSection, SectionIntro } from "@/components/layout/PageSection";
-import { HomeHero } from "@/components/sections/HomeHero";
-import { HomeStatsRow } from "@/components/sections/HomeStatsRow";
-import { StaggerReveal } from "@/components/animations/StaggerReveal";
-import { TiltCard } from "@/components/ui/TiltCard";
-import { SplitText } from "@/components/motion/SplitText";
-import { FadeUp } from "@/components/motion/FadeUp";
-import { MagneticButton } from "@/components/ui/MagneticButton";
+import { CtaBand, Faq, SectionHead } from "@/components/site/blocks";
 import { categories } from "@/lib/categories";
+import { getServicesByCategory, services } from "@/lib/services";
 import { priorityStates } from "@/lib/states";
-import {
-  credibilityStrip,
-  experienceTiles,
-  homeFaqs,
-  impactCards,
-  processSteps,
-  whyPillars,
-  homeStats,
-} from "@/content/home";
+import { homeFaqs, homeHero, packagePlans, processSteps, projectSheet, whyPoints } from "@/content/home";
+import { caseStudies, testimonials } from "@/content/proof";
+import { CaseStudySummary, Testimonials } from "@/components/site/Proof";
+import { TechOrbit } from "@/components/site/TechOrbit";
+import { practiceImages } from "@/content/practice-images";
+import { marketLinks } from "@/lib/market-links";
 
-const HomeTechnologySection = dynamic(
-  () => import("@/components/home/HomeTechnologySection").then((m) => m.HomeTechnologySection),
-  { loading: () => null },
-);
+const TOTAL_WEEKS = 8;
 
-const categoryIcons: Record<string, LucideIcon> = {
-  Code2,
-  Search,
-  Bot,
-  ShoppingBag,
-  Layers,
-  Palette,
-  TrendingUp,
-  Server,
-};
-
-const tileIcons: Record<string, LucideIcon> = {
-  zap: Zap,
-  search: Search,
-  activity: Activity,
-  trending: TrendingUp,
-  cpu: Cpu,
-  chart: BarChart3,
-  workflow: Workflow,
-  palette: Palette,
-  code: Code2,
-};
-
-function iconFor(key: string): LucideIcon {
-  return tileIcons[key] ?? Code2;
+function ProjectSheet() {
+  return (
+    <figure className="sheet" aria-labelledby="sheet-title">
+      <figcaption className="px-5 pb-4 pt-5">
+        <p id="sheet-title" className="font-semibold">
+          {projectSheet.title}
+        </p>
+        <p className="meta">{projectSheet.subtitle}</p>
+      </figcaption>
+      <ol>
+        {projectSheet.rows.map((row) => {
+          const [from, to] = row.span;
+          return (
+            <li key={row.when} className="sheet-row">
+              <span className="text-sm font-semibold text-ink">{row.when}</span>
+              <div>
+                <p className="text-[0.95rem] leading-snug">{row.what}</p>
+                <span className="relative mt-2.5 block h-1.5 rounded-full bg-mist" aria-hidden>
+                  <span
+                    className="sheet-bar absolute inset-y-0"
+                    style={{ left: `${(from / TOTAL_WEEKS) * 100}%`, width: `${((to - from) / TOTAL_WEEKS) * 100}%` }}
+                  />
+                </span>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+      <p className="border-t border-line px-5 py-4 text-sm text-slate">{projectSheet.footnote}</p>
+    </figure>
+  );
 }
 
-
-const Index = () => (
-  <>
-    <Header />
-    <main id="main-content" className="bg-background">
-      <HomeHero />
-
-      {/* Asymmetric credibility — breaks centered rhythm */}
-      <section className="relative border-b border-border bg-[hsl(var(--card))] py-[var(--space-section-y)]" aria-labelledby="cred-heading">
-        <div className="k-container">
-          <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,0.42fr)_minmax(0,1fr)] lg:gap-16">
-            <div className="lg:sticky lg:top-28">
-              <h2 id="cred-heading" className="font-display text-[length:var(--type-h2)] font-bold tracking-tight text-[hsl(var(--navy-deep))] dark:text-[hsl(var(--foreground))]">
-                <span className="micro-label mb-3 block text-[length:var(--type-label)] font-bold tracking-[0.2em]">Proof in the craft</span>
-                <span className="block leading-[var(--leading-tight)]"><SplitText type="words">Engineered for outcomes you can brief an exec on.</SplitText></span>
-              </h2>
+export default function Index() {
+  return (
+    <>
+      <Header />
+      <main id="main-content">
+        <section className="border-b border-line">
+          <div className="wrap grid gap-12 pb-16 pt-12 sm:pt-16 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-12 lg:pb-24 lg:pt-20">
+            <div>
+              <h1 className="display max-w-[14ch]">{homeHero.title}</h1>
+              <p className="lede mt-7">{homeHero.lede}</p>
+              <div className="mt-9 flex flex-wrap gap-3">
+                <Link href={homeHero.primaryCta.href} className="btn btn-primary">
+                  {homeHero.primaryCta.label}
+                </Link>
+                <Link href={homeHero.secondaryCta.href} className="btn btn-secondary">
+                  {homeHero.secondaryCta.label}
+                </Link>
+              </div>
             </div>
-            <StaggerReveal className="grid gap-4 sm:grid-cols-2" stagger={0.08}>
-              {credibilityStrip.map((item) => (
-                <li
-                  key={item.title}
-                  data-reveal-item
-                  className="group relative overflow-hidden rounded-[var(--radius-lg)] border border-border/80 bg-[hsl(var(--soft-bg))] p-5 transition duration-300 hover:border-primary/30 hover:shadow-[var(--shadow-glow-brand)]"
-                >
-                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 transition group-hover:opacity-100" />
-                  <CheckCircle2 className="h-5 w-5 text-primary" aria-hidden />
-                  <p className="mt-3 font-display text-[length:var(--type-body)] font-bold text-[hsl(var(--navy-deep))] dark:text-[hsl(var(--foreground))]">
-                    {item.title}
-                  </p>
-                  <p className="mt-2 text-[length:var(--type-body)] leading-[var(--leading-body)] text-muted-foreground">{item.body}</p>
+            <TechOrbit />
+          </div>
+        </section>
+
+        <section className="section" aria-labelledby="what-heading">
+          <div className="wrap ledger">
+            <div className="lg:sticky lg:top-24 lg:self-start">
+              <SectionHead
+                id="what-heading"
+                title="What we do"
+                intro="Most clients come to us for one thing, usually a website or search, and add the rest as they grow. Everything is built to work together."
+              />
+              <Link href="/all-services" className="link mt-6 inline-block font-semibold">
+                See all {services.length} services
+              </Link>
+            </div>
+            <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2">
+              {categories.map((c) => {
+                const top = getServicesByCategory(c.slug).slice(0, 3);
+                const image = practiceImages[c.slug];
+                return (
+                  <div key={c.slug} className="group">
+                    <Link
+                      href={`/categories/${c.slug}`}
+                      className="block overflow-hidden rounded-lg border border-line bg-mist"
+                      tabIndex={-1}
+                      aria-hidden
+                    >
+                      <img
+                        src={image.src}
+                        alt={image.alt}
+                        width={900}
+                        height={560}
+                        loading="lazy"
+                        decoding="async"
+                        className="aspect-[16/10] w-full object-cover transition-transform duration-300 group-hover:scale-[1.02] motion-reduce:transition-none"
+                      />
+                    </Link>
+                    <h3 className="h3 mt-5">
+                      <Link href={`/categories/${c.slug}`} className="quiet-link">
+                        {c.name}
+                      </Link>
+                    </h3>
+                    <p className="muted mt-2">{c.tagline}</p>
+                    <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[0.95rem]">
+                      {top.map((s) => (
+                        <li key={s.slug}>
+                          <Link href={`/services/${s.slug}`} className="link">
+                            {s.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {caseStudies.length > 0 ? (
+          <section className="section border-t border-line" aria-labelledby="work-heading">
+            <div className="wrap">
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <h2 id="work-heading" className="h2">
+                  Recent work
+                </h2>
+                <Link href="/work" className="link font-semibold">
+                  All case studies
+                </Link>
+              </div>
+              <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {caseStudies.slice(0, 3).map((s) => (
+                  <CaseStudySummary key={s.slug} study={s} />
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        <section className="section section-mist" aria-labelledby="why-heading">
+          <div className="wrap">
+            <h2 id="why-heading" className="h2 max-w-[22ch]">
+              What you can expect from us
+            </h2>
+            <div className="mt-12 grid gap-x-12 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
+              {whyPoints.map((p) => (
+                <div key={p.title} className="border-t-2 border-ink pt-5">
+                  <h3 className="text-lg">{p.title}</h3>
+                  <p className="muted mt-2">{p.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <Testimonials items={testimonials.slice(0, 4)} />
+
+        <section className="section" aria-labelledby="process-heading">
+          <div className="wrap ledger">
+            <div>
+              <SectionHead
+                id="process-heading"
+                title="How a project runs"
+                intro="The same six steps whether it's a five-page site or a custom app. Only the length of each step changes."
+              />
+              <div className="mt-10 max-w-md">
+                <ProjectSheet />
+              </div>
+            </div>
+            <ol className="grid content-start gap-x-10 gap-y-9 sm:grid-cols-2">
+              {processSteps.map((s, i) => (
+                <li key={s.label} className="grid grid-cols-[2.25rem_minmax(0,1fr)] gap-3">
+                  <span className="text-xl font-semibold tabular-nums text-teal [font-variation-settings:'wdth'_120]" aria-hidden>
+                    {i + 1}
+                  </span>
+                  <div>
+                    <h3 className="text-lg">{s.label}</h3>
+                    <p className="muted mt-1.5">{s.copy}</p>
+                  </div>
                 </li>
               ))}
-            </StaggerReveal>
+            </ol>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <HomeStatsRow items={homeStats} />
-
-      <PageSection innerClassName="k-container section">
-        <SectionIntro
-          kicker="Capabilities"
-          title={<>Eight practices. One continuous growth surface.</>}
-          description="Each discipline is led with senior-level rigor — designed to compound: your site, your search footprint, your automation layer, and your brand all move together."
-        />
-        <StaggerReveal className="mt-4 grid auto-rows-fr grid-cols-1 gap-5 sm:grid-cols-2">
-          {categories.map((c) => {
-            const Icon = categoryIcons[c.icon] ?? Code2;
-            return (
-              <Link
-                key={c.slug}
-                data-reveal-item
-                href={`/categories/${c.slug}`}
-                className="service-showcase group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              >
-                <article className="service-showcase__card">
-                  <div className="service-showcase__media">
-                    <div className="service-showcase__media-head">
-                      <span className="service-showcase__badge">{c.short}</span>
-                    </div>
-                    <div className="service-showcase__content">
-                      <h3 className="service-showcase__heading">{c.name}</h3>
-                      <p className="service-showcase__copy">{c.tagline}</p>
-                      <span className="service-showcase__cta">
-                        Enter practice <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
-                      </span>
-                    </div>
-                  </div>
-                  <div className="service-showcase__category">
-                    <span className="service-showcase__icon" aria-hidden>
-                      <Icon className="h-5 w-5" />
-                    </span>
-                  </div>
-                </article>
-              </Link>
-            );
-          })}
-        </StaggerReveal>
-      </PageSection>
-
-      {/* Offset dark panel — bleeds visually */}
-      <PageSection variant="ink" className="relative overflow-hidden">
-        <div className="pointer-events-none absolute right-0 top-1/2 h-[min(100vw,600px)] w-[min(100vw,600px)] -translate-y-1/2 translate-x-1/3 rounded-full bg-primary/15 blur-[120px]" aria-hidden />
-        <div className="grid gap-12 lg:grid-cols-[2fr_1fr] lg:items-end">
-          <SectionIntro
-            tone="onDark"
-            kicker="Why Klikcy"
-            title={<>We are not another vendor list — we are the team that ships the whole arc.</>}
-            description="Most agencies stop at deliverables. Klikcy connects strategy, interface, engineering, search, automation, and infrastructure so your digital presence performs as a single system."
-          />
-          <p className="hidden font-display text-[length:var(--type-label)] font-bold uppercase tracking-[0.3em] text-primary-light lg:block lg:pb-2">
-            Systems over slides
-          </p>
-        </div>
-        <div className="relative mt-4 grid gap-5 md:grid-cols-2">
-          {whyPillars.map((p) => (
-            <article key={p.title} className="bento-tile">
-              <h3 className="font-display text-[length:var(--type-h3)] font-bold text-white"><SplitText type="words">{p.title}</SplitText></h3>
-              <FadeUp delay={100}><p className="mt-3 text-[length:var(--type-body)] leading-[var(--leading-body)] text-white/65">{p.body}</p></FadeUp>
-            </article>
-          ))}
-        </div>
-      </PageSection>
-
-      <PageSection variant="muted" className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px timeline-rail opacity-60" aria-hidden />
-        <div className="max-w-xl">
-          <SectionIntro
-            kicker="Process"
-            title={<>Discover → design → build → optimize → launch → grow.</>}
-            description="A modern, transparent cadence so stakeholders see progress weekly — not as a black box."
-          />
-        </div>
-        <ol className="relative mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-6 lg:gap-4" role="list">
-          {processSteps.map((s, idx) => (
-            <li
-              key={s.label}
-              className="relative rounded-[var(--radius-lg)] border border-border/80 bg-[hsl(var(--card))] p-4 shadow-card transition hover:-translate-y-1 hover:border-primary/30 hover:shadow-glow motion-reduce:hover:translate-y-0"
-            >
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-primary/30 bg-primary/10 font-mono text-base font-bold leading-none text-primary">
-                  {s.n}
-                </span>
-                {idx < processSteps.length - 1 ? (
-                  <span className="hidden font-mono text-[length:var(--type-label)] text-muted-foreground/50 lg:inline" aria-hidden>
-                    →
-                  </span>
-                ) : null}
-              </div>
-              <h3 className="mt-3 font-display text-[length:var(--type-body)] font-bold text-navy-deep dark:text-[hsl(var(--foreground))]"><SplitText type="words">{s.label}</SplitText></h3>
-              <FadeUp delay={100}><p className="mt-1.5 text-[length:var(--type-body)] leading-[var(--leading-body)] text-muted-foreground">{s.copy}</p></FadeUp>
-            </li>
-          ))}
-        </ol>
-      </PageSection>
-
-      <PageSection variant="navy" className="relative overflow-hidden">
-        <div className="pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-primary/20 blur-[90px]" aria-hidden />
-        <SectionIntro
-          tone="onDark"
-          kicker="Impact model"
-          title={<>What changes when Klikcy owns the full stack.</>}
-          description="We do not publish inflated metrics — we engineer conditions for measurable lift: speed, clarity, discoverability, and operational leverage."
-        />
-        <ul className="relative mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-5" role="list">
-          {impactCards.map(({ title, body, iconKey }) => {
-            const Icon = iconFor(iconKey);
-            return (
-              <li key={title} className="bento-tile flex flex-col">
-                <Icon className="h-5 w-5 text-primary-light" aria-hidden />
-                <h3 className="mt-4 font-display text-[length:var(--type-body)] font-bold text-white"><SplitText type="words">{title}</SplitText></h3>
-                <FadeUp delay={100} className="flex-1"><p className="mt-2 text-[length:var(--type-body)] leading-[var(--leading-body)] text-white/65">{body}</p></FadeUp>
-              </li>
-            );
-          })}
-        </ul>
-      </PageSection>
-
-      <PageSection>
-        <div className="grid items-end gap-8 lg:grid-cols-12">
-          <div className="lg:col-span-7">
-            <SectionIntro
-              kicker="Experience"
-              title={<>Design, code, search, automation, analytics, and uptime — orchestrated.</>}
-              description="Klikcy is built for teams that want craft-level creative direction with principal-engineer execution across the entire lifecycle."
-            />
-          </div>
-          <p className="font-display text-[length:var(--type-label)] font-bold uppercase tracking-[0.24em] text-primary lg:col-span-5 lg:text-right">
-            Tilt cards on desktop
-          </p>
-        </div>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {experienceTiles.map(({ title, body, iconKey }) => {
-            const Icon = iconFor(iconKey);
-            return (
-              <TiltCard
-                key={title}
-                className="relative overflow-hidden rounded-[var(--radius-lg)] border border-border/80 bg-gradient-to-br from-[hsl(var(--card))] to-[hsl(var(--soft-bg))] p-6 shadow-card"
-              >
-                <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-primary/10 blur-2xl" aria-hidden />
-                <Icon className="relative h-6 w-6 text-primary" aria-hidden />
-                <h3 className="relative mt-4 font-display text-[length:var(--type-h3)] font-bold text-navy-deep dark:text-[hsl(var(--foreground))]"><SplitText type="words">{title}</SplitText></h3>
-                <FadeUp delay={100}><p className="relative mt-2 text-[length:var(--type-body)] leading-[var(--leading-body)] text-muted-foreground">{body}</p></FadeUp>
-              </TiltCard>
-            );
-          })}
-        </div>
-      </PageSection>
-
-      <PageSection variant="muted">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <SectionIntro
-            className="lg:max-w-xl"
-            kicker="Nationwide"
-            title={<>State and city programs tuned for local intent.</>}
-            description="Explore hubs for priority markets — built for high-intent local queries and answer-engine visibility."
-          />
-          <Link
-            href="/service-areas"
-            className="inline-flex shrink-0 items-center gap-2 self-start font-bold text-primary transition hover:gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:self-end"
-          >
-            Browse all service areas
-            <ArrowRight className="h-4 w-4" aria-hidden />
-          </Link>
-        </div>
-        <div className="mt-8 flex flex-wrap gap-2">
-          {priorityStates.map((s) => (
-            <Link
-              key={s.slug}
-              href={`/service-areas/${s.slug}`}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-border bg-[hsl(var(--card))] px-4 py-2.5 text-[length:var(--type-body)] font-semibold text-navy-deep shadow-sm transition hover:border-primary/40 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-[hsl(var(--foreground))]"
-            >
-              <MapPin className="h-3.5 w-3.5 text-primary" aria-hidden />
-              {s.name}
-            </Link>
-          ))}
-        </div>
-      </PageSection>
-
-      <HomeTechnologySection />
-
-      <HomePackagesSection />
-
-      <HomeFaqSection items={homeFaqs} />
-
-      <PageSection className="bg-transparent pb-[var(--space-section-y-lg)] pt-4">
-        <div className="k-container">
-          <div className="surface-dark relative overflow-hidden rounded-[var(--radius-xl)] border border-white/10 bg-gradient-to-br from-navy via-ink to-void px-8 py-16 text-white shadow-[0_40px_100px_-40px_hsl(184_100%_37%/0.45)] sm:px-14 lg:px-16 lg:py-20">
-            <div className="pointer-events-none absolute -right-[10%] top-0 h-72 w-72 rounded-full bg-primary/30 blur-[100px]" aria-hidden />
-            <div className="pointer-events-none absolute -bottom-24 left-10 h-56 w-56 rounded-full bg-primary/15 blur-[90px]" aria-hidden />
-            <div className="relative mx-auto max-w-3xl text-left sm:text-center">
-              <p className="font-display text-[length:var(--type-eyebrow)] font-bold uppercase tracking-[0.28em] text-primary-light">Let’s build</p>
-              <h2 className="font-display mt-4 text-[length:var(--type-h2)] font-extrabold leading-[var(--leading-tight)] tracking-tight text-white">
-                Ready for a digital system that looks, reads, and performs like a category leader?
+        <section className="section section-mist" aria-labelledby="plans-heading">
+          <div className="wrap">
+            <div className="max-w-2xl">
+              <h2 id="plans-heading" className="h2">
+                Ongoing plans
               </h2>
-              <p className="mt-5 text-[length:var(--type-body-lg)] leading-[var(--leading-body)] text-white/75">
-                Share your goals — we’ll respond with a focused plan across web, SEO/AEO, automation, and hosting. No jargon walls, no mystery pricing dance.
+              <p className="muted mt-4">
+                For businesses that want a site and someone to keep improving it. Larger builds, apps, and automation are
+                quoted as projects.
               </p>
-              <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:justify-center">
-                <MagneticButton>
-                  <Link href="/contact" className="btn-primary min-h-[48px] min-w-[200px] justify-center">
-                    Get Free Quote
+            </div>
+            <div className="mt-12 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+              {packagePlans.map((plan) => (
+                <div key={plan.title} className="flex flex-col bg-paper p-6">
+                  <h3 className="text-xl">{plan.title}</h3>
+                  <p className="muted mt-2 text-[0.95rem]">{plan.description}</p>
+                  <ul className="ticks mt-5 flex-1 text-[0.95rem]">
+                    {plan.features.map((f) => (
+                      <li key={f}>{f}</li>
+                    ))}
+                  </ul>
+                  <Link href="/contact" className="link mt-6 font-semibold">
+                    Ask about {plan.title}
                   </Link>
-                </MagneticButton>
-                <MagneticButton>
-                  <Link href="/about" className="btn-ghost-light min-h-[48px] min-w-[200px] justify-center">
-                    Meet Klikcy
-                  </Link>
-                </MagneticButton>
-              </div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </PageSection>
-    </main>
-    <Footer />
-  </>
-);
+        </section>
 
-export default Index;
+        <section className="section" aria-labelledby="where-heading">
+          <div className="wrap ledger">
+            <SectionHead
+              id="where-heading"
+              title="Where we work"
+              intro="Everywhere in the U.S. We work remotely, schedule calls inside your business hours, and keep track of state rules that affect websites, like privacy laws."
+            />
+            <div>
+              <ul className="flex flex-wrap gap-2">
+                {priorityStates.map((s) => (
+                  <li key={s.slug}>
+                    <Link
+                      href={`/service-areas/${s.slug}`}
+                      className="inline-flex min-h-[2.5rem] items-center rounded-md border border-line px-3.5 text-[0.95rem] no-underline hover:border-ink"
+                    >
+                      {s.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-8 font-semibold">Local pages</p>
+              <ul className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
+                {marketLinks.map((m) => (
+                  <li key={m.href}>
+                    <Link href={m.href} className="link">
+                      {m.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <Link href="/service-areas" className="link mt-6 inline-block font-semibold">
+                All 50 states and DC
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <div className="border-t border-line">
+          <Faq items={homeFaqs} title="Common questions" />
+        </div>
+
+        <CtaBand />
+      </main>
+      <Footer />
+    </>
+  );
+}

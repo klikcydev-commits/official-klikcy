@@ -10,7 +10,6 @@ export async function generateStaticParams() {
   return states.map((s) => ({ state: s.slug }));
 }
 
-export const dynamicParams = false;
 
 export async function generateMetadata({ params }: { params: { state: string } }): Promise<Metadata> {
   const state = getState(params.state);

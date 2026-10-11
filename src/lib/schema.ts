@@ -1,148 +1,113 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.klikcy.com";
+/**
+ * Schema.org JSON-LD builders. Each page emits one @graph whose nodes reference
+ * each other by @id, so Google sees a single connected description of the site.
+ * Only describe what is visible on the page.
+ */
+import { categories } from "./categories";
+import { CONTENT_UPDATED, SITE, absoluteUrl } from "./site";
 
-export const SITE = {
-  name: "Klikcy",
-  url: String(siteUrl).replace(/\/$/, ""),
-  description:
-    "Klikcy builds fast websites, SEO/AEO systems, AI automations, branding, and e-commerce solutions for businesses across the United States. Remote-first nationwide digital agency.",
-};
+export { SITE };
 
 export type FaqItem = { q: string; a: string };
+type Node = Record<string, unknown>;
 
-export const orgSchema = () => ({
-  "@context": "https://schema.org",
+/**
+ * Official profiles that represent Klikcy (Clutch, LinkedIn, Crunchbase, GitHub...).
+ * Only add profiles you control. Google uses these to connect reviews and mentions to the brand.
+ */
+export const SAME_AS: string[] = [];
+
+export const ORG_ID = `${SITE.url}/#organization`;
+const WEBSITE_ID = `${SITE.url}/#website`;
+
+export const organizationNode = (): Node => ({
   "@type": "Organization",
+  "@id": ORG_ID,
   name: SITE.name,
-  url: SITE.url,
+  url: absoluteUrl("/"),
+  logo: {
+    "@type": "ImageObject",
+    url: `${SITE.url}${SITE.logoPath}`,
+  },
   description: SITE.description,
+  email: SITE.email,
   areaServed: { "@type": "Country", name: "United States" },
-  sameAs: [],
-});
-
-export const websiteSchema = () => ({
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: SITE.name,
-  url: SITE.url,
-  description: SITE.description,
-  publisher: { "@type": "Organization", name: SITE.name, url: SITE.url },
-  potentialAction: {
-    "@type": "SearchAction",
-    target: {
-      "@type": "EntryPoint",
-      urlTemplate: `${SITE.url}/all-services?q={search_term_string}`,
-    },
-    "query-input": "required name=search_term_string",
+  knowsAbout: categories.map((c) => c.name),
+  ...(SAME_AS.length > 0 ? { sameAs: SAME_AS } : {}),
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "sales",
+    email: SITE.email,
+    areaServed: "US",
+    availableLanguage: "English",
   },
 });
 
-export const webPageSchema = (page: {
+export const websiteNode = (): Node => ({
+  "@type": "WebSite",
+  "@id": WEBSITE_ID,
+  url: absoluteUrl("/"),
+  name: SITE.name,
+  publisher: { "@id": ORG_ID },
+  inLanguage: "en-US",
+});
+
+export interface WebPageInput {
+  path: string;
   name: string;
-  url: string;
   description?: string;
-  dateModified?: string;
-}) => ({
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  name: page.name,
-  url: page.url,
-  description: page.description,
-  ...(page.dateModified ? { dateModified: page.dateModified } : {}),
-  isPartOf: { "@type": "WebSite", name: SITE.name, url: SITE.url },
-});
+  type?: "WebPage" | "AboutPage" | "ContactPage" | "CollectionPage";
+  hasBreadcrumb?: boolean;
+  mainEntityId?: string;
+}
 
-export const aboutPageSchema = () => ({
-  "@context": "https://schema.org",
-  "@type": "AboutPage",
-  name: `About ${SITE.name}`,
-  url: `${SITE.url}/about`,
-  description: SITE.description,
-  mainEntity: { "@type": "Organization", name: SITE.name, url: SITE.url },
-});
+export const webPageNode = (page: WebPageInput): Node => {
+  const url = absoluteUrl(page.path);
+  return {
+    "@type": page.type ?? "WebPage",
+    "@id": `${url}#webpage`,
+    url,
+    name: page.name,
+    ...(page.description ? { description: page.description } : {}),
+    isPartOf: { "@id": WEBSITE_ID },
+    publisher: { "@id": ORG_ID },
+    inLanguage: "en-US",
+    dateModified: CONTENT_UPDATED,
+    ...(page.hasBreadcrumb ? { breadcrumb: { "@id": `${url}#breadcrumb` } } : {}),
+    ...(page.mainEntityId ? { mainEntity: { "@id": page.mainEntityId } } : {}),
+  };
+};
 
-export const contactPageSchema = () => ({
-  "@context": "https://schema.org",
-  "@type": "ContactPage",
-  name: `Contact ${SITE.name}`,
-  url: `${SITE.url}/contact`,
-  description: "Contact Klikcy for web development, apps, software, AI automation, and digital growth projects.",
-});
-
-export const collectionPageSchema = (page: { name: string; description: string; url: string }) => ({
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  name: page.name,
-  description: page.description,
-  url: page.url,
-});
-
-export const breadcrumbSchema = (items: { name: string; url: string }[]) => ({
-  "@context": "https://schema.org",
+export const breadcrumbNode = (path: string, items: { name: string; path: string }[]): Node => ({
   "@type": "BreadcrumbList",
+  "@id": `${absoluteUrl(path)}#breadcrumb`,
   itemListElement: items.map((it, i) => ({
     "@type": "ListItem",
     position: i + 1,
     name: it.name,
-    item: it.url,
+    item: absoluteUrl(it.path),
   })),
 });
 
-export const serviceSchema = (s: {
-  name: string;
-  shortDescription?: string;
-  description?: string;
-  slug: string;
-}) => ({
-  "@context": "https://schema.org",
-  "@type": "Service",
-  name: s.name,
-  description: s.description || s.shortDescription || "",
-  provider: { "@type": "Organization", name: SITE.name, url: SITE.url },
-  areaServed: { "@type": "Country", name: "United States" },
-  url: `${SITE.url}/services/${s.slug}`,
-});
-
-export interface AreaServedInput {
-  stateName: string;
-  stateSlug: string;
-  cityName?: string;
-  citySlug?: string;
-}
-
-export const serviceSchemaWithArea = (
-  s: { name: string; shortDescription?: string; description?: string; slug: string },
-  area?: AreaServedInput,
-) => {
-  const areaServed = area?.cityName
-    ? {
-        "@type": "City",
-        name: area.cityName,
-        containedInPlace: { "@type": "State", name: area.stateName },
-      }
-    : area?.stateName
-      ? { "@type": "State", name: area.stateName }
-      : { "@type": "Country", name: "United States" };
-
-  const url = area?.citySlug
-    ? `${SITE.url}/${s.slug}/${area.stateSlug}/${area.citySlug}`
-    : area?.stateSlug
-      ? `${SITE.url}/${s.slug}/${area.stateSlug}`
-      : `${SITE.url}/services/${s.slug}`;
-
+export const serviceNode = (s: { slug: string; name: string; metaDescription: string; category: string }): Node => {
+  const url = absoluteUrl(`/services/${s.slug}`);
+  const category = categories.find((c) => c.slug === s.category);
   return {
-    "@context": "https://schema.org",
     "@type": "Service",
+    "@id": `${url}#service`,
     name: s.name,
-    description: s.description || s.shortDescription || "",
-    provider: { "@type": "Organization", name: SITE.name, url: SITE.url },
-    areaServed,
+    serviceType: s.name,
+    description: s.metaDescription,
     url,
+    provider: { "@id": ORG_ID },
+    areaServed: { "@type": "Country", name: "United States" },
+    ...(category ? { category: category.name } : {}),
   };
 };
 
-export const faqSchema = (faqs: FaqItem[]) => ({
-  "@context": "https://schema.org",
+export const faqNode = (path: string, faqs: FaqItem[]): Node => ({
   "@type": "FAQPage",
+  "@id": `${absoluteUrl(path)}#faq`,
   mainEntity: faqs.map((f) => ({
     "@type": "Question",
     name: f.q,
@@ -150,3 +115,18 @@ export const faqSchema = (faqs: FaqItem[]) => ({
   })),
 });
 
+export const itemListNode = (path: string, items: { name: string; path: string }[]): Node => ({
+  "@type": "ItemList",
+  "@id": `${absoluteUrl(path)}#list`,
+  itemListElement: items.map((it, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: it.name,
+    url: absoluteUrl(it.path),
+  })),
+});
+
+export const graph = (...nodes: Node[]) => ({
+  "@context": "https://schema.org",
+  "@graph": nodes,
+});

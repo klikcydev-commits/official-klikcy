@@ -16,7 +16,13 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   async redirects() {
-    return legacyRedirects;
+    return [
+      ...legacyRedirects,
+      // Retired sitemap URLs (sharded /sitemap/<id>.xml and older sitemap-*.xml files) -> single index.
+      { source: "/sitemap/:id.xml", destination: "/sitemap.xml", permanent: true },
+      { source: "/sitemap-:name.xml", destination: "/sitemap.xml", permanent: true },
+      { source: "/sitemap_index.xml", destination: "/sitemap.xml", permanent: true },
+    ];
   },
 };
 

@@ -1,5 +1,5 @@
 import { states, type State } from "./states";
-import { CITY_SLUG_ALIASES, resolveCitySlug } from "./seo/priorityMarkets";
+import { CITY_SLUG_ALIASES, resolveCitySlug } from "./city-aliases";
 
 export const citySlug = (city: string) =>
   city

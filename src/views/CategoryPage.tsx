@@ -1,77 +1,105 @@
-"use client";
-
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Breadcrumbs from "@/components/Breadcrumbs";
-import { CategoryServiceGrid } from "@/components/category/CategoryServiceGrid";
-import { FaqAccordion } from "@/components/FaqAccordion";
-import { getCategory, categories } from "@/lib/categories";
-import { buildCategoryFaqs } from "@/lib/geo-aeo-content";
+import { CtaBand, Faq, PageHero, SectionHead } from "@/components/site/blocks";
+import { categories, getCategory } from "@/lib/categories";
 import { getServicesByCategory } from "@/lib/services";
 
-interface CategoryPageProps {
-  slug: string;
-}
-
-const CategoryPage = ({ slug }: CategoryPageProps) => {
+export default function CategoryPage({ slug }: { slug: string }) {
   const cat = getCategory(slug)!;
   const services = getServicesByCategory(cat.slug);
-  const faqs = buildCategoryFaqs(cat);
+  const others = categories.filter((c) => c.slug !== cat.slug);
 
   return (
     <>
       <Header />
-      <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: cat.name }]} />
-      <main>
-        <section className="bg-gradient-hero">
-          <div className="container-x py-14 sm:py-20">
-            <span className="micro-label">{cat.short}</span>
-            <h1 className="mt-3 max-w-3xl text-4xl font-extrabold sm:text-5xl">{cat.name}</h1>
-            <p className="mt-5 max-w-2xl text-lg text-muted-foreground">{cat.description}</p>
-            <Link href="/contact" className="btn-primary mt-7">Get Free Quote <ArrowRight className="h-4 w-4" /></Link>
-          </div>
-        </section>
+      <main id="main-content">
+        <PageHero
+          title={cat.name}
+          lede={cat.description}
+          breadcrumbs={[{ name: "Home", href: "/" }, { name: "All services", href: "/all-services" }, { name: cat.name }]}
+        >
+          <Link href="/contact" className="btn btn-primary">
+            Get a quote
+          </Link>
+          <a href="#services" className="btn btn-secondary">
+            See the {services.length} services
+          </a>
+        </PageHero>
 
-        <section className="section relative">
-          <div
-            className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/25 to-transparent"
-            aria-hidden
-          />
-          <div className="container-x">
-            <div className="max-w-3xl">
-              <div className="flex items-center gap-4">
-                <span className="micro-label shrink-0">Services</span>
-                <span className="h-px flex-1 max-w-[6rem] bg-gradient-to-r from-primary/50 to-transparent" aria-hidden />
-              </div>
-              <h2 className="section-title mt-4 text-balance">{cat.name} services we deliver</h2>
-              <p className="section-desc mt-4 max-w-2xl text-pretty text-muted-foreground">
-                Each card is a concrete deliverable—scope, outcomes, and how we ship—so you can shortlist fast and brief
-                us with clarity.
-              </p>
-            </div>
-            <CategoryServiceGrid services={services} />
-          </div>
-        </section>
-
-        <FaqAccordion faqs={faqs} idPrefix={`category-${cat.slug}`} itemIdKind="faq" />
-
-        <section className="section bg-[hsl(var(--soft-bg))]">
-          <div className="container-x">
-            <span className="micro-label">Other practices</span>
-            <h2 className="mt-3 text-3xl font-bold">Explore more from Klikcy</h2>
-            <div className="mt-8 flex flex-wrap gap-2">
-              {categories.filter((c) => c.slug !== cat.slug).map((c) => (
-                <Link key={c.slug} href={`/categories/${c.slug}`} className="rounded-full border border-border bg-white px-4 py-2 text-sm hover:border-primary hover:text-primary">{c.name}</Link>
+        <section className="section" aria-labelledby="approach-heading">
+          <div className="wrap ledger">
+            <SectionHead id="approach-heading" title="How we approach it" />
+            <div className="prose-k">
+              {cat.overview.map((p) => (
+                <p key={p.slice(0, 40)}>{p}</p>
               ))}
             </div>
           </div>
         </section>
+
+        <section id="services" className="section section-mist scroll-mt-20" aria-labelledby="services-heading">
+          <div className="wrap">
+            <h2 id="services-heading" className="h2">
+              {cat.name} services
+            </h2>
+            <ul className="mt-10 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+              {services.map((s) => (
+                <li key={s.slug} className="flex flex-col bg-paper p-6">
+                  <h3 className="text-lg">
+                    <Link href={`/services/${s.slug}`} className="quiet-link">
+                      {s.name}
+                    </Link>
+                  </h3>
+                  <p className="muted mt-2 flex-1 text-[0.95rem]">{s.shortDescription}</p>
+                  <Link href={`/services/${s.slug}`} className="link mt-4 text-[0.95rem] font-semibold" aria-label={`Read about ${s.name}`}>
+                    Read more
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section className="section" aria-labelledby="principles-heading">
+          <div className="wrap">
+            <h2 id="principles-heading" className="h2">
+              What doesn&apos;t change between projects
+            </h2>
+            <div className="mt-10 grid gap-x-12 gap-y-9 md:grid-cols-2 lg:grid-cols-4">
+              {cat.principles.map((p) => (
+                <div key={p.title} className="border-t-2 border-ink pt-5">
+                  <h3 className="text-lg">{p.title}</h3>
+                  <p className="muted mt-2">{p.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <div className="border-t border-line">
+          <Faq items={cat.faqs} title={`${cat.name} questions`} />
+        </div>
+
+        <section className="section section-mist" aria-labelledby="other-heading">
+          <div className="wrap ledger">
+            <SectionHead id="other-heading" title="Other things we do" />
+            <ul className="grid gap-x-10 gap-y-6 sm:grid-cols-2">
+              {others.map((c) => (
+                <li key={c.slug}>
+                  <Link href={`/categories/${c.slug}`} className="link text-lg font-semibold">
+                    {c.name}
+                  </Link>
+                  <p className="muted mt-1 text-[0.95rem]">{c.tagline}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <CtaBand />
       </main>
       <Footer />
     </>
   );
-};
-
-export default CategoryPage;
+}

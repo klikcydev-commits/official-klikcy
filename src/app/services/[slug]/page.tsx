@@ -6,6 +6,7 @@ import { getServiceSeo } from "@/lib/seo";
 import { seoToMetadata } from "@/lib/seo/next-metadata";
 import { getService, services } from "@/lib/services";
 
+// Legacy service slugs are redirected at the edge (src/lib/redirects.mjs).
 export async function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
 }
@@ -26,7 +27,7 @@ export default function ServiceRoutePage({ params }: { params: { slug: string } 
   return (
     <>
       <JsonLd data={seo.jsonLd} />
-      <ServicePage slug={params.slug} />
+      <ServicePage slug={service.slug} />
     </>
   );
 }

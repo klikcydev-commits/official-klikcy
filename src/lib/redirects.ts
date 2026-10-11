@@ -1,5 +1,5 @@
 import { LEGACY_SERVICE_SLUG_REDIRECTS } from "./legacy-service-slugs";
-import { CITY_SLUG_ALIASES } from "./seo/priorityMarkets";
+import { CITY_SLUG_ALIASES } from "./city-aliases";
 
 /**
  * Typed redirect rules for app/tests. Edge config loads the mirrored rules from `redirects.mjs`
