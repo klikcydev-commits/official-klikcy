@@ -15,11 +15,17 @@ export const contactSchema = z.object({
   phone: z
     .string()
     .trim()
-    .min(7)
     .max(30)
-    .refine((v) => v.replace(/\D/g, "").length >= 7, "Invalid phone number"),
+    .refine((v) => v === "" || v.replace(/\D/g, "").length >= 7, "Invalid phone number")
+    .optional()
+    .default(""),
   company: z.string().trim().max(100).optional().or(z.literal("")),
-  service: z.string().trim().min(1).max(80),
+  service: z
+    .string()
+    .trim()
+    .max(80)
+    .optional()
+    .transform((v) => v || "Not sure yet"),
   message: z.string().trim().min(10).max(5000),
   website: z.literal("").optional(),
   formToken: z.string().min(3).max(128),
@@ -46,7 +52,7 @@ function buildContactEmail(data: Omit<ContactPayload, "formToken" | "website">) 
   const fields: [string, string][] = [
     ["Name", name],
     ["Email", email],
-    ["Phone", phone],
+    ["Phone", phone || "—"],
     ["Company", company?.trim() || "—"],
     ["Service", service],
     ["Message", message],
@@ -106,7 +112,7 @@ async function sendWithRetry(data: Omit<ContactPayload, "formToken" | "website">
     from: `"Klikcy Contact" <${fromUser}>`,
     to,
     replyTo: `"${data.name.replace(/"/g, "")}" <${data.email}>`,
-    subject: `[Klikcy] ${data.service} — ${data.name} | ${data.phone}`,
+    subject: `[Klikcy] ${data.service} — ${data.name}${data.phone ? ` | ${data.phone}` : ""}`,
     text,
     html,
   };
@@ -136,6 +142,17 @@ export type ContactValidationResult =
   | { ok: true; status: 200; silent: true }
   | { ok: true; status: 200; data: Omit<ContactPayload, "formToken" | "website"> };
 
+/** Plain-language errors so a visitor knows which field to fix. */
+const FIELD_ERRORS: Partial<Record<keyof ContactPayload, string>> = {
+  name: "Enter your name.",
+  email: "Enter a valid email address.",
+  phone: "That phone number doesn't look right. You can leave it blank.",
+  company: "The company name is too long.",
+  service: "Choose what you need help with.",
+  message: "Add a sentence or two about the project.",
+  formToken: "The form expired. Reload the page and send it again.",
+};
+
 export function validateContactRequest(body: unknown, ip: string): ContactValidationResult {
   const rate = checkContactRateLimit(ip);
   if (!rate.ok) {
@@ -152,23 +169,20 @@ export function validateContactRequest(body: unknown, ip: string): ContactValida
     return { ok: true, status: 200, silent: true };
   }
 
-  const rawPhone = typeof raw?.phone === "string" ? raw.phone.trim() : "";
-  if (!rawPhone) {
-    return { ok: false, status: 400, error: "Phone number is required." };
-  }
-
   const parsed = contactSchema.safeParse(body);
   if (!parsed.success) {
+    const details = parsed.error.flatten().fieldErrors;
+    const field = Object.keys(details)[0] as keyof typeof FIELD_ERRORS | undefined;
     return {
       ok: false,
       status: 400,
-      error: "Invalid form data.",
-      details: parsed.error.flatten().fieldErrors,
+      error: (field && FIELD_ERRORS[field]) || "Please check the form and try again.",
+      details,
     };
   }
 
   if (!verifyContactFormToken(parsed.data.formToken)) {
-    return { ok: false, status: 400, error: "Invalid form data." };
+    return { ok: false, status: 400, error: "The form expired. Reload the page and send it again." };
   }
 
   const { formToken: _formToken, website: _website, ...data } = parsed.data;
@@ -181,6 +195,6 @@ export function getHealthPayload() {
   return {
     ok: true,
     version: API_VERSION,
-    requiredFields: ["name", "email", "phone", "service", "message", "formToken"],
+    requiredFields: ["name", "email", "message", "formToken"],
   };
 }

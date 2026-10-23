@@ -19,7 +19,7 @@ type Window = { timestamps: number[] };
 const ipWindows = new Map<string, Window>();
 const globalWindow: Window = { timestamps: [] };
 
-const IP_MAX = 3;
+const IP_MAX = 5;
 const IP_WINDOW_MS = 10 * 60 * 1000;
 const GLOBAL_MAX = 20;
 const GLOBAL_WINDOW_MS = 60 * 60 * 1000;

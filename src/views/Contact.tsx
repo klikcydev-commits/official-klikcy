@@ -14,7 +14,7 @@ const nextSteps = [
   { title: "You get a written scope and fixed quote", body: "What we'll deliver, how long it takes, and what it costs. No obligation." },
 ];
 
-export default function Contact({ formToken }: { formToken: string }) {
+export default function Contact() {
   return (
     <>
       <Header />
@@ -40,7 +40,7 @@ export default function Contact({ formToken }: { formToken: string }) {
               <div className="sheet p-6 sm:p-8">
                 <h2 className="text-xl">New project inquiry</h2>
                 <div className="mt-6">
-                  <ContactForm serviceOptions={serviceOptions} email={SITE.email} formToken={formToken} />
+                  <ContactForm serviceOptions={serviceOptions} email={SITE.email} />
                 </div>
               </div>
             </div>

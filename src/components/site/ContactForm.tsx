@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 
@@ -10,32 +10,72 @@ const schema = z.object({
   phone: z
     .string()
     .trim()
-    .min(7, "Enter a phone number so we can call if email bounces.")
     .max(30, "That phone number is too long.")
-    .refine((v) => v.replace(/\D/g, "").length >= 7, "Enter a phone number with at least 7 digits."),
+    .refine((v) => v === "" || v.replace(/\D/g, "").length >= 7, "That phone number looks too short. You can leave it blank."),
   company: z.string().optional(),
-  service: z.string().min(1, 'Choose the closest match, or "Not sure yet".'),
+  service: z.string().optional(),
   message: z.string().trim().min(10, "Add a sentence or two about the project (at least 10 characters)."),
   website: z.literal("").optional(),
 });
 
+type FormValues = z.infer<typeof schema>;
+
+/** /api/contact rejects tokens younger than this (bots submit instantly). */
+const MIN_TOKEN_AGE_MS = 3500;
+/** Refresh the token if the tab has been open this long. */
+const MAX_TOKEN_AGE_MS = 12 * 60 * 60 * 1000;
 
 const inputClass =
   "mt-1.5 block w-full rounded-xl border border-line bg-paper px-3.5 py-3 text-base text-ink placeholder:text-slate/70 focus:border-teal focus:outline-none focus:ring-2 focus:ring-teal/20 disabled:opacity-60 aria-[invalid=true]:border-destructive";
 
-export default function ContactForm({
-  serviceOptions,
-  email,
-  formToken,
-}: {
-  serviceOptions: string[];
-  email: string;
-  /** Signed timestamp from the server; /api/contact rejects submissions without it. */
-  formToken: string;
-}) {
+/** Signed timestamp from the server. Fetched in the browser because the contact page is static. */
+async function fetchFormToken(): Promise<string> {
+  const response = await fetch("/api/contact/token/", { cache: "no-store" });
+  if (!response.ok) throw new Error("Couldn't prepare the form.");
+  const body = (await response.json()) as { token?: string };
+  if (!body.token) throw new Error("Couldn't prepare the form.");
+  return body.token;
+}
+
+/** A mailto link carrying the visitor's message, used when the form can't send. */
+function mailtoLink(email: string, values: FormValues): string {
+  const subject = `Project inquiry from ${values.name}`;
+  const details = [
+    `Name: ${values.name}`,
+    `Email: ${values.email}`,
+    values.phone ? `Phone: ${values.phone}` : "",
+    values.company ? `Company: ${values.company}` : "",
+    values.service ? `Service: ${values.service}` : "",
+  ].filter(Boolean);
+  const body = [values.message, "", ...details].join("\n");
+  return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+export default function ContactForm({ serviceOptions, email }: { serviceOptions: string[]; email: string }) {
+  const token = useRef<{ value: string; at: number } | null>(null);
   const [sent, setSent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [fallback, setFallback] = useState<string | null>(null);
+
+  const refreshToken = async () => {
+    token.current = { value: await fetchFormToken(), at: Date.now() };
+  };
+
+  useEffect(() => {
+    refreshToken().catch(() => {
+      token.current = null;
+    });
+  }, []);
+
+  /** Returns a token the server will accept, waiting out the minimum age if needed. */
+  const readyToken = async (): Promise<string> => {
+    if (!token.current || Date.now() - token.current.at > MAX_TOKEN_AGE_MS) await refreshToken();
+    const current = token.current!;
+    const wait = MIN_TOKEN_AGE_MS - (Date.now() - current.at);
+    if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+    return current.value;
+  };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,6 +92,7 @@ export default function ContactForm({
       return;
     }
     setErrors({});
+    setFallback(null);
     setSubmitting(true);
     try {
       const payload = {
@@ -59,12 +100,12 @@ export default function ContactForm({
         email: res.data.email,
         phone: res.data.phone,
         company: res.data.company?.trim() ?? "",
-        service: res.data.service,
+        service: res.data.service || "Not sure yet",
         message: res.data.message,
         website: res.data.website ?? "",
-        formToken,
+        formToken: await readyToken(),
       };
-      const response = await fetch("/api/contact", {
+      const response = await fetch("/api/contact/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -76,7 +117,10 @@ export default function ContactForm({
       toast.success("Message sent. We'll reply within one business day.");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Your message didn't send.";
-      toast.error(`${message} Try again, or email ${email}.`);
+      // A stale or missing token is the usual cause; get a new one for the next try.
+      refreshToken().catch(() => undefined);
+      setFallback(mailtoLink(email, res.data));
+      toast.error(`${message} You can also send it by email.`);
     } finally {
       setSubmitting(false);
     }
@@ -108,43 +152,34 @@ export default function ContactForm({
         className="absolute -left-[9999px] h-0 w-0 opacity-0"
       />
       <p id="form-note" className="meta">
-        All fields are required unless marked optional.
+        Only your name, email, and a few words about the project are needed. Prefer email? Write to{" "}
+        <a href={`mailto:${email}`} className="link">
+          {email}
+        </a>
+        .
       </p>
       <div className="grid gap-6 sm:grid-cols-2">
         <Field label="Your name" name="name" autoComplete="name" error={errors.name} disabled={submitting} />
         <Field label="Email" name="email" type="email" autoComplete="email" error={errors.email} disabled={submitting} />
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
-        <Field label="Phone" name="phone" type="tel" autoComplete="tel" error={errors.phone} disabled={submitting} />
+        <Field label="Phone (optional)" name="phone" type="tel" autoComplete="tel" error={errors.phone} disabled={submitting} optional />
         <Field label="Company (optional)" name="company" autoComplete="organization" disabled={submitting} optional />
       </div>
       <div>
         <label htmlFor="field-service" className="font-semibold">
-          What do you need help with?
+          What do you need help with? <span className="font-normal text-slate">(optional)</span>
         </label>
-        <select
-          id="field-service"
-          name="service"
-          disabled={submitting}
-          aria-invalid={errors.service ? true : undefined}
-          aria-describedby={errors.service ? "error-service" : undefined}
-          className={inputClass}
-          defaultValue=""
-        >
-          <option value="" disabled>
-            Choose one
-          </option>
-          {serviceOptions.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
+        <select id="field-service" name="service" disabled={submitting} className={inputClass} defaultValue="">
+          <option value="">Not sure yet</option>
+          {serviceOptions
+            .filter((s) => s !== "Not sure yet")
+            .map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
         </select>
-        {errors.service ? (
-          <p id="error-service" className="mt-1.5 text-sm text-destructive">
-            {errors.service}
-          </p>
-        ) : null}
       </div>
       <div>
         <label htmlFor="field-message" className="font-semibold">
@@ -157,6 +192,7 @@ export default function ContactForm({
           id="field-message"
           name="message"
           rows={6}
+          required
           disabled={submitting}
           aria-invalid={errors.message ? true : undefined}
           aria-describedby={errors.message ? "hint-message error-message" : "hint-message"}
@@ -168,6 +204,17 @@ export default function ContactForm({
           </p>
         ) : null}
       </div>
+      {fallback ? (
+        <div className="rounded-xl border border-line bg-mist p-4" role="alert">
+          <p className="font-semibold">The form couldn&apos;t send your message.</p>
+          <p className="muted mt-1 text-[0.95rem]">
+            Try again, or send the same message from your email app. Everything you typed is already filled in.
+          </p>
+          <a href={fallback} className="btn btn-secondary mt-3">
+            Send it by email instead
+          </a>
+        </div>
+      ) : null}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
         <button type="submit" className="btn btn-primary w-full sm:w-auto" disabled={submitting}>
           {submitting ? "Sending…" : "Send message"}
